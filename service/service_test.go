@@ -172,8 +172,8 @@ func TestService(t *testing.T) {
 	go srv.StartWatchers()
 	// this needs to be start as a goroutien
 	go srv.StartBlockListener()
-	t.Log("sleeping for 30 seconds to let processes run")
-	time.Sleep(time.Second * 30)
+	t.Log("sleeping for 65 seconds to let processes run")
+	time.Sleep(time.Second * 65)
 	require.NoError(t, srv.Close())
 }
 
