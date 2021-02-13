@@ -6,7 +6,7 @@ import (
 	"strings"
 
 	"github.com/BurntSushi/locker"
-	"github.com/bonedaddy/circuit-breaker/config"
+	"github.com/indexed-finance/circuit-breaker/config"
 	"gorm.io/driver/postgres"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"

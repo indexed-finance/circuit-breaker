@@ -6,7 +6,7 @@ import (
 	"testing"
 
 	"github.com/bonedaddy/bdsm/testenv"
-	bmat "github.com/bonedaddy/circuit-breaker/bindings/bmath"
+	bmat "github.com/indexed-finance/circuit-breaker/bindings/bmath"
 	"github.com/stretchr/testify/require"
 )
 

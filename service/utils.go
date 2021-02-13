@@ -4,10 +4,10 @@ import (
 	"strings"
 	"time"
 
-	"github.com/bonedaddy/circuit-breaker/config"
-	"github.com/bonedaddy/circuit-breaker/utils"
 	poolbindings "github.com/bonedaddy/go-indexed/bindings/pool"
 	"github.com/ethereum/go-ethereum/common"
+	"github.com/indexed-finance/circuit-breaker/config"
+	"github.com/indexed-finance/circuit-breaker/utils"
 	"go.uber.org/zap"
 )
 

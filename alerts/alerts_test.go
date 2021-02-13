@@ -4,7 +4,7 @@ import (
 	"os"
 	"testing"
 
-	"github.com/bonedaddy/circuit-breaker/config"
+	"github.com/indexed-finance/circuit-breaker/config"
 	"github.com/stretchr/testify/require"
 	"go.uber.org/zap"
 )

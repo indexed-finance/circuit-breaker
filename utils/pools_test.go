@@ -5,10 +5,10 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/bonedaddy/circuit-breaker/config"
 	"github.com/bonedaddy/go-indexed/bclient"
 	poolbindings "github.com/bonedaddy/go-indexed/bindings/pool"
 	"github.com/ethereum/go-ethereum/common"
+	"github.com/indexed-finance/circuit-breaker/config"
 	"github.com/stretchr/testify/require"
 )
 

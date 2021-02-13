@@ -4,9 +4,9 @@ import (
 	"context"
 	"math/big"
 
-	bindings "github.com/bonedaddy/circuit-breaker/bindings/multicall"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
+	bindings "github.com/indexed-finance/circuit-breaker/bindings/multicall"
 )
 
 // Multicall exposes utility functions around the multicall contract

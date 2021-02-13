@@ -1,4 +1,4 @@
-module github.com/bonedaddy/circuit-breaker
+module github.com/indexed-finance/circuit-breaker
 
 go 1.15
 

@@ -8,13 +8,13 @@ import (
 	"math/big"
 	"strings"
 
-	"github.com/bonedaddy/circuit-breaker/alerts"
-	"github.com/bonedaddy/circuit-breaker/database"
-	"github.com/bonedaddy/circuit-breaker/utils"
 	poolbindings "github.com/bonedaddy/go-indexed/bindings/pool"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/event"
+	"github.com/indexed-finance/circuit-breaker/alerts"
+	"github.com/indexed-finance/circuit-breaker/database"
+	"github.com/indexed-finance/circuit-breaker/utils"
 	"go.uber.org/zap"
 )
 

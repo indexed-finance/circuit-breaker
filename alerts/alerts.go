@@ -1,7 +1,7 @@
 package alerts
 
 import (
-	"github.com/bonedaddy/circuit-breaker/config"
+	"github.com/indexed-finance/circuit-breaker/config"
 	"github.com/kevinburke/twilio-go"
 	"go.uber.org/multierr"
 	"go.uber.org/zap"

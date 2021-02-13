@@ -7,9 +7,9 @@ import (
 	"os"
 	"time"
 
-	"github.com/bonedaddy/circuit-breaker/config"
-	"github.com/bonedaddy/circuit-breaker/utils"
 	"github.com/ethereum/go-ethereum/crypto"
+	"github.com/indexed-finance/circuit-breaker/config"
+	"github.com/indexed-finance/circuit-breaker/utils"
 	"github.com/urfave/cli/v2"
 )
 

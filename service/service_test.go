@@ -8,14 +8,14 @@ import (
 	"testing"
 	"time"
 
-	"github.com/bonedaddy/circuit-breaker/alerts"
-	"github.com/bonedaddy/circuit-breaker/config"
-	"github.com/bonedaddy/circuit-breaker/database"
-	"github.com/bonedaddy/circuit-breaker/multicall"
-	"github.com/bonedaddy/circuit-breaker/utils"
 	"github.com/bonedaddy/go-indexed/bclient"
 	poolbindings "github.com/bonedaddy/go-indexed/bindings/pool"
 	"github.com/ethereum/go-ethereum/common"
+	"github.com/indexed-finance/circuit-breaker/alerts"
+	"github.com/indexed-finance/circuit-breaker/config"
+	"github.com/indexed-finance/circuit-breaker/database"
+	"github.com/indexed-finance/circuit-breaker/multicall"
+	"github.com/indexed-finance/circuit-breaker/utils"
 	"github.com/stretchr/testify/require"
 )
 

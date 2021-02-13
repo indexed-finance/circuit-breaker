@@ -6,9 +6,9 @@ import (
 	"testing"
 
 	"github.com/bonedaddy/bdsm/testenv"
-	"github.com/bonedaddy/circuit-breaker/bindings/logswap"
-	"github.com/bonedaddy/circuit-breaker/bindings/multicall"
 	"github.com/bonedaddy/go-indexed/bclient"
+	"github.com/indexed-finance/circuit-breaker/bindings/logswap"
+	"github.com/indexed-finance/circuit-breaker/bindings/multicall"
 	"github.com/stretchr/testify/require"
 )
 
