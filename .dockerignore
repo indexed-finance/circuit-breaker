@@ -1,0 +1,23 @@
+# misc
+
+.git
+.gitmodules
+LICENSE
+**/Makefile
+release
+files
+.scripts
+.travis.yml
+circuit-breaker
+bin
+contracts
+
+# regexs
+**/*.yaml
+**/*.yml
+**/*.db
+**/*.log
+**/*.profile
+**/*.md
+**/*.conf
+**/*.png

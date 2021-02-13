@@ -1,0 +1,47 @@
+version: "3.5"
+services:
+  contract-watcher:
+    image: bonedaddy/circuit-breaker:v0.0.7-1-g9b783b1
+    restart: always
+    networks:
+      privnet:
+        ipv4_address: 172.16.245.2
+    ports:
+      - 6060:6060
+    command: "contract-watcher"
+    depends_on:
+      - postgres
+      - block-listener
+    volumes: 
+      - ./circuit-breaker.yaml:/circuit-breaker.yml
+  block-listener:
+    image: bonedaddy/circuit-breaker:v0.0.7-1-g9b783b1
+    restart: always
+    networks:
+      privnet:
+        ipv4_address: 172.16.245.3
+    ports:
+      - 6061:6060
+    command: "--db.migrate block-listener"
+    depends_on:
+      - postgres
+    volumes: 
+      - ./circuit-breaker.yaml:/circuit-breaker.yml
+  postgres:
+    image: postgres:10.12
+    networks:
+      privnet:
+        ipv4_address: 172.16.245.4
+    restart: always
+    environment:
+      POSTGRES_DB: "circuit-breaker"
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "password123"
+    volumes:
+     - ./my-postgres.conf:/etc/postgresql/postgresql.conf
+networks:
+ privnet:
+  driver: bridge
+  ipam:
+    config:
+      - subnet: 172.16.245.0/24
