@@ -1,5 +1,7 @@
 # circuit-breaker
 
+[![Build Status](https://travis-ci.com/indexed-finance/circuit-breaker.svg?branch=master)](https://travis-ci.com/indexed-finance/circuit-breaker) [![codecov](https://codecov.io/gh/indexed-finance/circuit-breaker/branch/master/graph/badge.svg?token=srpQ1FF1MH)](https://codecov.io/gh/indexed-finance/circuit-breaker) ![Go Report Card](https://goreportcard.com/badge/github.com/indexed-finance/circuit-breaker) [![GoDoc](https://godoc.org/github.com/indexed-finance/circuit-breaker?status.svg)](https://godoc.org/github.com/indexed-finance/circuit-breaker) 
+
 `circuit-breaker` is a circuit breaker bot for Indexed Finance that can trigger circuit breaks based off of total supply increase/decrease of the tokens that are part of a pool (ie CRV total supply increasing/decreasing), or due to excessive price fluctuations (specifically price decreases) from token swaps.
 
 # Architecture
@@ -14,14 +16,14 @@ For information on best practices when running `circuit-breaker` in production s
 
 ## Installation
 
-The installation examples here assume a latest release of `v0.0.9`, please substitute all `v0.0.9` references with the latest release at time of installation. It also assumes you have already installed docker on the host you will be running `circuit-breaker` on.
+The installation examples here assume a latest release of `v0.0.2`, please substitute all `v0.0.2` references with the latest release at time of installation. It also assumes you have already installed docker on the host you will be running `circuit-breaker` on.
 
-On your main desktop/laptop/faptop navigate to `https://github.com/indexed-finance/circuit-breaker/releases/tag/v0.0.9` using a browser authenticated with GitHub using a user account that has permissions to view the repository. You'll want to download the following files:
+On your main desktop/laptop navigate to `https://github.com/indexed-finance/circuit-breaker/releases/tag/v0.0.2` using a browser authenticated with GitHub using a user account that has permissions to view the repository. You'll want to download the following files:
 
-* `circuit-breaker-docker_v0.0.9.tar.sha256` (docker image checksum)
-* `circuit-breaker-docker_v0.0.9.tar` (docker image)
-* `circuit-breaker-v0.0.9.sha256` (cli checksum)
-* `circuit-breaker-v0.0.9` (cli)
+* `circuit-breaker-docker_v0.0.2.tar.sha256` (docker image checksum)
+* `circuit-breaker-docker_v0.0.2.tar` (docker image)
+* `circuit-breaker-v0.0.2.sha256` (cli checksum)
+* `circuit-breaker-v0.0.2` (cli)
 
 Once these have downloaded you can verify the checksum with the following one-liner and ensure that `OK` is outputted to your console. If `ERROR` is displayed then you likely have a corrutpted download and want to try again:
 
@@ -29,32 +31,32 @@ Once these have downloaded you can verify the checksum with the following one-li
 Docker image verification:
 
 ```
-$> WANT_SHA=$(cat circuit-breaker-docker_v0.0.9.tar.sha256 | awk '{print $1}'); HAVE_SHA=$(sha256sum circuit-breaker-docker_v0.0.9.tar | awk '{print $1}'); if [[ "$WANT_SHA" == "$HAVE_SHA" ]]; then echo "OK" ; else "ERROR" ; fi
+$> WANT_SHA=$(cat circuit-breaker-docker_v0.0.2.tar.sha256 | awk '{print $1}'); HAVE_SHA=$(sha256sum circuit-breaker-docker_v0.0.2.tar | awk '{print $1}'); if [[ "$WANT_SHA" == "$HAVE_SHA" ]]; then echo "OK" ; else "ERROR" ; fi
 ```
 
 CLI verification:
 
 ```
-$> WANT_SHA=$(cat circuit-breaker-v0.0.9.sha256 | awk '{print $1}'); HAVE_SHA=$(sha256sum circuit-breaker-v0.0.9 | awk '{print $1}'); if [[ "$WANT_SHA" == "$HAVE_SHA" ]]; then echo "OK" ; else "ERROR" ; fi
+$> WANT_SHA=$(cat circuit-breaker-v0.0.2.sha256 | awk '{print $1}'); HAVE_SHA=$(sha256sum circuit-breaker-v0.0.2 | awk '{print $1}'); if [[ "$WANT_SHA" == "$HAVE_SHA" ]]; then echo "OK" ; else "ERROR" ; fi
 ```
 
-Transfer the docker image (`circuit-breaker-docker_v0.0.9.tar`) to the host you will be running `circuit-breaker` on:
+Transfer the docker image (`circuit-breaker-docker_v0.0.2.tar`) to the host you will be running `circuit-breaker` on:
 
 ```shell
-$> scp circuit-breaker-docker_v0.0.9.tar  user@host
+$> scp circuit-breaker-docker_v0.0.2.tar  user@host
 ```
 
 After this has transferred ssh to the target host and load the docker image with the following command:
 
 ```shell
-$> docker image load < circuit-breaker-docker_v0.0.9.tar
+$> docker image load < circuit-breaker-docker_v0.0.2.tar
 ```
 
 After this you will have installed `circuit-breaker` onto the target host, and will now be ready for configuring the service. 
 
 ## Configuration
 
-For this you'll want to use the precompiled binary (`circuit-breaker-v0.0.9`) to generate the configuration file used by the service. You can change the name and path the file is written to using `--config.path`, however it defaults to the current working directory in a file named `circuit-breaker.yaml`. For simplicity sake all references to the precompiled binary from here on out will be `circuit-breaker`. For documentation on the settings of the configuration file see [CONFIG_DOC.md](./CONFIG_DOC.md)
+For this you'll want to use the precompiled binary (`circuit-breaker-v0.0.2`) to generate the configuration file used by the service. You can change the name and path the file is written to using `--config.path`, however it defaults to the current working directory in a file named `circuit-breaker.yaml`. For simplicity sake all references to the precompiled binary from here on out will be `circuit-breaker`. For documentation on the settings of the configuration file see [CONFIG_DOC.md](./CONFIG_DOC.md)
 
 Please note that all corresponding files (yaml config file, key file, docker compose file, etc...) must be placed in the same directory on the target host.
 
@@ -97,7 +99,7 @@ Make sure you cahnge the `POSTGRES_USER` and `POSTGRES_PASSWORD` fields to more 
 version: "3.5"
 services:
   contract-watcher:
-    image: bonedaddy/circuit-breaker:v0.0.9
+    image: indexed-finance/circuit-breaker:v0.0.2
     command: "contract-watcher"
     depends_on:
       - postgres
@@ -105,7 +107,7 @@ services:
     volumes: 
       - ./circuit-breaker.yaml:/circuit-breaker.yml
   block-listener:
-    image: bonedaddy/circuit-breaker:v0.0.9
+    image: indexed-finance/circuit-breaker:v0.0.2
     restart: always
     command: "--db.migrate block-listener"
     depends_on:
@@ -129,7 +131,7 @@ Note the very long `UTC-xxxx` value will depend on whatever is returned by the k
 version: "3.5"
 services:
   contract-watcher:
-    image: bonedaddy/circuit-breaker:v0.0.9
+    image: indexed-finance/circuit-breaker:v0.0.2
     command: "contract-watcher"
     depends_on:
       - postgres
@@ -138,7 +140,7 @@ services:
       - ./circuit-breaker.yaml:/circuit-breaker.yml
       - ./UTC--2021-02-10T10-20-05.869581969Z--54f0b946340efb1ba43e2b841616ac003c296eef:/UTC--2021-02-10T10-20-05.869581969Z--54f0b946340efb1ba43e2b841616ac003c296eef
   block-listener:
-    image: bonedaddy/circuit-breaker:v0.0.9
+    image: indexed-finance/circuit-breaker:v0.0.2
     restart: always
     command: "--db.migrate block-listener"
     depends_on:
