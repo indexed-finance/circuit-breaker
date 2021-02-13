@@ -32,7 +32,7 @@ deploy:
   file: release/*
   on:
     tags: true
-    repo: bonedaddy/circuit-breaker
+    repo: indexed-finance/circuit-breaker
 cache:
   directories:
   - "$GOPATH/pkg/mod"
