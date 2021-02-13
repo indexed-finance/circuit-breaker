@@ -1,7 +1,7 @@
 version: "3.5"
 services:
   contract-watcher:
-    image: bonedaddy/circuit-breaker:v0.0.7-1-g9b783b1
+    image: bonedaddy/circuit-breaker:v0.0.1-1-g76f3293
     restart: always
     networks:
       privnet:
@@ -15,7 +15,7 @@ services:
     volumes: 
       - ./circuit-breaker.yaml:/circuit-breaker.yml
   block-listener:
-    image: bonedaddy/circuit-breaker:v0.0.7-1-g9b783b1
+    image: bonedaddy/circuit-breaker:v0.0.1-1-g76f3293
     restart: always
     networks:
       privnet:

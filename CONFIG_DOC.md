@@ -5,6 +5,7 @@ As mentioned in the README, configuration of `circuit-breaker` is done using a Y
 
 ```yaml
 infura_api_key: INFURA-KEY
+network: mainnet
 multi_call_address: 0x3067b1b7bf344027c7439509fbdf344eb25f5991
 pools:
 - name: DEFI5
@@ -57,6 +58,10 @@ Below you'll find explanations on all the configuration file settings
 # infura_api_key
 
 This is your Infura API key. During testing monitoring two index pools, a free tier account was enough. You may be able to use a free tier account for monitoring three or four index pools but I havent tested this.
+
+# network
+
+The ethreum network to use, at the moment the only supported RPC provider is Infura, so it will need to be a valid network as supported by Infura. It is case sensitive, so "mainnet", "ropsten", "rinkeby", etc...
 
 # multi_call_address
 
