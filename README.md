@@ -1,5 +1,7 @@
 # circuit-breaker
 
+[![Build Status](https://travis-ci.com/indexed-finance/circuit-breaker.svg?branch=master)](https://travis-ci.com/indexed-finance/circuit-breaker) [![codecov](https://codecov.io/gh/indexed-finance/circuit-breaker/branch/master/graph/badge.svg?token=srpQ1FF1MH)](https://codecov.io/gh/indexed-finance/circuit-breaker) ![Go Report Card](https://goreportcard.com/badge/github.com/indexed-finance/circuit-breaker) [![GoDoc](https://godoc.org/github.com/indexed-finance/circuit-breaker?status.svg)](https://godoc.org/github.com/indexed-finance/circuit-breaker) 
+
 `circuit-breaker` is a circuit breaker bot for Indexed Finance that can trigger circuit breaks based off of total supply increase/decrease of the tokens that are part of a pool (ie CRV total supply increasing/decreasing), or due to excessive price fluctuations (specifically price decreases) from token swaps.
 
 # Architecture
