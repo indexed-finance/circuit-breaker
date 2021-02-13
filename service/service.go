@@ -302,15 +302,8 @@ func (s *Service) StartBlockListener() error {
 						s.circuitBreakCheck(tok, supply, totalSupplies, pool)
 					}
 
-					// check to see if we need to purge old information
-					if infos, err := s.db.GetNumInfos(pool.Name); err == nil {
-						if infos > 512 {
-							s.logger.Debug("purging old infos")
-							if err := s.db.PurgeOldInfos(pool.Name, 512); err != nil {
-								s.logger.Error("failed to purge old infos", zap.Error(err))
-							}
-						}
-					}
+					// purge old records if need be
+					s.purgeInfoCheck(pool.Name)
 
 				}(pool)
 			}
@@ -420,4 +413,17 @@ func (s *Service) circuitBreakCheck(
 
 	}
 
+}
+
+// performs a check to see if we need to purge records from the database
+func (s *Service) purgeInfoCheck(name string) {
+	// check to see if we need to purge old information
+	if infos, err := s.db.GetNumInfos(name); err == nil {
+		if infos > 512 {
+			s.logger.Debug("purging old infos")
+			if err := s.db.PurgeOldInfos(name, 512); err != nil {
+				s.logger.Error("failed to purge old infos", zap.Error(err))
+			}
+		}
+	}
 }

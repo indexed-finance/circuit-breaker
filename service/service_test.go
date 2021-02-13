@@ -169,8 +169,26 @@ func TestService(t *testing.T) {
 			}
 		})
 	})
+	t.Run("PurgeInfoCheck", func(t *testing.T) {
+		dPool, err := srv.db.GetPool("cc10")
+		require.NoError(t, err)
+		// record fake infos to go past the max info count
+		for i := 1; i < 1024; i++ {
+			require.NoError(t, srv.db.RecordInfo(
+				"cc10",
+				dPool.LastUpdateAt+uint64(i),
+				oldBalances,
+				oldDenomWeights,
+				oldSupplies,
+			))
+		}
+
+		srv.purgeInfoCheck("cc10")
+		infos, err := srv.db.GetNumInfos("cc10")
+		require.NoError(t, err)
+		require.Equal(t, infos, 512)
+	})
 	go srv.StartWatchers()
-	// this needs to be start as a goroutien
 	go srv.StartBlockListener()
 	t.Log("sleeping for 65 seconds to let processes run")
 	time.Sleep(time.Second * 65)
