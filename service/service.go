@@ -246,29 +246,41 @@ func (s *Service) StartBlockListener() error {
 			return err
 		case header := <-ch:
 			s.logger.Debug("new block header received", zap.Any("header", header))
-			// process total supply update
+
+			// do a single update for wait group incrementation instead of multiple times
+			s.wg.Add(len(s.pools))
+
 			for _, pool := range s.pools {
+
 				// claim the named lock
 				s.namedLock.Lock(pool.Name)
+
 				// start the total supply update information in the background
-				s.wg.Add(1)
 				go func(pool config.Pool) {
+
 					// defer named lock unlock
 					defer s.namedLock.Unlock(pool.Name)
 					defer s.wg.Done()
+
 					// grab the previous pool information so we can determine if we should break the circuit
 					dPool, err := s.db.GetPool(pool.Name)
 					if err != nil {
 						s.logger.Error("failed to get pool database entry", zap.Error(err), zap.String("pool", pool.Name))
 						return
 					}
+					// get the information for the time this record was last updated at
 					infos, err := s.db.GetInfo(dPool.Name, dPool.LastUpdateAt)
 					if err != nil {
 						s.logger.Error("failed to get pool infos database entry", zap.Error(err), zap.String("pool", pool.Name), zap.Uint64("updated.at", dPool.LastUpdateAt))
 						return
 					}
+
+					// check the block number from the header
 					blockNum := header.Number.Uint64()
+
 					s.logger.Info("updating pool information (supply, balances, weights)", zap.String("pool", pool.Name), zap.Uint64("block.num", blockNum))
+
+					// create bindings for the given contract
 					contract, err := poolbindings.NewPoolbindings(
 						common.HexToAddress(pool.ContractAddress),
 						s.ew.BC().EthClient(),
@@ -277,97 +289,36 @@ func (s *Service) StartBlockListener() error {
 						s.logger.Error("failed to get contract binding", zap.Error(err), zap.String("pool", pool.Name))
 						return
 					}
+
+					// update the information stored in the database
 					_, _, totalSupplies, err := s.UpdateBalancesWeightsAndSupplies(blockNum, pool, contract)
 					if err != nil {
 						s.logger.Error("UpdateBalancesWeightsAndSupplies failed", zap.Error(err), zap.String("pool", pool.Name))
 					}
+
 					// now start checking total supply shifts
 					for tok, supply := range infos.TokenTotalSupplies {
-						oldSupplyStr, ok := supply.(string)
-						if !ok {
-							s.logger.Error("failed to convert old supply to string", zap.Error(err), zap.String("pool", pool.Name), zap.String("token", tok))
-							return
-						}
-						oldSupplyBig, ok := new(big.Int).SetString(oldSupplyStr, 10)
-						if !ok {
-							s.logger.Error("failed to convert old supply from string to big.Int", zap.Error(err), zap.String("pool", pool.Name), zap.String("token", tok))
-							return
-						}
-						newSupplyStr, ok := totalSupplies[tok].(string)
-						if !ok {
-							s.logger.Error("failed to convert new supply to string", zap.Error(err), zap.String("pool", pool.Name), zap.String("token", tok))
-							return
-						}
-						newSupplyBig, ok := new(big.Int).SetString(newSupplyStr, 10)
-						if !ok {
-							s.logger.Error("failed to convert new supply from string to big.Int", zap.Error(err), zap.String("pool", pool.Name), zap.String("token", tok))
-							return
-						}
-						var (
-							change float64
-							reason string
-						)
-						// handle token supply increase/decrease
-						if newSupplyBig.Cmp(oldSupplyBig) == 1 {
-							// multiply by 100 to get correct percentage
-							change = (utils.GetChangePercentageBig(newSupplyBig, oldSupplyBig)) * 100
-							s.logger.Debug(
-								"token total supply increased",
-								zap.Float64("change.percent", change),
-								zap.String("pool", pool.Name),
-								zap.String("token", tok),
-								zap.String("supply.old", oldSupplyStr),
-								zap.String("supply.new", newSupplyStr),
-							)
-							reason = "increase"
-						} else if newSupplyBig.Cmp(oldSupplyBig) == -1 {
-							change = (utils.GetChangePercentageBig(newSupplyBig, oldSupplyBig)) * 100
-							s.logger.Debug(
-								"token total supply decreased",
-								zap.Float64("change.percent", change),
-								zap.String("pool", pool.Name),
-								zap.String("token", tok),
-								zap.String("supply.old", oldSupplyStr),
-								zap.String("supply.new", newSupplyStr),
-							)
-							reason = "decrease"
-						}
-						if math.Abs(change) > pool.SupplyBreakPercentage {
-							s.logger.Warn(
-								"token supply fluctuation is greater than minimum break percentage, breaking circuits!",
-								zap.String("pool", pool.Name), zap.String("token", tok),
-								zap.Float64("break_at", pool.SupplyBreakPercentage), zap.Float64("change", change), zap.Float64("change_abs", math.Abs(change)),
-								zap.String("supply.old", oldSupplyBig.String()), zap.String("supply.new", newSupplyBig.String()),
-							)
-							// lock the authorizer since bind.TransactOpts is not threadsafe
-							s.auther.Lock()
-							// TODO(bonedaddy): replace with actual circuit break transaction
-							s.auther.Unlock()
-							if err := s.at.NotifyCircuitBreak(
-								fmt.Sprintf(
-									"a circuit break is in progress. pool: %s, token: %s, reason: token supply %s",
-									pool.Name, tok, reason,
-								),
-							); err != nil {
-								s.logger.Error("circuit break notification failed")
-							}
-						}
-						if infos, err := s.db.GetNumInfos(pool.Name); err == nil {
-							if infos > 512 {
-								s.logger.Debug("purging old infos")
-								if err := s.db.PurgeOldInfos(pool.Name, 512); err != nil {
-									s.logger.Error("failed to purge old infos", zap.Error(err))
-								}
+						// check the total supply for the given token
+						s.circuitBreakCheck(tok, supply, totalSupplies, pool)
+					}
+
+					// check to see if we need to purge old information
+					if infos, err := s.db.GetNumInfos(pool.Name); err == nil {
+						if infos > 512 {
+							s.logger.Debug("purging old infos")
+							if err := s.db.PurgeOldInfos(pool.Name, 512); err != nil {
+								s.logger.Error("failed to purge old infos", zap.Error(err))
 							}
 						}
 					}
+
 				}(pool)
 			}
 		}
 	}
 }
 
-// Close shuts down all internal modules returning any errors encounterd from shutdown
+// Close shuts down all internal modules returning any errors encountered from shutdown
 func (s *Service) Close() error {
 	var errors error
 	s.logger.Info("cancelling context")
@@ -387,4 +338,86 @@ func (s *Service) Close() error {
 	}
 	s.logger.Info("shutdown process finished, goodbye...")
 	return errors
+}
+
+// circuitBreakCheck performs a check to see if a circuit needs to be broken
+// and if so handles breaking of the circuit
+func (s *Service) circuitBreakCheck(
+	tok string, supply interface{},
+	totalSupplies map[string]interface{},
+	pool config.Pool,
+) {
+
+	oldSupplyStr, ok := supply.(string)
+	if !ok {
+		s.logger.Error("failed to convert old supply to string", zap.String("pool", pool.Name), zap.String("token", tok))
+		return
+	}
+
+	oldSupplyBig, ok := new(big.Int).SetString(oldSupplyStr, 10)
+	if !ok {
+		s.logger.Error("failed to convert old supply from string to big.Int", zap.String("pool", pool.Name), zap.String("token", tok))
+		return
+	}
+
+	newSupplyStr, ok := totalSupplies[tok].(string)
+	if !ok {
+		s.logger.Error("failed to convert new supply to string", zap.String("pool", pool.Name), zap.String("token", tok))
+		return
+	}
+
+	newSupplyBig, ok := new(big.Int).SetString(newSupplyStr, 10)
+	if !ok {
+		s.logger.Error("failed to convert new supply from string to big.Int", zap.String("pool", pool.Name), zap.String("token", tok))
+		return
+	}
+
+	var (
+		direction string
+		change    = (utils.GetChangePercentageBig(newSupplyBig, oldSupplyBig)) * 100
+	)
+
+	if change < 0 {
+		direction = "decreased"
+	} else if change > 0 {
+		direction = "increased"
+	}
+
+	s.logger.Debug(
+		"token total supply changed",
+		zap.String("direction", direction),
+		zap.Float64("change.percent", change),
+		zap.String("pool", pool.Name),
+		zap.String("token", tok),
+		zap.String("supply.old", oldSupplyStr),
+		zap.String("supply.new", newSupplyStr),
+	)
+
+	// we take the absolute to see if the change is greater than the break percentage
+	// as we want to handle circuit breaks whether the total supply increased or decreases
+	if math.Abs(change) > pool.SupplyBreakPercentage {
+
+		s.logger.Warn(
+			"token supply fluctuation is greater than minimum break percentage, breaking circuits!",
+			zap.String("pool", pool.Name), zap.String("token", tok),
+			zap.Float64("break_at", pool.SupplyBreakPercentage), zap.Float64("change", change), zap.Float64("change_abs", math.Abs(change)),
+			zap.String("supply.old", oldSupplyBig.String()), zap.String("supply.new", newSupplyBig.String()),
+		)
+
+		// lock the authorizer since bind.TransactOpts is not threadsafe
+		s.auther.Lock()
+		// TODO(bonedaddy): replace with actual circuit break transaction
+		s.auther.Unlock()
+
+		if err := s.at.NotifyCircuitBreak(
+			fmt.Sprintf(
+				"a circuit break is in progress. pool: %s, token: %s, reason: token supply %s",
+				pool.Name, tok, direction,
+			),
+		); err != nil {
+			s.logger.Error("circuit break notification failed")
+		}
+
+	}
+
 }
