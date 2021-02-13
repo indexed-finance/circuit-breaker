@@ -64,7 +64,7 @@ func TestWatchedContract(t *testing.T) {
 	require.NoError(t, err)*/
 	watched, err := ew.NewWatchedContracts(zap.NewNop(), tenv, map[string]*poolbindings.Poolbindings{"cc10": pool})
 	require.NoError(t, err)
-	// start listene
+	require.Equal(t, watched[0].Name(), "cc10")
 
 	watchedContract := watched[0]
 	// triggert getPreviousSwapFee error case while simulation is set to false
