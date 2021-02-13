@@ -16,7 +16,7 @@ For information on best practices when running `circuit-breaker` in production s
 
 The installation examples here assume a latest release of `v0.0.9`, please substitute all `v0.0.9` references with the latest release at time of installation. It also assumes you have already installed docker on the host you will be running `circuit-breaker` on.
 
-On your main desktop/laptop/faptop navigate to `https://github.com/indexed-finance/circuit-breaker/releases/tag/v0.0.9` using a browser authenticated with GitHub using a user account that has permissions to view the repository. You'll want to download the following files:
+On your main desktop/laptop navigate to `https://github.com/indexed-finance/circuit-breaker/releases/tag/v0.0.9` using a browser authenticated with GitHub using a user account that has permissions to view the repository. You'll want to download the following files:
 
 * `circuit-breaker-docker_v0.0.9.tar.sha256` (docker image checksum)
 * `circuit-breaker-docker_v0.0.9.tar` (docker image)
