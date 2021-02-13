@@ -35,3 +35,18 @@ func TestConfig(t *testing.T) {
 	_, err = LoggerFromConfig(config)
 	require.NoError(t, err)
 }
+
+func TestLoggerFullOpts(t *testing.T) {
+	t.Cleanup(func() { os.Remove("test.log") })
+	logger, err := LoggerFromConfig(&Config{
+		Logger: Logger{
+			Path:     "test.log",
+			Dev:      true,
+			Debug:    true,
+			FileOnly: true,
+			Fields:   map[string]interface{}{"test": "true"},
+		},
+	})
+	require.NoError(t, err)
+	require.NoError(t, logger.Sync())
+}
