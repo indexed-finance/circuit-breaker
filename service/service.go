@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"math"
 	"math/big"
@@ -299,7 +300,11 @@ func (s *Service) StartBlockListener() error {
 					// now start checking total supply shifts
 					for tok, supply := range infos.TokenTotalSupplies {
 						// check the total supply for the given token
-						s.circuitBreakCheck(tok, supply, totalSupplies, pool)
+						// however if it fails dont abort processing, continue processing
+						// as other tokens may need to be checked
+						if err := s.circuitBreakCheck(tok, supply, totalSupplies, pool); err != nil {
+							s.logger.Error("circuitBreakCheck failed", zap.Error(err), zap.String("pool", pool.Name), zap.String("token", tok))
+						}
 					}
 
 					// purge old records if need be
@@ -339,30 +344,26 @@ func (s *Service) circuitBreakCheck(
 	tok string, supply interface{},
 	totalSupplies map[string]interface{},
 	pool config.Pool,
-) {
+) error {
 
 	oldSupplyStr, ok := supply.(string)
 	if !ok {
-		s.logger.Error("failed to convert old supply to string", zap.String("pool", pool.Name), zap.String("token", tok))
-		return
+		return errors.New("old supply is not of type string")
 	}
 
 	oldSupplyBig, ok := new(big.Int).SetString(oldSupplyStr, 10)
 	if !ok {
-		s.logger.Error("failed to convert old supply from string to big.Int", zap.String("pool", pool.Name), zap.String("token", tok))
-		return
+		return errors.New("fialed to convert old supply from string to big.Int")
 	}
 
 	newSupplyStr, ok := totalSupplies[tok].(string)
 	if !ok {
-		s.logger.Error("failed to convert new supply to string", zap.String("pool", pool.Name), zap.String("token", tok))
-		return
+		return errors.New("new supply is not of type string")
 	}
 
 	newSupplyBig, ok := new(big.Int).SetString(newSupplyStr, 10)
 	if !ok {
-		s.logger.Error("failed to convert new supply from string to big.Int", zap.String("pool", pool.Name), zap.String("token", tok))
-		return
+		return errors.New("failed to convert new supply from string to big.Int")
 	}
 
 	var (
@@ -412,7 +413,7 @@ func (s *Service) circuitBreakCheck(
 		}
 
 	}
-
+	return nil
 }
 
 // performs a check to see if we need to purge records from the database
