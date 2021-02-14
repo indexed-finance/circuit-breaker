@@ -353,7 +353,7 @@ func (s *Service) circuitBreakCheck(
 
 	oldSupplyBig, ok := new(big.Int).SetString(oldSupplyStr, 10)
 	if !ok {
-		return errors.New("fialed to convert old supply from string to big.Int")
+		return errors.New("failed to convert old supply from string to big.Int")
 	}
 
 	newSupplyStr, ok := totalSupplies[tok].(string)
