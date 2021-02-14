@@ -169,8 +169,170 @@ func TestService(t *testing.T) {
 			}
 		})
 	})
+	t.Run("PurgeInfoCheck", func(t *testing.T) {
+		dPool, err := srv.db.GetPool("cc10")
+		require.NoError(t, err)
+		// record fake infos to go past the max info count
+		for i := 1; i < 516; i++ {
+			require.NoError(t, srv.db.RecordInfo(
+				"cc10",
+				dPool.LastUpdateAt+uint64(i),
+				oldBalances,
+				oldDenomWeights,
+				oldSupplies,
+			))
+		}
+
+		srv.purgeInfoCheck("cc10")
+		infos, err := srv.db.GetNumInfos("cc10")
+		require.NoError(t, err)
+		require.LessOrEqual(t, infos, 512)
+
+	})
+	t.Run("CircuitBreakCheck", func(t *testing.T) {
+		type args struct {
+			token         string
+			supply        interface{}
+			totalSupplies map[string]interface{}
+			pool          config.Pool
+		}
+		tests := []struct {
+			name       string
+			args       args
+			wantErr    bool
+			wantErrStr string
+		}{
+			{"1-InvalidToken", args{
+				"notarealtoken",
+				"100",
+				map[string]interface{}{
+					"snx": "100",
+				},
+				config.Pool{
+					Name:                  "cc10",
+					SupplyBreakPercentage: 0,
+				},
+			}, true, "new supply is not of type string"},
+			{"2-InvalidOldSupply-NotString", args{
+				"snx",
+				99.99,
+				map[string]interface{}{
+					"snx": "100",
+				},
+				config.Pool{
+					Name:                  "cc10",
+					SupplyBreakPercentage: 0,
+				},
+			}, true, "old supply is not of type string"},
+			{"3-InvalidOldSupply-NotBigInt", args{
+				"snx",
+				"abc",
+				map[string]interface{}{
+					"snx": "100",
+				},
+				config.Pool{
+					Name:                  "cc10",
+					SupplyBreakPercentage: 0,
+				},
+			}, true, "failed to convert old supply from string to big.Int"},
+			{"4-InvalidNewSupply-NotString", args{
+				"snx",
+				"100",
+				map[string]interface{}{
+					"snx": 99,
+				},
+				config.Pool{
+					Name:                  "cc10",
+					SupplyBreakPercentage: 0,
+				},
+			}, true, "new supply is not of type string"},
+			{"5-InvalidNewSupply-NotBigInt", args{
+				"snx",
+				"100",
+				map[string]interface{}{
+					"snx": "abc",
+				},
+				config.Pool{
+					Name:                  "cc10",
+					SupplyBreakPercentage: 0,
+				},
+			}, true, "failed to convert new supply from string to big.Int"},
+			{"6-SupplyDecreased-Break", args{
+				"snx",
+				utils.ToWei("1000", 18).String(),
+				map[string]interface{}{
+					"snx": utils.ToWei("1", 18).String(),
+				},
+				config.Pool{
+					Name:                  "cc10",
+					SupplyBreakPercentage: 1,
+				},
+			}, false, ""},
+			{"7-SupplyIncreased-Break", args{
+				"snx",
+				utils.ToWei("1", 18).String(),
+				map[string]interface{}{
+					"snx": utils.ToWei("1000", 18).String(),
+				},
+				config.Pool{
+					Name:                  "cc10",
+					SupplyBreakPercentage: 1,
+				},
+			}, false, ""},
+			{"8-SupplyDecreased-NoBreak", args{
+				"snx",
+				utils.ToWei("3", 18).String(),
+				map[string]interface{}{
+					"snx": utils.ToWei("2", 18).String(),
+				},
+				config.Pool{
+					Name:                  "cc10",
+					SupplyBreakPercentage: 25,
+				},
+			}, false, ""},
+			{"9-SupplyIncreased-NoBreak", args{
+				"snx",
+				utils.ToWei("2", 18).String(),
+				map[string]interface{}{
+					"snx": utils.ToWei("3", 18).String(),
+				},
+				config.Pool{
+					Name:                  "cc10",
+					SupplyBreakPercentage: 25,
+				},
+			}, false, ""},
+			{"10-NoSupplyChange", args{
+				"snx",
+				utils.ToWei("2", 18).String(),
+				map[string]interface{}{
+					"snx": utils.ToWei("2", 18).String(),
+				},
+				config.Pool{
+					Name:                  "cc10",
+					SupplyBreakPercentage: 25,
+				},
+			}, false, ""},
+		}
+		for _, tt := range tests {
+			t.Run(tt.name, func(t *testing.T) {
+				err := srv.circuitBreakCheck(
+					tt.args.token,
+					tt.args.supply,
+					tt.args.totalSupplies,
+					tt.args.pool,
+				)
+				if (err != nil) != tt.wantErr {
+					t.Errorf("circuitBreakCheck err %v, wantErr %v", err, tt.wantErr)
+				}
+				// validate error string
+				if tt.wantErr {
+					require.Equal(t, tt.wantErrStr, err.Error())
+				}
+			})
+		}
+	})
+
 	go srv.StartWatchers()
-	// this needs to be start as a goroutien
 	go srv.StartBlockListener()
 	t.Log("sleeping for 65 seconds to let processes run")
 	time.Sleep(time.Second * 65)
