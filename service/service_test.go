@@ -173,7 +173,7 @@ func TestService(t *testing.T) {
 		dPool, err := srv.db.GetPool("cc10")
 		require.NoError(t, err)
 		// record fake infos to go past the max info count
-		for i := 1; i < 1024; i++ {
+		for i := 1; i < 516; i++ {
 			require.NoError(t, srv.db.RecordInfo(
 				"cc10",
 				dPool.LastUpdateAt+uint64(i),
@@ -186,8 +186,147 @@ func TestService(t *testing.T) {
 		srv.purgeInfoCheck("cc10")
 		infos, err := srv.db.GetNumInfos("cc10")
 		require.NoError(t, err)
-		require.Equal(t, infos, 512)
+		require.LessOrEqual(t, infos, 512)
+
 	})
+	t.Run("CircuitBreakCheck", func(t *testing.T) {
+		type args struct {
+			token         string
+			supply        interface{}
+			totalSupplies map[string]interface{}
+			pool          config.Pool
+		}
+		tests := []struct {
+			name    string
+			args    args
+			wantErr bool
+		}{
+			{"1-InvalidToken", args{
+				"notarealtoken",
+				"100",
+				map[string]interface{}{
+					"snx": "100",
+				},
+				config.Pool{
+					Name:                  "cc10",
+					SupplyBreakPercentage: 0,
+				},
+			}, true},
+			{"2-InvalidOldSupply-NotString", args{
+				"snx",
+				99.99,
+				map[string]interface{}{
+					"snx": "100",
+				},
+				config.Pool{
+					Name:                  "cc10",
+					SupplyBreakPercentage: 0,
+				},
+			}, true},
+			{"3-InvalidOldSupply-NotBigInt", args{
+				"snx",
+				"abc",
+				map[string]interface{}{
+					"snx": "100",
+				},
+				config.Pool{
+					Name:                  "cc10",
+					SupplyBreakPercentage: 0,
+				},
+			}, true},
+			{"4-InvalidNewSupply-NotString", args{
+				"snx",
+				"100",
+				map[string]interface{}{
+					"snx": 99,
+				},
+				config.Pool{
+					Name:                  "cc10",
+					SupplyBreakPercentage: 0,
+				},
+			}, true},
+			{"5-InvalidNewSupply-NotBigInt", args{
+				"snx",
+				"100",
+				map[string]interface{}{
+					"snx": "abc",
+				},
+				config.Pool{
+					Name:                  "cc10",
+					SupplyBreakPercentage: 0,
+				},
+			}, true},
+			{"6-SupplyDecreased-Break", args{
+				"snx",
+				utils.ToWei("1000", 18).String(),
+				map[string]interface{}{
+					"snx": utils.ToWei("1", 18).String(),
+				},
+				config.Pool{
+					Name:                  "cc10",
+					SupplyBreakPercentage: 1,
+				},
+			}, false},
+			{"7-SupplyIncreased-Break", args{
+				"snx",
+				utils.ToWei("1", 18).String(),
+				map[string]interface{}{
+					"snx": utils.ToWei("1000", 18).String(),
+				},
+				config.Pool{
+					Name:                  "cc10",
+					SupplyBreakPercentage: 1,
+				},
+			}, false},
+			{"8-SupplyDecreased-NoBreak", args{
+				"snx",
+				utils.ToWei("3", 18).String(),
+				map[string]interface{}{
+					"snx": utils.ToWei("2", 18).String(),
+				},
+				config.Pool{
+					Name:                  "cc10",
+					SupplyBreakPercentage: 25,
+				},
+			}, false},
+			{"9-SupplyIncreased-NoBreak", args{
+				"snx",
+				utils.ToWei("2", 18).String(),
+				map[string]interface{}{
+					"snx": utils.ToWei("3", 18).String(),
+				},
+				config.Pool{
+					Name:                  "cc10",
+					SupplyBreakPercentage: 25,
+				},
+			}, false},
+			{"10-NoSupplyChange", args{
+				"snx",
+				utils.ToWei("2", 18).String(),
+				map[string]interface{}{
+					"snx": utils.ToWei("2", 18).String(),
+				},
+				config.Pool{
+					Name:                  "cc10",
+					SupplyBreakPercentage: 25,
+				},
+			}, false},
+		}
+		for _, tt := range tests {
+			t.Run(tt.name, func(t *testing.T) {
+				err := srv.circuitBreakCheck(
+					tt.args.token,
+					tt.args.supply,
+					tt.args.totalSupplies,
+					tt.args.pool,
+				)
+				if (err != nil) != tt.wantErr {
+					t.Errorf("circuitBreakCheck err %v, wantErr %v", err, tt.wantErr)
+				}
+			})
+		}
+	})
+
 	go srv.StartWatchers()
 	go srv.StartBlockListener()
 	t.Log("sleeping for 65 seconds to let processes run")
