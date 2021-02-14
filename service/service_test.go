@@ -197,9 +197,10 @@ func TestService(t *testing.T) {
 			pool          config.Pool
 		}
 		tests := []struct {
-			name    string
-			args    args
-			wantErr bool
+			name       string
+			args       args
+			wantErr    bool
+			wantErrStr string
 		}{
 			{"1-InvalidToken", args{
 				"notarealtoken",
@@ -211,7 +212,7 @@ func TestService(t *testing.T) {
 					Name:                  "cc10",
 					SupplyBreakPercentage: 0,
 				},
-			}, true},
+			}, true, "new supply is not of type string"},
 			{"2-InvalidOldSupply-NotString", args{
 				"snx",
 				99.99,
@@ -222,7 +223,7 @@ func TestService(t *testing.T) {
 					Name:                  "cc10",
 					SupplyBreakPercentage: 0,
 				},
-			}, true},
+			}, true, "old supply is not of type string"},
 			{"3-InvalidOldSupply-NotBigInt", args{
 				"snx",
 				"abc",
@@ -233,7 +234,7 @@ func TestService(t *testing.T) {
 					Name:                  "cc10",
 					SupplyBreakPercentage: 0,
 				},
-			}, true},
+			}, true, "failed to convert old supply from string to big.Int"},
 			{"4-InvalidNewSupply-NotString", args{
 				"snx",
 				"100",
@@ -244,7 +245,7 @@ func TestService(t *testing.T) {
 					Name:                  "cc10",
 					SupplyBreakPercentage: 0,
 				},
-			}, true},
+			}, true, "new supply is not of type string"},
 			{"5-InvalidNewSupply-NotBigInt", args{
 				"snx",
 				"100",
@@ -255,7 +256,7 @@ func TestService(t *testing.T) {
 					Name:                  "cc10",
 					SupplyBreakPercentage: 0,
 				},
-			}, true},
+			}, true, "failed to convert new supply from string to big.Int"},
 			{"6-SupplyDecreased-Break", args{
 				"snx",
 				utils.ToWei("1000", 18).String(),
@@ -266,7 +267,7 @@ func TestService(t *testing.T) {
 					Name:                  "cc10",
 					SupplyBreakPercentage: 1,
 				},
-			}, false},
+			}, false, ""},
 			{"7-SupplyIncreased-Break", args{
 				"snx",
 				utils.ToWei("1", 18).String(),
@@ -277,7 +278,7 @@ func TestService(t *testing.T) {
 					Name:                  "cc10",
 					SupplyBreakPercentage: 1,
 				},
-			}, false},
+			}, false, ""},
 			{"8-SupplyDecreased-NoBreak", args{
 				"snx",
 				utils.ToWei("3", 18).String(),
@@ -288,7 +289,7 @@ func TestService(t *testing.T) {
 					Name:                  "cc10",
 					SupplyBreakPercentage: 25,
 				},
-			}, false},
+			}, false, ""},
 			{"9-SupplyIncreased-NoBreak", args{
 				"snx",
 				utils.ToWei("2", 18).String(),
@@ -299,7 +300,7 @@ func TestService(t *testing.T) {
 					Name:                  "cc10",
 					SupplyBreakPercentage: 25,
 				},
-			}, false},
+			}, false, ""},
 			{"10-NoSupplyChange", args{
 				"snx",
 				utils.ToWei("2", 18).String(),
@@ -310,7 +311,7 @@ func TestService(t *testing.T) {
 					Name:                  "cc10",
 					SupplyBreakPercentage: 25,
 				},
-			}, false},
+			}, false, ""},
 		}
 		for _, tt := range tests {
 			t.Run(tt.name, func(t *testing.T) {
@@ -322,6 +323,10 @@ func TestService(t *testing.T) {
 				)
 				if (err != nil) != tt.wantErr {
 					t.Errorf("circuitBreakCheck err %v, wantErr %v", err, tt.wantErr)
+				}
+				// validate error string
+				if tt.wantErr {
+					require.Equal(t, tt.wantErrStr, err.Error())
 				}
 			})
 		}
