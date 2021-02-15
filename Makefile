@@ -18,6 +18,7 @@ abigen:
 	abigen --abi bin/BNum.abi --bin bin/BNum.bin --pkg bmat --out bindings/bmath/bindings.go
 	abigen --abi bin/LogSwapTest.abi --bin bin/LogSwapTest.bin --pkg logswap --out bindings/logswap/bindings.go
 	abigen --abi bin/SimpleMultiCall.abi --bin bin/SimpleMultiCall.bin --pkg multicall --out bindings/multicall/bindings.go
+	abigen --abi bin/SigmaIndexPoolV1.json --pkg sigmacore --out bindings/sigmacore/bindings.go
 
 # TESTFLAGS="-v -cover" make test
 .PHONY: test

@@ -14,9 +14,14 @@ contract LogSwapTest {
     string public symbol = "CC10";
     uint8 public decimal = 18;
     uint256 public _swapFee = 25000000000000000; // 2.5%
+    bool internal _publicSwap;
 
     function emitLogSwap(uint256 outAmount, uint256 inAmount) public {
         emit LOG_SWAP(msg.sender, msg.sender, msg.sender, inAmount, outAmount);
+    }
+
+    function setPublicSwap(bool enabled) external {
+        _publicSwap = enabled;
     }
 
     // note: this is used to generate a random denorm weight for testing purposes
