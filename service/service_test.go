@@ -9,9 +9,9 @@ import (
 	"time"
 
 	"github.com/bonedaddy/go-indexed/bclient"
-	poolbindings "github.com/bonedaddy/go-indexed/bindings/pool"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/indexed-finance/circuit-breaker/alerts"
+	"github.com/indexed-finance/circuit-breaker/bindings/sigmacore"
 	"github.com/indexed-finance/circuit-breaker/config"
 	"github.com/indexed-finance/circuit-breaker/database"
 	"github.com/indexed-finance/circuit-breaker/multicall"
@@ -84,7 +84,7 @@ func TestService(t *testing.T) {
 		case "defi5":
 			nonStalePool = "cc10"
 		}
-		contract, err := poolbindings.NewPoolbindings(common.HexToAddress(pool.ContractAddress), srv.ew.BC().EthClient())
+		contract, err := sigmacore.NewSigmacore(common.HexToAddress(pool.ContractAddress), srv.ew.BC().EthClient())
 		require.NoError(t, err)
 		tokens, err := utils.PoolTokensFor(contract, srv.ew.BC().EthClient())
 		require.NoError(t, err)
@@ -140,7 +140,7 @@ func TestService(t *testing.T) {
 	t.Run("FreshPoolValidate", func(t *testing.T) {
 		pool, err := srv.db.GetPool(nonStalePool)
 		require.NoError(t, err)
-		contract, err := poolbindings.NewPoolbindings(common.HexToAddress(pool.ContractAddress), srv.ew.BC().EthClient())
+		contract, err := sigmacore.NewSigmacore(common.HexToAddress(pool.ContractAddress), srv.ew.BC().EthClient())
 		require.NoError(t, err)
 		poolTokens, err := utils.PoolTokensFor(contract, srv.ew.BC().EthClient())
 		require.NoError(t, err)

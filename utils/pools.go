@@ -6,9 +6,9 @@ import (
 	"time"
 
 	"github.com/bonedaddy/go-indexed/bindings/erc20"
-	poolbindings "github.com/bonedaddy/go-indexed/bindings/pool"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
+	"github.com/indexed-finance/circuit-breaker/bindings/sigmacore"
 )
 
 var (
@@ -18,7 +18,7 @@ var (
 )
 
 // PoolTokensFor is similar go-indexed/bclient's version but for easier testing
-func PoolTokensFor(bindings *poolbindings.Poolbindings, backend bind.ContractBackend) (map[string]common.Address, error) {
+func PoolTokensFor(bindings *sigmacore.Sigmacore, backend bind.ContractBackend) (map[string]common.Address, error) {
 	tokens, err := bindings.GetCurrentTokens(nil)
 	if err != nil {
 		return nil, err

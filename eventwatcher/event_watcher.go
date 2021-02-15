@@ -2,8 +2,8 @@ package eventwatcher
 
 import (
 	"github.com/bonedaddy/go-indexed/bclient"
-	poolbindings "github.com/bonedaddy/go-indexed/bindings/pool"
 	"github.com/ethereum/go-ethereum/common"
+	"github.com/indexed-finance/circuit-breaker/bindings/sigmacore"
 )
 
 // EventWatcher wraps one or more interfaces to the ethereum blockchain to watch events
@@ -18,10 +18,10 @@ func New(bc *bclient.Client) *EventWatcher {
 }
 
 // NewBindings constructs poolbindings for various indices, the input addresses argument is a map of pool name -> pool address
-func (ew *EventWatcher) NewBindings(addresses map[string]string) (map[string]*poolbindings.Poolbindings, error) {
-	out := make(map[string]*poolbindings.Poolbindings)
+func (ew *EventWatcher) NewBindings(addresses map[string]string) (map[string]*sigmacore.Sigmacore, error) {
+	out := make(map[string]*sigmacore.Sigmacore)
 	for name, addr := range addresses {
-		binding, err := poolbindings.NewPoolbindings(common.HexToAddress(addr), ew.bc.EthClient())
+		binding, err := sigmacore.NewSigmacore(common.HexToAddress(addr), ew.bc.EthClient())
 		if err != nil {
 			return nil, err
 		}

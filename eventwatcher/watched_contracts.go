@@ -8,11 +8,11 @@ import (
 	"math/big"
 	"strings"
 
-	poolbindings "github.com/bonedaddy/go-indexed/bindings/pool"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/event"
 	"github.com/indexed-finance/circuit-breaker/alerts"
+	"github.com/indexed-finance/circuit-breaker/bindings/sigmacore"
 	"github.com/indexed-finance/circuit-breaker/database"
 	"github.com/indexed-finance/circuit-breaker/utils"
 	"go.uber.org/zap"
@@ -21,9 +21,9 @@ import (
 // WatchedContract is a singular watched contract
 type WatchedContract struct {
 	name           string
-	binding        *poolbindings.Poolbindings
-	evCh           chan *poolbindings.PoolbindingsLOGSWAP
-	notifCh        chan *poolbindings.PoolbindingsLOGSWAP // duplicate of evCh to send events to watchers
+	binding        *sigmacore.Sigmacore
+	evCh           chan *sigmacore.SigmacoreLOGSWAP
+	notifCh        chan *sigmacore.SigmacoreLOGSWAP // duplicate of evCh to send events to watchers
 	sub            event.Subscription
 	logger         *zap.Logger
 	tokenAddresses map[string]common.Address
@@ -32,10 +32,10 @@ type WatchedContract struct {
 }
 
 // NewWatchedContracts initializes watched contracts and prepares them for event listening
-func (ew *EventWatcher) NewWatchedContracts(logger *zap.Logger, backend bind.ContractBackend, bindings map[string]*poolbindings.Poolbindings) ([]*WatchedContract, error) {
+func (ew *EventWatcher) NewWatchedContracts(logger *zap.Logger, backend bind.ContractBackend, bindings map[string]*sigmacore.Sigmacore) ([]*WatchedContract, error) {
 	out := make([]*WatchedContract, 0)
 	for name, contract := range bindings {
-		ch := make(chan *poolbindings.PoolbindingsLOGSWAP, 100) // todo: we may want to change this in the future
+		ch := make(chan *sigmacore.SigmacoreLOGSWAP, 100) // todo: we may want to change this in the future
 		sub, err := contract.WatchLOGSWAP(nil, ch, nil, nil, nil)
 		if err != nil {
 			return nil, err
@@ -57,7 +57,7 @@ func (ew *EventWatcher) NewWatchedContracts(logger *zap.Logger, backend bind.Con
 			name:           name,
 			binding:        contract,
 			evCh:           ch,
-			notifCh:        make(chan *poolbindings.PoolbindingsLOGSWAP),
+			notifCh:        make(chan *sigmacore.SigmacoreLOGSWAP),
 			sub:            sub,
 			logger:         logger.Named("contract.watcher").With(zap.String("pool", name)),
 			tokenAddresses: addrs,
@@ -169,7 +169,7 @@ func (wc *WatchedContract) Listen(ctx context.Context, db *database.Database, al
 // NotifChan returns events when listened on, this is used to notify any
 // listening goroutines of received events without having to worry about multi channel listeners
 // as if we have multiple listeners on a channel golang will randomly choose 1
-func (wc *WatchedContract) NotifChan() <-chan *poolbindings.PoolbindingsLOGSWAP {
+func (wc *WatchedContract) NotifChan() <-chan *sigmacore.SigmacoreLOGSWAP {
 	return wc.notifCh
 }
 
@@ -180,7 +180,7 @@ func (wc *WatchedContract) Name() string {
 
 func (wc *WatchedContract) getPreviousSpotPrice(
 	db *database.Database,
-	evLog *poolbindings.PoolbindingsLOGSWAP,
+	evLog *sigmacore.SigmacoreLOGSWAP,
 	swapFee *big.Int,
 ) (*big.Int, error) {
 	var (
@@ -254,7 +254,7 @@ func (wc *WatchedContract) getPreviousSpotPrice(
 }
 
 func (wc *WatchedContract) getCurrentSpotPrice(
-	evLog *poolbindings.PoolbindingsLOGSWAP,
+	evLog *sigmacore.SigmacoreLOGSWAP,
 ) (*big.Int, error) {
 	return wc.binding.GetSpotPrice(&bind.CallOpts{
 		BlockNumber: new(big.Int).SetUint64(evLog.Raw.BlockNumber),

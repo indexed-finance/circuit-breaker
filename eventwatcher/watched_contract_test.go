@@ -9,11 +9,11 @@ import (
 	"time"
 
 	"github.com/bonedaddy/bdsm/testenv"
-	poolbindings "github.com/bonedaddy/go-indexed/bindings/pool"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/indexed-finance/circuit-breaker/alerts"
 	"github.com/indexed-finance/circuit-breaker/bindings/logswap"
+	"github.com/indexed-finance/circuit-breaker/bindings/sigmacore"
 	"github.com/indexed-finance/circuit-breaker/config"
 	"github.com/indexed-finance/circuit-breaker/database"
 	"github.com/indexed-finance/circuit-breaker/utils"
@@ -58,11 +58,11 @@ func TestWatchedContract(t *testing.T) {
 	_, err = tenv.DoWaitDeployed(tx)
 	require.NoError(t, err)
 	ew := &EventWatcher{}
-	pool, err := poolbindings.NewPoolbindings(addr, tenv)
+	pool, err := sigmacore.NewSigmacore(addr, tenv)
 	require.NoError(t, err)
 	/*logger, err := zap.NewDevelopment()
 	require.NoError(t, err)*/
-	watched, err := ew.NewWatchedContracts(zap.NewNop(), tenv, map[string]*poolbindings.Poolbindings{"cc10": pool})
+	watched, err := ew.NewWatchedContracts(zap.NewNop(), tenv, map[string]*sigmacore.Sigmacore{"cc10": pool})
 	require.NoError(t, err)
 	require.Equal(t, watched[0].Name(), "cc10")
 
@@ -147,7 +147,7 @@ func TestWatchedContract(t *testing.T) {
 	})
 
 	// now lets send an event to trigger the removed log code
-	watchedContract.evCh <- &poolbindings.PoolbindingsLOGSWAP{Raw: types.Log{Removed: true}}
+	watchedContract.evCh <- &sigmacore.SigmacoreLOGSWAP{Raw: types.Log{Removed: true}}
 	time.Sleep(time.Second * 3)
 	cancel()
 	wg.Wait()

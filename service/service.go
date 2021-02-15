@@ -13,10 +13,10 @@ import (
 	"github.com/BurntSushi/locker"
 	"github.com/bonedaddy/go-indexed/bclient"
 	"github.com/bonedaddy/go-indexed/bindings/erc20"
-	poolbindings "github.com/bonedaddy/go-indexed/bindings/pool"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/indexed-finance/circuit-breaker/alerts"
+	"github.com/indexed-finance/circuit-breaker/bindings/sigmacore"
 	"github.com/indexed-finance/circuit-breaker/config"
 	"github.com/indexed-finance/circuit-breaker/database"
 	"github.com/indexed-finance/circuit-breaker/eventwatcher"
@@ -87,7 +87,7 @@ func (s *Service) Prepare() error {
 		}
 		for _, pool := range s.pools {
 			// construct the pool contract bindings
-			contract, err := poolbindings.NewPoolbindings(common.HexToAddress(pool.ContractAddress), s.ew.BC().EthClient())
+			contract, err := sigmacore.NewSigmacore(common.HexToAddress(pool.ContractAddress), s.ew.BC().EthClient())
 			if err != nil {
 				s.logger.Error("failed to get pool contract bindings")
 				startErr = err
@@ -282,7 +282,7 @@ func (s *Service) StartBlockListener() error {
 					s.logger.Info("updating pool information (supply, balances, weights)", zap.String("pool", pool.Name), zap.Uint64("block.num", blockNum))
 
 					// create bindings for the given contract
-					contract, err := poolbindings.NewPoolbindings(
+					contract, err := sigmacore.NewSigmacore(
 						common.HexToAddress(pool.ContractAddress),
 						s.ew.BC().EthClient(),
 					)
