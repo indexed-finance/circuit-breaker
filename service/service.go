@@ -13,6 +13,7 @@ import (
 	"github.com/BurntSushi/locker"
 	"github.com/bonedaddy/go-indexed/bclient"
 	"github.com/bonedaddy/go-indexed/bindings/erc20"
+	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/indexed-finance/circuit-breaker/alerts"
@@ -290,7 +291,6 @@ func (s *Service) StartBlockListener() error {
 						s.logger.Error("failed to get contract binding", zap.Error(err), zap.String("pool", pool.Name))
 						return
 					}
-
 					// update the information stored in the database
 					_, _, totalSupplies, err := s.UpdateBalancesWeightsAndSupplies(blockNum, pool, contract)
 					if err != nil {
@@ -302,7 +302,7 @@ func (s *Service) StartBlockListener() error {
 						// check the total supply for the given token
 						// however if it fails dont abort processing, continue processing
 						// as other tokens may need to be checked
-						if err := s.circuitBreakCheck(tok, supply, totalSupplies, pool); err != nil {
+						if err := s.circuitBreakCheck(tok, supply, totalSupplies, pool, contract); err != nil {
 							s.logger.Error("circuitBreakCheck failed", zap.Error(err), zap.String("pool", pool.Name), zap.String("token", tok))
 						}
 					}
@@ -344,6 +344,7 @@ func (s *Service) circuitBreakCheck(
 	tok string, supply interface{},
 	totalSupplies map[string]interface{},
 	pool config.Pool,
+	contract utils.Breaker,
 ) error {
 
 	oldSupplyStr, ok := supply.(string)
@@ -400,7 +401,16 @@ func (s *Service) circuitBreakCheck(
 
 		// lock the authorizer since bind.TransactOpts is not threadsafe
 		s.auther.Lock()
-		// TODO(bonedaddy): replace with actual circuit break transaction
+		// get gas price for break transactoin
+		gasPrice, err := utils.GetGasPrice(s.ctx, s.ew.BC().EthClient())
+		if err != nil {
+			s.logger.Error("failed to suggest gasprice", zap.Error(err))
+		} else {
+			s.setPublicSwap(contract, gasPrice, pool.Name, tok)
+		}
+		// we need to unset the gas price that we overrode the transactor with
+		// so that future uses of this transactor have the gas price set to nil
+		s.auther.TransactOpts.GasPrice = nil
 		s.auther.Unlock()
 
 		if err := s.at.NotifyCircuitBreak(
@@ -426,5 +436,46 @@ func (s *Service) purgeInfoCheck(name string) {
 				s.logger.Error("failed to purge old infos", zap.Error(err))
 			}
 		}
+	}
+}
+
+func (s *Service) setPublicSwap(
+	contract utils.Breaker,
+	gasPrice *big.Int, poolName, tokenName string,
+) {
+	s.auther.GasPrice = gasPrice
+	if tx, err := contract.SetPublicSwap(s.auther.TransactOpts, false); err != nil {
+		s.logger.Error(
+			"failed to broadcast public swap disable transaction",
+			zap.Error(err),
+			zap.String("pool", poolName),
+			zap.String("token", tokenName),
+		)
+	} else {
+		s.wg.Add(1)
+		go func() {
+			defer s.wg.Done()
+			s.logger.Warn(
+				"waiting for public swap disable transaction to be mined",
+				zap.String("pool", poolName),
+				zap.String("token", tokenName),
+				zap.String("tx.hash", tx.Hash().String()),
+			)
+			if rcpt, err := bind.WaitMined(s.ctx, s.ew.BC().EthClient(), tx); err != nil {
+				s.logger.Error(
+					"transaction failed to be mined",
+					zap.String("pool", poolName),
+					zap.String("token", tokenName),
+					zap.String("tx.hash", tx.Hash().String()),
+				)
+			} else {
+				s.logger.Warn(
+					"transaction mined",
+					zap.String("pool", poolName),
+					zap.String("token", tokenName),
+					zap.Any("receipt", rcpt),
+				)
+			}
+		}()
 	}
 }
