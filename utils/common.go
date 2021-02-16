@@ -6,7 +6,6 @@ import (
 
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/core/types"
-	"github.com/ethereum/go-ethereum/ethclient"
 )
 
 // Breaker is a minimal interface needed for circuit breaker
@@ -17,8 +16,8 @@ type Breaker interface {
 
 // GetGasPrice returns a gas price as reported by the oracle
 // but multiplies by 3 to ensure speedy transactions
-func GetGasPrice(ctx context.Context, ec *ethclient.Client) (*big.Int, error) {
-	gasPrice, err := ec.SuggestGasPrice(ctx)
+func GetGasPrice(ctx context.Context, backend bind.ContractBackend) (*big.Int, error) {
+	gasPrice, err := backend.SuggestGasPrice(ctx)
 	if err != nil {
 		return nil, err
 	}

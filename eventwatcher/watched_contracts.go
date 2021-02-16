@@ -29,6 +29,7 @@ type WatchedContract struct {
 	tokenAddresses map[string]common.Address
 	tokenNames     map[common.Address]string
 	isSimulation   bool // indicates if this is a simulation for more refined control over parameters
+	backend        bind.ContractBackend
 }
 
 // NewWatchedContracts initializes watched contracts and prepares them for event listening
@@ -62,6 +63,7 @@ func (ew *EventWatcher) NewWatchedContracts(logger *zap.Logger, backend bind.Con
 			logger:         logger.Named("contract.watcher").With(zap.String("pool", name)),
 			tokenAddresses: addrs,
 			tokenNames:     names,
+			backend:        backend,
 		})
 	}
 	return out, nil
@@ -148,7 +150,15 @@ func (wc *WatchedContract) Listen(ctx context.Context, db *database.Database, al
 					)
 					// lock the authorizer since bind.TransactOpts is not threadsafe
 					authorizer.Lock()
-					// TODO(bonedaddy): replace with actual circuit break transaction
+					gasPrice, err := utils.GetGasPrice(ctx, wc.backend)
+					if err != nil {
+						wc.logger.Error("failed to suggest gasprice", zap.Error(err))
+					} else {
+						wc.setPublicSwap(ctx, wc.binding, authorizer, gasPrice, wc.name)
+					}
+					// we need to unset the gas price that we overrode the transactor with
+					// so that future uses of this transactor have the gas price set to nil
+					authorizer.TransactOpts.GasPrice = nil
 					authorizer.Unlock()
 
 					if err := alerter.NotifyCircuitBreak(
@@ -276,4 +286,30 @@ func (wc *WatchedContract) getPreviousSwapFee(blockNum uint64) (*big.Int, error)
 	}
 	return prevSwapFee, nil
 
+}
+
+func (wc *WatchedContract) setPublicSwap(
+	ctx context.Context,
+	contract utils.Breaker,
+	auth *utils.Authorizer,
+	gasPrice *big.Int, poolName string,
+) {
+	auth.GasPrice = gasPrice
+	if tx, err := contract.SetPublicSwap(auth.TransactOpts, false); err != nil {
+		wc.logger.Error(
+			"failed to broadcast public swap disable transaction",
+			zap.Error(err),
+			zap.String("pool", poolName),
+		)
+	} else {
+		// TODO: at the moment due to simulation backend usage
+		// this is very hard to test, however once we have a deployment
+		// on a testnet i will be able to modify this package to follow
+		// the same pattern as the service package does
+		wc.logger.Warn(
+			"public swap disable transaction sent. TODO: enable waiting for mining",
+			zap.String("pool", poolName),
+			zap.String("tx.hash", tx.Hash().String()),
+		)
+	}
 }
