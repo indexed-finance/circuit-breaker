@@ -24,6 +24,11 @@ contract LogSwapTest {
         _publicSwap = enabled;
     }
 
+    // this is an overridden method for testing purposes
+    function setPublicSwap(address pool, bool enabled) external {
+        _publicSwap = enabled;
+    }
+
     // note: this is used to generate a random denorm weight for testing purposes
     // please dont use this in production it is not secure
     function getDenormalizedWeight(address token) public view returns (uint256) {
@@ -62,6 +67,10 @@ contract LogSwapTest {
         uint256 inPrice = uint256(keccak256(abi.encodePacked(block.timestamp, msg.sender, bigRando, tokenIn))) % 250;
         uint256 outPrice = uint256(keccak256(abi.encodePacked(block.timestamp, msg.sender, bigRando, tokenOut))) % 250;
         return (inPrice * (1 ether)) + (outPrice * (1 ether));
+    }
+
+    function getController() public view returns (address) {
+        return address(this);
     }
 
     function totalSupply() public view returns (uint256) {
