@@ -13,7 +13,7 @@ while true; do
         --token.in_amount "20.0" \
         --token.out_amount "1.0" &
 
-    sleep 0.25s
+    sleep 1.75s
 
     ./circuit-breaker \
         --config.path circuit-breaker-client.yaml \
@@ -23,7 +23,7 @@ while true; do
         --token.in_amount "20.0" \
         --token.out_amount "1.0" &
 
-    sleep 0.25s
+    sleep 1.75s
 
     ./circuit-breaker \
         --config.path circuit-breaker-client.yaml \
@@ -33,7 +33,7 @@ while true; do
         --token.in_amount "20.0" \
         --token.out_amount "1.0" &
 
-    sleep 0.25s
+    sleep 1.75s
 
     ./circuit-breaker \
         --config.path circuit-breaker-client.yaml \
@@ -43,7 +43,7 @@ while true; do
         --token.in_amount "20.0" \
         --token.out_amount "1.0" &
 
-    sleep 0.25s
+    sleep 1.75s
 
    ./circuit-breaker \
         --config.path circuit-breaker-client.yaml \
@@ -53,7 +53,7 @@ while true; do
         --token.in_amount "20.0" \
         --token.out_amount "1.0" &
 
-    sleep 0.25s
+    sleep 1.75s
 
    ./circuit-breaker \
         --config.path circuit-breaker-client.yaml \
@@ -63,7 +63,7 @@ while true; do
         --token.in_amount "20.0" \
         --token.out_amount "1.0" &
 
-    sleep 1.5s
+    sleep 1.75s
 
 done
 
