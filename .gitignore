@@ -12,3 +12,5 @@ circuit-breaker.yaml
 files
 
 release/
+
+circuit-breaker-client.yaml

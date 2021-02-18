@@ -21,7 +21,8 @@ abigen:
 	abigen --abi bin/SimpleMultiCall.abi --bin bin/SimpleMultiCall.bin --pkg multicall --out bindings/multicall/bindings.go
 	abigen --abi bin/SigmaIndexPoolV1.json --pkg sigmacore --out bindings/sigmacore/bindings.go
 	abigen --abi bin/FreeTokens.abi --pkg freetokens --out bindings/freetokens/bindings.go
-	
+	abigen --abi bin/MarketCapSqrtController.json --pkg controller --out bindings/controller/bindings.go
+
 # TESTFLAGS="-v -cover" make test
 .PHONY: test
 test:
