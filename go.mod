@@ -13,6 +13,7 @@ require (
 	github.com/kevinburke/rest v0.0.0-20210106114233-22cd0577e450 // indirect
 	github.com/kevinburke/twilio-go v0.0.0-20210106192831-51cae4e2b9d8
 	github.com/kr/pretty v0.2.1 // indirect
+	github.com/olekukonko/tablewriter v0.0.5
 	github.com/shopspring/decimal v1.2.0
 	github.com/stretchr/testify v1.5.1
 	github.com/ttacon/builder v0.0.0-20170518171403-c099f663e1c2 // indirect
