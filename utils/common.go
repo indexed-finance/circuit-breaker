@@ -5,13 +5,14 @@ import (
 	"math/big"
 
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
+	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
 )
 
 // Breaker is a minimal interface needed for circuit breaker
 // designed to allow for easier testing
 type Breaker interface {
-	SetPublicSwap(opts *bind.TransactOpts, enabled bool) (*types.Transaction, error)
+	SetPublicSwap(opts *bind.TransactOpts, pool common.Address, enabled bool) (*types.Transaction, error)
 }
 
 // GetGasPrice returns a gas price as reported by the oracle

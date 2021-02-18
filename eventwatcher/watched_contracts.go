@@ -12,6 +12,7 @@ import (
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/event"
 	"github.com/indexed-finance/circuit-breaker/alerts"
+	"github.com/indexed-finance/circuit-breaker/bindings/controller"
 	"github.com/indexed-finance/circuit-breaker/bindings/sigmacore"
 	"github.com/indexed-finance/circuit-breaker/database"
 	"github.com/indexed-finance/circuit-breaker/utils"
@@ -30,6 +31,7 @@ type WatchedContract struct {
 	tokenNames     map[common.Address]string
 	isSimulation   bool // indicates if this is a simulation for more refined control over parameters
 	backend        bind.ContractBackend
+	controller     *controller.Controller
 }
 
 // NewWatchedContracts initializes watched contracts and prepares them for event listening
@@ -52,6 +54,14 @@ func (ew *EventWatcher) NewWatchedContracts(logger *zap.Logger, backend bind.Con
 		for name, addr := range addrs {
 			names[addr] = strings.ToLower(name)
 		}
+		controllerAddress, err := contract.GetController(nil)
+		if err != nil {
+			return nil, err
+		}
+		control, err := controller.NewController(controllerAddress, backend)
+		if err != nil {
+			return nil, err
+		}
 		// lowercase the name
 		name = strings.ToLower(name)
 		out = append(out, &WatchedContract{
@@ -64,6 +74,7 @@ func (ew *EventWatcher) NewWatchedContracts(logger *zap.Logger, backend bind.Con
 			tokenAddresses: addrs,
 			tokenNames:     names,
 			backend:        backend,
+			controller:     control,
 		})
 	}
 	return out, nil
@@ -72,6 +83,12 @@ func (ew *EventWatcher) NewWatchedContracts(logger *zap.Logger, backend bind.Con
 // Listen stars the watche contract listening process waiting for incoming events
 func (wc *WatchedContract) Listen(ctx context.Context, db *database.Database, alerter *alerts.Alerter, authorizer *utils.Authorizer, breakPercentage float64) error {
 	wc.logger.Info("contract watcher started listening for events")
+	// get the pool contract address
+	dbInfo, err := db.GetPool(wc.name)
+	if err != nil {
+		return err
+	}
+	poolAddress := common.HexToAddress(dbInfo.ContractAddress)
 	for {
 		select {
 		case <-ctx.Done():
@@ -154,7 +171,7 @@ func (wc *WatchedContract) Listen(ctx context.Context, db *database.Database, al
 					if err != nil {
 						wc.logger.Error("failed to suggest gasprice", zap.Error(err))
 					} else {
-						wc.setPublicSwap(ctx, wc.binding, authorizer, gasPrice, wc.name)
+						wc.setPublicSwap(ctx, authorizer, poolAddress, gasPrice, wc.name)
 					}
 					// we need to unset the gas price that we overrode the transactor with
 					// so that future uses of this transactor have the gas price set to nil
@@ -290,12 +307,12 @@ func (wc *WatchedContract) getPreviousSwapFee(blockNum uint64) (*big.Int, error)
 
 func (wc *WatchedContract) setPublicSwap(
 	ctx context.Context,
-	contract utils.Breaker,
 	auth *utils.Authorizer,
+	poolAddress common.Address,
 	gasPrice *big.Int, poolName string,
 ) {
 	auth.GasPrice = gasPrice
-	if tx, err := contract.SetPublicSwap(auth.TransactOpts, false); err != nil {
+	if tx, err := wc.controller.SetPublicSwap(auth.TransactOpts, poolAddress, true); err != nil {
 		wc.logger.Error(
 			"failed to broadcast public swap disable transaction",
 			zap.Error(err),

@@ -377,6 +377,6 @@ func newFakePublicSwap(tx *types.Transaction) *fakePublicSwap {
 	return &fakePublicSwap{tx: tx}
 }
 
-func (fpb *fakePublicSwap) SetPublicSwap(opts *bind.TransactOpts, enabled bool) (*types.Transaction, error) {
+func (fpb *fakePublicSwap) SetPublicSwap(opts *bind.TransactOpts, pool common.Address, enabled bool) (*types.Transaction, error) {
 	return fpb.tx, nil
 }

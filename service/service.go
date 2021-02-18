@@ -17,6 +17,7 @@ import (
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/indexed-finance/circuit-breaker/alerts"
+	"github.com/indexed-finance/circuit-breaker/bindings/controller"
 	"github.com/indexed-finance/circuit-breaker/bindings/sigmacore"
 	"github.com/indexed-finance/circuit-breaker/config"
 	"github.com/indexed-finance/circuit-breaker/database"
@@ -302,8 +303,17 @@ func (s *Service) StartBlockListener() error {
 						// check the total supply for the given token
 						// however if it fails dont abort processing, continue processing
 						// as other tokens may need to be checked
-						if err := s.circuitBreakCheck(tok, supply, totalSupplies, pool, contract); err != nil {
-							s.logger.Error("circuitBreakCheck failed", zap.Error(err), zap.String("pool", pool.Name), zap.String("token", tok))
+						if controllerAddress, err := contract.GetController(nil); err != nil {
+							s.logger.Error("failed to get controller address", zap.Error(err), zap.String("pool", pool.Name), zap.String("token", tok))
+						} else {
+							conContract, err := controller.NewController(controllerAddress, s.ew.BC().EthClient())
+							if err != nil {
+								s.logger.Error("failed to get controller contract", zap.Error(err), zap.String("pool", pool.Name), zap.String("token", tok))
+							} else {
+								if err := s.circuitBreakCheck(tok, supply, totalSupplies, pool, conContract); err != nil {
+									s.logger.Error("circuitBreakCheck failed", zap.Error(err), zap.String("pool", pool.Name), zap.String("token", tok))
+								}
+							}
 						}
 					}
 
@@ -406,7 +416,7 @@ func (s *Service) circuitBreakCheck(
 		if err != nil {
 			s.logger.Error("failed to suggest gasprice", zap.Error(err))
 		} else {
-			s.setPublicSwap(contract, gasPrice, pool.Name, tok)
+			s.setPublicSwap(contract, gasPrice, pool.Name, tok, pool.ContractAddress)
 		}
 		// we need to unset the gas price that we overrode the transactor with
 		// so that future uses of this transactor have the gas price set to nil
@@ -441,10 +451,10 @@ func (s *Service) purgeInfoCheck(name string) {
 
 func (s *Service) setPublicSwap(
 	contract utils.Breaker,
-	gasPrice *big.Int, poolName, tokenName string,
+	gasPrice *big.Int, poolName, tokenName, poolAddress string,
 ) {
 	s.auther.GasPrice = gasPrice
-	if tx, err := contract.SetPublicSwap(s.auther.TransactOpts, false); err != nil {
+	if tx, err := contract.SetPublicSwap(s.auther.TransactOpts, common.HexToAddress(poolAddress), false); err != nil {
 		s.logger.Error(
 			"failed to broadcast public swap disable transaction",
 			zap.Error(err),
