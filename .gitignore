@@ -14,3 +14,5 @@ files
 release/
 
 circuit-breaker-client.yaml
+
+coverage.txt
