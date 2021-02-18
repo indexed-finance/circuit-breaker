@@ -9,6 +9,7 @@ files
 .scripts
 .travis.yml
 circuit-breaker
+sigma-core
 bin
 contracts
 
