@@ -1,28 +1,28 @@
 version: "3.5"
 services:
   contract-watcher:
-    image: indexed-finance/circuit-breaker:v0.0.1-1-g76f3293
+    image: indexed-finance/circuit-breaker:v0.0.4-rc1-20-g19e768a
     restart: always
     networks:
       privnet:
         ipv4_address: 172.16.245.2
     ports:
       - 6060:6060
-    command: "contract-watcher"
+    command: "services contract-watcher"
     depends_on:
       - postgres
       - block-listener
     volumes: 
       - ./circuit-breaker.yaml:/circuit-breaker.yml
   block-listener:
-    image: indexed-finance/circuit-breaker:v0.0.1-1-g76f3293
+    image: indexed-finance/circuit-breaker:v0.0.4-rc1-20-g19e768a
     restart: always
     networks:
       privnet:
         ipv4_address: 172.16.245.3
     ports:
       - 6061:6060
-    command: "--db.migrate block-listener"
+    command: "--db.migrate services block-listener"
     depends_on:
       - postgres
     volumes: 
