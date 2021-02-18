@@ -40,10 +40,12 @@ type Service struct {
 	cancel context.CancelFunc
 	start  sync.Once
 	// pools represents the index pools to process
-	pools     []config.Pool
-	mx        sync.RWMutex
-	wg        sync.WaitGroup
-	namedLock *locker.Locker
+	pools         []config.Pool
+	mx            sync.RWMutex
+	wg            sync.WaitGroup
+	namedLock     *locker.Locker
+	minimumGwei   *big.Int
+	gasMultiplier *big.Int
 }
 
 // New intializes all needed modules and returns a ready to consume service
@@ -55,19 +57,32 @@ func New(
 	bc *bclient.Client,
 	auther *utils.Authorizer,
 	logger *zap.Logger,
-	pools []config.Pool) (*Service, error) {
+	pools []config.Pool,
+	gasConfig config.GasPrice) (*Service, error) {
 	ctx, cancel := context.WithCancel(ctx)
+	minimumGwei, ok := new(big.Int).SetString(gasConfig.MinimumGwei, 10)
+	if !ok {
+		cancel()
+		return nil, errors.New("failed to parse minimum gwei config")
+	}
+	gasMultiplier, ok := new(big.Int).SetString(gasConfig.Multiplier, 10)
+	if !ok {
+		cancel()
+		return nil, errors.New("failed to parse gas multiplier")
+	}
 	return &Service{
-		db:        db,
-		ew:        eventwatcher.New(bc),
-		logger:    logger.Named("service"),
-		mc:        mc,
-		at:        alert,
-		auther:    auther,
-		ctx:       ctx,
-		cancel:    cancel,
-		pools:     pools,
-		namedLock: locker.NewLocker(),
+		db:            db,
+		ew:            eventwatcher.New(bc),
+		logger:        logger.Named("service"),
+		mc:            mc,
+		at:            alert,
+		auther:        auther,
+		ctx:           ctx,
+		cancel:        cancel,
+		pools:         pools,
+		namedLock:     locker.NewLocker(),
+		minimumGwei:   minimumGwei,
+		gasMultiplier: gasMultiplier,
 	}, nil
 }
 
@@ -188,7 +203,7 @@ func (s *Service) StartWatchers() error {
 		return err
 	}
 
-	watchers, err := s.ew.NewWatchedContracts(s.logger, s.ew.BC().EthClient(), bindings)
+	watchers, err := s.ew.NewWatchedContracts(s.logger, s.ew.BC().EthClient(), bindings, s.minimumGwei, s.gasMultiplier)
 	if err != nil {
 		return err
 	}
@@ -412,14 +427,16 @@ func (s *Service) circuitBreakCheck(
 		// lock the authorizer since bind.TransactOpts is not threadsafe
 		s.auther.Lock()
 		// get gas price for break transactoin
-		gasPrice, err := utils.GetGasPrice(s.ctx, s.ew.BC().EthClient())
+		gasPrice, err := utils.GetGasPrice(s.ctx, s.ew.BC().EthClient(), s.minimumGwei, s.gasMultiplier)
 		if err != nil {
 			s.logger.Error("failed to suggest gasprice", zap.Error(err))
 		} else {
+			s.logger.Info("gas price calculated (includes boost)", zap.String("gas.price", gasPrice.String()))
 			s.setPublicSwap(contract, gasPrice, pool.Name, tok, pool.ContractAddress)
 		}
 		// we need to unset the gas price that we overrode the transactor with
 		// so that future uses of this transactor have the gas price set to nil
+		// this is set within the setPublicSwap call
 		s.auther.TransactOpts.GasPrice = nil
 		s.auther.Unlock()
 

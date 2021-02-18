@@ -62,7 +62,17 @@ func TestWatchedContract(t *testing.T) {
 	require.NoError(t, err)
 	/*logger, err := zap.NewDevelopment()
 	require.NoError(t, err)*/
-	watched, err := ew.NewWatchedContracts(zap.NewNop(), tenv, map[string]*sigmacore.Sigmacore{"cc10": pool})
+	minimumGwei, ok := new(big.Int).SetString(cfg.EthereumAccount.GasPrice.MinimumGwei, 10)
+	require.True(t, ok)
+	multiplier, ok := new(big.Int).SetString(cfg.EthereumAccount.GasPrice.Multiplier, 10)
+	require.True(t, ok)
+	watched, err := ew.NewWatchedContracts(
+		zap.NewNop(),
+		tenv,
+		map[string]*sigmacore.Sigmacore{"cc10": pool},
+		minimumGwei,
+		multiplier,
+	)
 	require.NoError(t, err)
 	require.Equal(t, watched[0].Name(), "cc10")
 

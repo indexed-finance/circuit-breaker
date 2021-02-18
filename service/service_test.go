@@ -67,7 +67,7 @@ func TestService(t *testing.T) {
 	require.NoError(t, err)
 	mc, err := multicall.New(ctx, cfg.MultiCallAddress, bc.EthClient())
 	require.NoError(t, err)
-	srv, err := New(ctx, alerts.New(logger, cfg.Alerts), mc, db, bc, auther, logger, cfg.Pools)
+	srv, err := New(ctx, alerts.New(logger, cfg.Alerts), mc, db, bc, auther, logger, cfg.Pools, cfg.EthereumAccount.GasPrice)
 	require.NoError(t, err)
 	var (
 		preCreateBlock                                      uint64

@@ -32,10 +32,17 @@ type WatchedContract struct {
 	isSimulation   bool // indicates if this is a simulation for more refined control over parameters
 	backend        bind.ContractBackend
 	controller     *controller.Controller
+	minimumGwei    *big.Int
+	gasMultiplier  *big.Int
 }
 
 // NewWatchedContracts initializes watched contracts and prepares them for event listening
-func (ew *EventWatcher) NewWatchedContracts(logger *zap.Logger, backend bind.ContractBackend, bindings map[string]*sigmacore.Sigmacore) ([]*WatchedContract, error) {
+func (ew *EventWatcher) NewWatchedContracts(
+	logger *zap.Logger,
+	backend bind.ContractBackend,
+	bindings map[string]*sigmacore.Sigmacore,
+	minimumGwei, gasMultiplier *big.Int,
+) ([]*WatchedContract, error) {
 	out := make([]*WatchedContract, 0)
 	for name, contract := range bindings {
 		ch := make(chan *sigmacore.SigmacoreLOGSWAP, 100) // todo: we may want to change this in the future
@@ -75,6 +82,8 @@ func (ew *EventWatcher) NewWatchedContracts(logger *zap.Logger, backend bind.Con
 			tokenNames:     names,
 			backend:        backend,
 			controller:     control,
+			minimumGwei:    minimumGwei,
+			gasMultiplier:  gasMultiplier,
 		})
 	}
 	return out, nil
@@ -167,7 +176,7 @@ func (wc *WatchedContract) Listen(ctx context.Context, db *database.Database, al
 					)
 					// lock the authorizer since bind.TransactOpts is not threadsafe
 					authorizer.Lock()
-					gasPrice, err := utils.GetGasPrice(ctx, wc.backend)
+					gasPrice, err := utils.GetGasPrice(ctx, wc.backend, wc.minimumGwei, wc.gasMultiplier)
 					if err != nil {
 						wc.logger.Error("failed to suggest gasprice", zap.Error(err))
 					} else {

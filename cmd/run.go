@@ -66,7 +66,7 @@ func run(c *cli.Context, mode string, cfg *config.Config) error {
 		return err
 	}
 	logger.Info("initializing service")
-	srv, err := service.New(ctx, alerts.New(logger, cfg.Alerts), mc, db, bc, auther, logger, cfg.Pools)
+	srv, err := service.New(ctx, alerts.New(logger, cfg.Alerts), mc, db, bc, auther, logger, cfg.Pools, cfg.EthereumAccount.GasPrice)
 	if err != nil {
 		db.Close()
 		return err
