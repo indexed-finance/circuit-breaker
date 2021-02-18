@@ -44,3 +44,7 @@ docker-build:
 .PHONY: release
 release:
 	.scripts/release.sh
+
+.PHONY: breakit
+breakit:
+	.scripts/breakit.sh
