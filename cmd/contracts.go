@@ -23,7 +23,7 @@ func contractCommands() cli.Commands {
 	return cli.Commands{
 		&cli.Command{
 			Name:        "contracts",
-			Usage:       "exposes helper functions for interacting with contracts",
+			Usage:       "exposes helper functions for interacting with contracts, warning: should only be used on testnets",
 			Description: "warning this is largely intended for testing purposes on testnets, do not use on mainnets or you burn a lot of money very fast",
 			Subcommands: cli.Commands{
 				setPublicSwap(),
