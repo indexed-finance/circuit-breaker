@@ -180,6 +180,7 @@ func (wc *WatchedContract) Listen(ctx context.Context, db *database.Database, al
 					if err != nil {
 						wc.logger.Error("failed to suggest gasprice", zap.Error(err))
 					} else {
+						wc.logger.Info("gas price calculated (includes boost)", zap.String("gas.price", gasPrice.String()))
 						wc.setPublicSwap(ctx, authorizer, poolAddress, gasPrice, wc.name)
 					}
 					// we need to unset the gas price that we overrode the transactor with
