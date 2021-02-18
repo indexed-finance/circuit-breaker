@@ -4,6 +4,7 @@ import (
 	"io/ioutil"
 	"os"
 
+	"github.com/indexed-finance/circuit-breaker/utils"
 	"go.bobheadxi.dev/zapx/zapx"
 	"go.uber.org/zap"
 	"gopkg.in/yaml.v2"
@@ -86,6 +87,21 @@ type EthereumAccount struct {
 	KeyFilePath     string `yaml:"key_file_path"`
 	KeyFilePassword string `yaml:"key_file_password"`
 	PrivateKey      string `yaml:"private_key"`
+	GasPrice        `yaml:"gas_price"`
+}
+
+// GasPrice controls how we specify gas prices for sending transactions
+type GasPrice struct {
+	// reports the minimum amount of gwei we will spend
+	// if the gas price oracle from go-ethereum reports less than this
+	// we override the gas price to this
+	MinimumGwei string `yaml:"minimum_gwei"`
+	// Multiplier controls the gas price multiplier
+	// whatever the minimum gwei, or the value reported by the gasprice oracle
+	// we multiply it by the value specified here. It defaults to three and should only
+	// be changed with care as decreasing the multiplier could result in failure to get
+	// next block transaction inclusion
+	Multiplier string `yaml:"gwei_multiplier"`
 }
 
 var (
@@ -141,6 +157,10 @@ var (
 			KeyFilePath:     "CHANGEME-PATH",
 			KeyFilePassword: "CHANGEME-PASS",
 			PrivateKey:      "CHANGEME-PK",
+			GasPrice: GasPrice{
+				MinimumGwei: utils.ToWei("100.0", 9).String(), // 9 is the denomination of gwei
+				Multiplier:  "3",
+			},
 		},
 	}
 )
