@@ -161,7 +161,7 @@ func (wc *WatchedContract) Listen(ctx context.Context, db *database.Database, al
 				// only handle breaking if the price decreases (change < 0)
 				// and if the change is outside the break precentage window
 				// to do this we calculate the absolute value of the change percentage
-				if change < 0 && math.Abs(change) >= breakPercentage {
+				if math.Abs(change) >= breakPercentage {
 					wc.logger.Warn(
 						"price fluctuation outside of acceptable bounds, breaking!",
 					)
