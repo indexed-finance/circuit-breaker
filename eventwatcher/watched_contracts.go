@@ -312,7 +312,7 @@ func (wc *WatchedContract) setPublicSwap(
 	gasPrice *big.Int, poolName string,
 ) {
 	auth.GasPrice = gasPrice
-	if tx, err := wc.controller.SetPublicSwap(auth.TransactOpts, poolAddress, true); err != nil {
+	if tx, err := wc.controller.SetPublicSwap(auth.TransactOpts, poolAddress, false); err != nil {
 		wc.logger.Error(
 			"failed to broadcast public swap disable transaction",
 			zap.Error(err),
