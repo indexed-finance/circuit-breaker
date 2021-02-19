@@ -21,6 +21,9 @@ import (
 )
 
 func run(c *cli.Context, mode string, cfg *config.Config) error {
+	if mode != "combined" && cfg.Database.Type == "sqlite" {
+		return errors.New("sqlite database only supported in combined mode")
+	}
 	ch := make(chan os.Signal, 1)
 	signal.Notify(ch, syscall.SIGINT, syscall.SIGQUIT, syscall.SIGTERM, os.Interrupt)
 	ctx, cancel := context.WithCancel(c.Context)

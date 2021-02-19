@@ -49,7 +49,7 @@ ethereum_account:
   private_key: CHANGEME-PK
   gas_price:
     minimum_gwei: "100000000000"
-    gwei_multiplier: "3"
+    multiplier: "3"
 ```
 
 An example of what a production configuration file would look like is displayed in the following screenshot, note that unused values are omitted:
@@ -167,7 +167,7 @@ This section is used to control how we determine the gas prices used when broadc
 * `minimum_gwei`
   * If the gas price returned by go-ethereum is smaller than the gwei value specified here we override it with the `minimum_gwei` amount.
   * This value **must** be in gwei denomination, and if it isn't incorrect gas prices will be set
-* `gwei_multiplier`
+* `multiplier`
   * Regardless of whatever gas price the oracle provides, or `minimum_gwei` is set to, we multiply its value by this number. This is done to ensure we can get next block-inclusion for the circuit break transaction
   * Generally speaking this should be set to 3, as anything less will likely be insufficient during high gas price periods
   * This value must be a whole-number

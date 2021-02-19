@@ -100,7 +100,7 @@ type GasPrice struct {
 	// we multiply it by the value specified here. It defaults to three and should only
 	// be changed with care as decreasing the multiplier could result in failure to get
 	// next block transaction inclusion
-	Multiplier string `yaml:"gwei_multiplier"`
+	Multiplier string `yaml:"multiplier"`
 }
 
 var (

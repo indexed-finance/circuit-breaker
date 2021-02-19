@@ -35,8 +35,10 @@ func (wc *WatchedContract) handleSwapToggles(ctx context.Context) {
 			wc.brokenLock.Lock()
 			if !evLog.Enabled { // indicates swap has been disabled
 				wc.broken = true
+				wc.logger.Info("public swaps disabled")
 			} else {
 				wc.broken = false
+				wc.logger.Info("public swaps enabled")
 			}
 			wc.brokenLock.Unlock()
 		}

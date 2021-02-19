@@ -44,8 +44,9 @@ func accountNew() *cli.Command {
 				if err != nil {
 					return err
 				}
-				log.Println("hex encoded private key:")
-				log.Println(hex.EncodeToString(crypto.FromECDSA(pk)))
+				addr := crypto.PubkeyToAddress(pk.PublicKey)
+				log.Println("hex encoded private key: ", hex.EncodeToString(crypto.FromECDSA(pk)))
+				log.Println("public address: ", addr.Hex())
 			default:
 				return errors.New("unsupported mode, must be one of: keyfile, privatekey")
 			}

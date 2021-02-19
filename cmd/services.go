@@ -1,8 +1,6 @@
 package main
 
 import (
-	"errors"
-
 	"github.com/indexed-finance/circuit-breaker/config"
 	"github.com/urfave/cli/v2"
 )
@@ -30,9 +28,6 @@ func contractWatcher() *cli.Command {
 			if err != nil {
 				return err
 			}
-			if cfg.Database.Type == "sqlite" {
-				return errors.New("sqlite database is only supported in combined mode")
-			}
 			return run(c, "contract-watcher", cfg)
 		},
 	}
@@ -47,9 +42,6 @@ func blockListener() *cli.Command {
 			cfg, err := config.LoadConfig(c.String("config.path"))
 			if err != nil {
 				return err
-			}
-			if cfg.Database.Type == "sqlite" {
-				return errors.New("sqlite database is only supported in combined mode")
 			}
 			return run(c, "block-listener", cfg)
 		},
