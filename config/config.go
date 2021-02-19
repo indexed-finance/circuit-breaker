@@ -4,7 +4,6 @@ import (
 	"io/ioutil"
 	"os"
 
-	"github.com/indexed-finance/circuit-breaker/utils"
 	"go.bobheadxi.dev/zapx/zapx"
 	"go.uber.org/zap"
 	"gopkg.in/yaml.v2"
@@ -158,7 +157,7 @@ var (
 			KeyFilePassword: "CHANGEME-PASS",
 			PrivateKey:      "CHANGEME-PK",
 			GasPrice: GasPrice{
-				MinimumGwei: utils.ToWei("100.0", 9).String(), // 9 is the denomination of gwei
+				MinimumGwei: ToWei("100.0", 9).String(), // 9 is the denomination of gwei
 				Multiplier:  "3",
 			},
 		},
