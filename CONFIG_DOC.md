@@ -47,6 +47,9 @@ ethereum_account:
   key_file_path: CHANGEME-PATH
   key_file_password: CHANGEME-PASS
   private_key: CHANGEME-PK
+  gas_price:
+    minimum_gwei: "100000000000"
+    gwei_multiplier: "3"
 ```
 
 An example of what a production configuration file would look like is displayed in the following screenshot, note that unused values are omitted:
@@ -144,9 +147,9 @@ Used to assist with profiling `block-listener` and `contract-watcher`, when enab
 * `address`
   * The address to expose pprof handlers on
 
-# ethereum_access
+# ethereum_account
 
-This provides configuration over the ethereum account used to sign transactions
+This provides configuration over the ethereum account used to sign transactions, as well as a rudimentary gas price selection "algorithm" (i use the word algorithm loosely as its basically a glorified if/else statement with some multiplication)
 
 * `mode`
   * The ethereum account mode to use, can be one of `privatekey` or `keyfile`
@@ -156,3 +159,15 @@ This provides configuration over the ethereum account used to sign transactions
   * If `mode` is set to `keyfile` the password used to unlock the keyfile
 * `private_key`
   * If `mode` is set to `privatekey` the hex encoded private key to use
+
+## gas_price
+
+This section is used to control how we determine the gas prices used when broadcasting circuit break transactions. The underlying gas price determination is done using go-ethereums "gasprice oracle" which is usually configured to sample gas prices over the last 20 blocks, and provide an estimate based off that sampling.
+
+* `minimum_gwei`
+  * If the gas price returned by go-ethereum is smaller than the gwei value specified here we override it with the `minimum_gwei` amount.
+  * This value **must** be in gwei denomination, and if it isn't incorrect gas prices will be set
+* `gwei_multiplier`
+  * Regardless of whatever gas price the oracle provides, or `minimum_gwei` is set to, we multiply its value by this number. This is done to ensure we can get next block-inclusion for the circuit break transaction
+  * Generally speaking this should be set to 3, as anything less will likely be insufficient during high gas price periods
+  * This value must be a whole-number
