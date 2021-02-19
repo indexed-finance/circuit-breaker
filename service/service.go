@@ -224,7 +224,7 @@ func (s *Service) StartWatchers() error {
 	for _, watcher := range watchers {
 		go func(wtchr *eventwatcher.WatchedContract, bkPercent float64) {
 			defer s.wg.Done()
-			if err := wtchr.Listen(ctx, s.db, s.at, s.auther, bkPercent); err != nil {
+			if err := wtchr.Listen(ctx, s.db, s.at, s.auther, bkPercent, s.ew.BC().EthClient()); err != nil {
 				errCh <- err
 			}
 		}(watcher, spotPriceBreakPercentages[watcher.Name()])

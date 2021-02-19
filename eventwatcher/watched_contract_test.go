@@ -105,7 +105,7 @@ func TestWatchedContract(t *testing.T) {
 	wg.Add(1)
 	go func() {
 		defer wg.Done()
-		watchedContract.Listen(ctx, db, alerts.New(zap.NewNop(), cfg.Alerts), authorizer, 0.1)
+		watchedContract.Listen(ctx, db, alerts.New(zap.NewNop(), cfg.Alerts), authorizer, 0.1, nil)
 	}()
 
 	// we need to spoof some information for easier testing

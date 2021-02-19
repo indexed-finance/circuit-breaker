@@ -7,9 +7,11 @@ import (
 	"math"
 	"math/big"
 	"strings"
+	"sync"
 
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/ethclient"
 	"github.com/ethereum/go-ethereum/event"
 	"github.com/indexed-finance/circuit-breaker/alerts"
 	"github.com/indexed-finance/circuit-breaker/bindings/controller"
@@ -34,6 +36,8 @@ type WatchedContract struct {
 	controller     *controller.Controller
 	minimumGwei    *big.Int
 	gasMultiplier  *big.Int
+	breakLock      sync.Mutex
+	breaking       bool
 }
 
 // NewWatchedContracts initializes watched contracts and prepares them for event listening
@@ -90,7 +94,7 @@ func (ew *EventWatcher) NewWatchedContracts(
 }
 
 // Listen stars the watche contract listening process waiting for incoming events
-func (wc *WatchedContract) Listen(ctx context.Context, db *database.Database, alerter *alerts.Alerter, authorizer *utils.Authorizer, breakPercentage float64) error {
+func (wc *WatchedContract) Listen(ctx context.Context, db *database.Database, alerter *alerts.Alerter, authorizer *utils.Authorizer, breakPercentage float64, ec *ethclient.Client) error {
 	wc.logger.Info("contract watcher started listening for events")
 	// get the pool contract address
 	dbInfo, err := db.GetPool(wc.name)
@@ -181,7 +185,7 @@ func (wc *WatchedContract) Listen(ctx context.Context, db *database.Database, al
 						wc.logger.Error("failed to suggest gasprice", zap.Error(err))
 					} else {
 						wc.logger.Info("gas price calculated (includes boost)", zap.String("gas.price", gasPrice.String()))
-						wc.setPublicSwap(ctx, authorizer, poolAddress, gasPrice, wc.name)
+						wc.setPublicSwap(ctx, authorizer, poolAddress, gasPrice, wc.name, ec)
 					}
 					// we need to unset the gas price that we overrode the transactor with
 					// so that future uses of this transactor have the gas price set to nil
@@ -320,7 +324,16 @@ func (wc *WatchedContract) setPublicSwap(
 	auth *utils.Authorizer,
 	poolAddress common.Address,
 	gasPrice *big.Int, poolName string,
+	ec *ethclient.Client,
 ) {
+	wc.breakLock.Lock()
+	if wc.breaking {
+		wc.logger.Warn("attempting to trigger circuit break while one is ongoing")
+		wc.breakLock.Unlock()
+		return
+	}
+	wc.breaking = true
+	wc.breakLock.Unlock()
 	auth.GasPrice = gasPrice
 	if tx, err := wc.controller.SetPublicSwap(auth.TransactOpts, poolAddress, false); err != nil {
 		wc.logger.Error(
@@ -329,14 +342,25 @@ func (wc *WatchedContract) setPublicSwap(
 			zap.String("pool", poolName),
 		)
 	} else {
-		// TODO: at the moment due to simulation backend usage
-		// this is very hard to test, however once we have a deployment
-		// on a testnet i will be able to modify this package to follow
-		// the same pattern as the service package does
-		wc.logger.Warn(
-			"public swap disable transaction sent. TODO: enable waiting for mining",
-			zap.String("pool", poolName),
-			zap.String("tx.hash", tx.Hash().String()),
-		)
+		if ec == nil {
+			wc.logger.Warn("ethclient argument is nil, if you are running on mainnet and see this please contact the developer")
+		} else {
+			wc.logger.Warn(
+				"public swap disable transaction sent, waiting for transaction to be mined",
+				zap.String("pool", poolName),
+				zap.String("tx.hash", tx.Hash().String()),
+			)
+			if rcpt, err := bind.WaitMined(ctx, ec, tx); err != nil {
+				wc.logger.Error("failed to wait for transaction to be mined", zap.Error(err), zap.String("pool", poolName), zap.String("tx.hash", tx.Hash().String()))
+			} else {
+				if rcpt.Status != 1 {
+					wc.logger.Warn("public swap transaction failed execution as return status is not 1")
+				}
+			}
+			// unset the breaking boolean
+			wc.breakLock.Lock()
+			wc.breaking = false
+			wc.breakLock.Unlock()
+		}
 	}
 }
