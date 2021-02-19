@@ -123,7 +123,7 @@ func (wc *WatchedContract) Listen(ctx context.Context, db *database.Database, al
 	poolAddress := common.HexToAddress(dbInfo.ContractAddress)
 
 	// monitor the toggle events in a specific goroutine
-	go wc.handleSetPublicSwap(ctx)
+	go wc.handleSwapToggles(ctx)
 
 	// this is a blocking function call
 	return wc.handleLogSwaps(ctx, db, alerter, authorizer, breakPercentage, ec, poolAddress)

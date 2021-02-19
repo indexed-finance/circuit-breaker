@@ -22,20 +22,19 @@ func (wc *WatchedContract) handleLogSwaps(
 	ec *ethclient.Client,
 	poolAddress common.Address,
 ) error {
-	defer func() {
-		wc.swapSub.Unsubscribe()
-		close(wc.swapCh)
-		close(wc.notifSwapCh)
-	}()
 	for {
 		select {
 		case <-ctx.Done():
+			wc.swapSub.Unsubscribe()
+			close(wc.swapCh)
+			close(wc.notifSwapCh)
 			return nil
-
 		case err := <-wc.swapSub.Err():
 			wc.logger.Error("event subscription error received", zap.Error(err))
+			wc.swapSub.Unsubscribe()
+			close(wc.swapCh)
+			close(wc.notifSwapCh)
 			return err
-
 		case evLog := <-wc.swapCh:
 			wc.logger.Debug("received new event (log swap)", zap.Any("event", evLog))
 			// skip reverted logs
