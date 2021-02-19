@@ -4,8 +4,8 @@ import (
 	"strings"
 	"time"
 
-	poolbindings "github.com/bonedaddy/go-indexed/bindings/pool"
 	"github.com/ethereum/go-ethereum/common"
+	"github.com/indexed-finance/circuit-breaker/bindings/sigmacore"
 	"github.com/indexed-finance/circuit-breaker/config"
 	"github.com/indexed-finance/circuit-breaker/utils"
 	"go.uber.org/zap"
@@ -14,7 +14,7 @@ import (
 // GetBalancesWeightsAndSupplies returns the balance, weights
 // and total supplies of all tokens held by an IndexPool
 func (s *Service) GetBalancesWeightsAndSupplies(
-	contract *poolbindings.Poolbindings,
+	contract *sigmacore.Sigmacore,
 	block uint64,
 	poolAddress string,
 	tokens map[string]common.Address,
@@ -71,7 +71,7 @@ func (s *Service) GetBalancesWeightsAndSupplies(
 func (s *Service) UpdateBalancesWeightsAndSupplies(
 	block uint64,
 	pool config.Pool,
-	contract *poolbindings.Poolbindings,
+	contract *sigmacore.Sigmacore,
 ) (
 	balances map[string]interface{},
 	denormWeights map[string]interface{},
@@ -94,7 +94,7 @@ func (s *Service) UpdateBalancesWeightsAndSupplies(
 
 // GetWeights is used to return a given pool's token weights
 func (s *Service) GetWeights(
-	contract *poolbindings.Poolbindings,
+	contract *sigmacore.Sigmacore,
 	block uint64,
 	poolAddress string,
 	tokens map[string]common.Address,
@@ -120,7 +120,7 @@ func (s *Service) GetWeights(
 // GetBalances returns the balances of various pool tokens
 // This is not to be confused with IndexPool token balances
 func (s *Service) GetBalances(
-	contract *poolbindings.Poolbindings,
+	contract *sigmacore.Sigmacore,
 	block uint64,
 	poolAddress string,
 	tokens map[string]common.Address,
@@ -144,7 +144,7 @@ func (s *Service) GetBalances(
 
 // GetTotalSupplies returns the total supplies of all the tokens that are part of the pool
 func (s *Service) GetTotalSupplies(
-	contract *poolbindings.Poolbindings,
+	contract *sigmacore.Sigmacore,
 	block uint64,
 	tokens map[string]common.Address,
 ) (map[string]interface{}, error) {

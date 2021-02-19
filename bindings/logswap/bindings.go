@@ -27,10 +27,10 @@ var (
 )
 
 // LogswapABI is the input ABI used to generate the binding from.
-const LogswapABI = "[{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"caller\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"tokenIn\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"tokenOut\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"tokenAmountIn\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"tokenAmountOut\",\"type\":\"uint256\"}],\"name\":\"LOG_SWAP\",\"type\":\"event\"},{\"inputs\":[],\"name\":\"_swapFee\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"decimal\",\"outputs\":[{\"internalType\":\"uint8\",\"name\":\"\",\"type\":\"uint8\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"outAmount\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"inAmount\",\"type\":\"uint256\"}],\"name\":\"emitLogSwap\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"token\",\"type\":\"address\"}],\"name\":\"getBalance\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getCurrentTokens\",\"outputs\":[{\"internalType\":\"address[]\",\"name\":\"\",\"type\":\"address[]\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"token\",\"type\":\"address\"}],\"name\":\"getDenormalizedWeight\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"tokenIn\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"tokenOut\",\"type\":\"address\"}],\"name\":\"getSpotPrice\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getSwapFee\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"token\",\"type\":\"address\"}],\"name\":\"getUsedBalance\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"incRando\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"symbol\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"\",\"type\":\"string\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"totalSupply\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"}]"
+const LogswapABI = "[{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"bool\",\"name\":\"enabled\",\"type\":\"bool\"}],\"name\":\"LOG_PUBLIC_SWAP_TOGGLED\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"caller\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"tokenIn\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"tokenOut\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"tokenAmountIn\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"tokenAmountOut\",\"type\":\"uint256\"}],\"name\":\"LOG_SWAP\",\"type\":\"event\"},{\"inputs\":[],\"name\":\"_swapFee\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"decimal\",\"outputs\":[{\"internalType\":\"uint8\",\"name\":\"\",\"type\":\"uint8\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"outAmount\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"inAmount\",\"type\":\"uint256\"}],\"name\":\"emitLogSwap\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bool\",\"name\":\"enabled\",\"type\":\"bool\"}],\"name\":\"emitPublicSwap\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"token\",\"type\":\"address\"}],\"name\":\"getBalance\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getController\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getCurrentTokens\",\"outputs\":[{\"internalType\":\"address[]\",\"name\":\"\",\"type\":\"address[]\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"token\",\"type\":\"address\"}],\"name\":\"getDenormalizedWeight\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"tokenIn\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"tokenOut\",\"type\":\"address\"}],\"name\":\"getSpotPrice\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getSwapFee\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"token\",\"type\":\"address\"}],\"name\":\"getUsedBalance\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"incRando\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"pool\",\"type\":\"address\"},{\"internalType\":\"bool\",\"name\":\"enabled\",\"type\":\"bool\"}],\"name\":\"setPublicSwap\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bool\",\"name\":\"enabled\",\"type\":\"bool\"}],\"name\":\"setPublicSwap\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"symbol\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"\",\"type\":\"string\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"totalSupply\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"}]"
 
 // LogswapBin is the compiled bytecode used for deploying new contracts.
-var LogswapBin = "0x608060405260016000556040518060400160405280600481526020017f43433130000000000000000000000000000000000000000000000000000000008152506001908051906020019061005492919061008e565b506012600260006101000a81548160ff021916908360ff1602179055506658d15e1762800060035534801561008857600080fd5b50610139565b828054600181600116156101000203166002900490600052602060002090601f0160209004810192826100c4576000855561010b565b82601f106100dd57805160ff191683800117855561010b565b8280016001018555821561010b579182015b8281111561010a5782518255916020019190600101906100ef565b5b509050610118919061011c565b5090565b5b8082111561013557600081600090555060010161011d565b5090565b61097b806101486000396000f3fe608060405234801561001057600080fd5b50600436106100b45760003560e01c8063948d8ce611610071578063948d8ce6146101f057806395d89b4114610248578063ad4a5c4b146102cb578063cc77828d14610303578063d4cadf6814610362578063f8b2cb4f14610380576100b4565b806315e84af9146100b957806318160ddd146101315780634aa4e0b51461014f5780635d93a794146101a757806376809ce3146101b157806383278155146101d2575b600080fd5b61011b600480360360408110156100cf57600080fd5b81019080803573ffffffffffffffffffffffffffffffffffffffff169060200190929190803573ffffffffffffffffffffffffffffffffffffffff1690602001909291905050506103d8565b6040518082815260200191505060405180910390f35b61013961051c565b6040518082815260200191505060405180910390f35b6101916004803603602081101561016557600080fd5b81019080803573ffffffffffffffffffffffffffffffffffffffff169060200190929190505050610588565b6040518082815260200191505060405180910390f35b6101af61061c565b005b6101b961062e565b604051808260ff16815260200191505060405180910390f35b6101da610641565b6040518082815260200191505060405180910390f35b6102326004803603602081101561020657600080fd5b81019080803573ffffffffffffffffffffffffffffffffffffffff169060200190929190505050610647565b6040518082815260200191505060405180910390f35b6102506106e5565b6040518080602001828103825283818151815260200191508051906020019080838360005b83811015610290578082015181840152602081019050610275565b50505050905090810190601f1680156102bd5780820380516001836020036101000a031916815260200191505b509250505060405180910390f35b610301600480360360408110156102e157600080fd5b810190808035906020019092919080359060200190929190505050610783565b005b61030b61080b565b6040518080602001828103825283818151815260200191508051906020019060200280838360005b8381101561034e578082015181840152602081019050610333565b505050509050019250505060405180910390f35b61036a6108a7565b6040518082815260200191505060405180910390f35b6103c26004803603602081101561039657600080fd5b81019080803573ffffffffffffffffffffffffffffffffffffffff1690602001909291905050506108b1565b6040518082815260200191505060405180910390f35b6000600343106103f2576701aa535d3d0c00009050610516565b600060fa423360005487604051602001808581526020018473ffffffffffffffffffffffffffffffffffffffff1660601b81526014018381526020018273ffffffffffffffffffffffffffffffffffffffff1660601b81526014019450505050506040516020818303038152906040528051906020012060001c8161047357fe5b069050600060fa423360005487604051602001808581526020018473ffffffffffffffffffffffffffffffffffffffff1660601b81526014018381526020018273ffffffffffffffffffffffffffffffffffffffff1660601b81526014019450505050506040516020818303038152906040528051906020012060001c816104f757fe5b069050670de0b6b3a76400008102670de0b6b3a7640000830201925050505b92915050565b6000804233600054604051602001808481526020018373ffffffffffffffffffffffffffffffffffffffff1660601b815260140182815260200193505050506040516020818303038152906040528051906020012060001c905068056bc75e2d63100000810291505090565b600080423360005485604051602001808581526020018473ffffffffffffffffffffffffffffffffffffffff1660601b81526014018381526020018273ffffffffffffffffffffffffffffffffffffffff1660601b81526014019450505050506040516020818303038152906040528051906020012060001c905060006703782dace9d90000820290508092505050919050565b60016000808282540192505081905550565b600260009054906101000a900460ff1681565b60035481565b6000806064423360005486604051602001808581526020018473ffffffffffffffffffffffffffffffffffffffff1660601b81526014018381526020018273ffffffffffffffffffffffffffffffffffffffff1660601b81526014019450505050506040516020818303038152906040528051906020012060001c816106c957fe5b0690506000670de0b6b3a7640000820290508092505050919050565b60018054600181600116156101000203166002900480601f01602080910402602001604051908101604052809291908181526020018280546001816001161561010002031660029004801561077b5780601f106107505761010080835404028352916020019161077b565b820191906000526020600020905b81548152906001019060200180831161075e57829003601f168201915b505050505081565b3373ffffffffffffffffffffffffffffffffffffffff163373ffffffffffffffffffffffffffffffffffffffff163373ffffffffffffffffffffffffffffffffffffffff167f908fb5ee8f16c6bc9bc3690973819f32a4d4b10188134543c88706e0e1d433788486604051808381526020018281526020019250505060405180910390a45050565b606080600167ffffffffffffffff8111801561082657600080fd5b506040519080825280602002602001820160405280156108555781602001602082028036833780820191505090505b509050308160008151811061086657fe5b602002602001019073ffffffffffffffffffffffffffffffffffffffff16908173ffffffffffffffffffffffffffffffffffffffff16815250508091505090565b6000600354905090565b600080423360005485604051602001808581526020018473ffffffffffffffffffffffffffffffffffffffff1660601b81526014018381526020018273ffffffffffffffffffffffffffffffffffffffff1660601b81526014019450505050506040516020818303038152906040528051906020012060001c90506000678ac7230489e8000082029050809250505091905056fea26469706673582212202b61dedd95cd0bf90e902fec3e0f5ce4944f42b5e53c1896afd0c64b57bf13cc64736f6c63430007040033"
+var LogswapBin = "0x608060405260016000556040518060400160405280600481526020017f43433130000000000000000000000000000000000000000000000000000000008152506001908051906020019061005492919061008e565b506012600260006101000a81548160ff021916908360ff1602179055506658d15e1762800060035534801561008857600080fd5b50610139565b828054600181600116156101000203166002900490600052602060002090601f0160209004810192826100c4576000855561010b565b82601f106100dd57805160ff191683800117855561010b565b8280016001018555821561010b579182015b8281111561010a5782518255916020019190600101906100ef565b5b509050610118919061011c565b5090565b5b8082111561013557600081600090555060010161011d565b5090565b610b2a806101486000396000f3fe608060405234801561001057600080fd5b50600436106101005760003560e01c80638327815511610097578063c94ddf8c11610066578063c94ddf8c14610403578063cc77828d14610433578063d4cadf6814610492578063f8b2cb4f146104b057610100565b806383278155146102d2578063948d8ce6146102f057806395d89b4114610348578063ad4a5c4b146103cb57610100565b806349b59552116100d357806349b595521461021f5780634aa4e0b51461024f5780635d93a794146102a757806376809ce3146102b157610100565b806315e84af91461010557806318160ddd1461017d5780631eccc1851461019b5780633018205f146101eb575b600080fd5b6101676004803603604081101561011b57600080fd5b81019080803573ffffffffffffffffffffffffffffffffffffffff169060200190929190803573ffffffffffffffffffffffffffffffffffffffff169060200190929190505050610508565b6040518082815260200191505060405180910390f35b61018561064c565b6040518082815260200191505060405180910390f35b6101e9600480360360408110156101b157600080fd5b81019080803573ffffffffffffffffffffffffffffffffffffffff1690602001909291908035151590602001909291905050506106b8565b005b6101f36106d6565b604051808273ffffffffffffffffffffffffffffffffffffffff16815260200191505060405180910390f35b61024d6004803603602081101561023557600080fd5b810190808035151590602001909291905050506106de565b005b6102916004803603602081101561026557600080fd5b81019080803573ffffffffffffffffffffffffffffffffffffffff1690602001909291905050506106fb565b6040518082815260200191505060405180910390f35b6102af61078f565b005b6102b96107a1565b604051808260ff16815260200191505060405180910390f35b6102da6107b4565b6040518082815260200191505060405180910390f35b6103326004803603602081101561030657600080fd5b81019080803573ffffffffffffffffffffffffffffffffffffffff1690602001909291905050506107ba565b6040518082815260200191505060405180910390f35b610350610858565b6040518080602001828103825283818151815260200191508051906020019080838360005b83811015610390578082015181840152602081019050610375565b50505050905090810190601f1680156103bd5780820380516001836020036101000a031916815260200191505b509250505060405180910390f35b610401600480360360408110156103e157600080fd5b8101908080359060200190929190803590602001909291905050506108f6565b005b6104316004803603602081101561041957600080fd5b8101908080351515906020019092919050505061097e565b005b61043b6109ba565b6040518080602001828103825283818151815260200191508051906020019060200280838360005b8381101561047e578082015181840152602081019050610463565b505050509050019250505060405180910390f35b61049a610a56565b6040518082815260200191505060405180910390f35b6104f2600480360360208110156104c657600080fd5b81019080803573ffffffffffffffffffffffffffffffffffffffff169060200190929190505050610a60565b6040518082815260200191505060405180910390f35b600060034310610522576701aa535d3d0c00009050610646565b600060fa423360005487604051602001808581526020018473ffffffffffffffffffffffffffffffffffffffff1660601b81526014018381526020018273ffffffffffffffffffffffffffffffffffffffff1660601b81526014019450505050506040516020818303038152906040528051906020012060001c816105a357fe5b069050600060fa423360005487604051602001808581526020018473ffffffffffffffffffffffffffffffffffffffff1660601b81526014018381526020018273ffffffffffffffffffffffffffffffffffffffff1660601b81526014019450505050506040516020818303038152906040528051906020012060001c8161062757fe5b069050670de0b6b3a76400008102670de0b6b3a7640000830201925050505b92915050565b6000804233600054604051602001808481526020018373ffffffffffffffffffffffffffffffffffffffff1660601b815260140182815260200193505050506040516020818303038152906040528051906020012060001c905068056bc75e2d63100000810291505090565b80600460006101000a81548160ff0219169083151502179055505050565b600030905090565b80600460006101000a81548160ff02191690831515021790555050565b600080423360005485604051602001808581526020018473ffffffffffffffffffffffffffffffffffffffff1660601b81526014018381526020018273ffffffffffffffffffffffffffffffffffffffff1660601b81526014019450505050506040516020818303038152906040528051906020012060001c905060006703782dace9d90000820290508092505050919050565b60016000808282540192505081905550565b600260009054906101000a900460ff1681565b60035481565b6000806064423360005486604051602001808581526020018473ffffffffffffffffffffffffffffffffffffffff1660601b81526014018381526020018273ffffffffffffffffffffffffffffffffffffffff1660601b81526014019450505050506040516020818303038152906040528051906020012060001c8161083c57fe5b0690506000670de0b6b3a7640000820290508092505050919050565b60018054600181600116156101000203166002900480601f0160208091040260200160405190810160405280929190818152602001828054600181600116156101000203166002900480156108ee5780601f106108c3576101008083540402835291602001916108ee565b820191906000526020600020905b8154815290600101906020018083116108d157829003601f168201915b505050505081565b3373ffffffffffffffffffffffffffffffffffffffff163373ffffffffffffffffffffffffffffffffffffffff163373ffffffffffffffffffffffffffffffffffffffff167f908fb5ee8f16c6bc9bc3690973819f32a4d4b10188134543c88706e0e1d433788486604051808381526020018281526020019250505060405180910390a45050565b7f40fc85fbff9305015298ba6fcee88b7e442a64cc803ddb889327680bbd62270a8160405180821515815260200191505060405180910390a150565b606080600167ffffffffffffffff811180156109d557600080fd5b50604051908082528060200260200182016040528015610a045781602001602082028036833780820191505090505b5090503081600081518110610a1557fe5b602002602001019073ffffffffffffffffffffffffffffffffffffffff16908173ffffffffffffffffffffffffffffffffffffffff16815250508091505090565b6000600354905090565b600080423360005485604051602001808581526020018473ffffffffffffffffffffffffffffffffffffffff1660601b81526014018381526020018273ffffffffffffffffffffffffffffffffffffffff1660601b81526014019450505050506040516020818303038152906040528051906020012060001c90506000678ac7230489e8000082029050809250505091905056fea26469706673582212207b3c0e55e44387636a48853e26c496d78647ab1f9ce425a0a7a1b14d8d2fb24064736f6c63430007040033"
 
 // DeployLogswap deploys a new Ethereum contract, binding an instance of Logswap to it.
 func DeployLogswap(auth *bind.TransactOpts, backend bind.ContractBackend) (common.Address, *types.Transaction, *Logswap, error) {
@@ -281,6 +281,37 @@ func (_Logswap *LogswapCallerSession) GetBalance(token common.Address) (*big.Int
 	return _Logswap.Contract.GetBalance(&_Logswap.CallOpts, token)
 }
 
+// GetController is a free data retrieval call binding the contract method 0x3018205f.
+//
+// Solidity: function getController() view returns(address)
+func (_Logswap *LogswapCaller) GetController(opts *bind.CallOpts) (common.Address, error) {
+	var out []interface{}
+	err := _Logswap.contract.Call(opts, &out, "getController")
+
+	if err != nil {
+		return *new(common.Address), err
+	}
+
+	out0 := *abi.ConvertType(out[0], new(common.Address)).(*common.Address)
+
+	return out0, err
+
+}
+
+// GetController is a free data retrieval call binding the contract method 0x3018205f.
+//
+// Solidity: function getController() view returns(address)
+func (_Logswap *LogswapSession) GetController() (common.Address, error) {
+	return _Logswap.Contract.GetController(&_Logswap.CallOpts)
+}
+
+// GetController is a free data retrieval call binding the contract method 0x3018205f.
+//
+// Solidity: function getController() view returns(address)
+func (_Logswap *LogswapCallerSession) GetController() (common.Address, error) {
+	return _Logswap.Contract.GetController(&_Logswap.CallOpts)
+}
+
 // GetCurrentTokens is a free data retrieval call binding the contract method 0xcc77828d.
 //
 // Solidity: function getCurrentTokens() view returns(address[])
@@ -519,6 +550,27 @@ func (_Logswap *LogswapTransactorSession) EmitLogSwap(outAmount *big.Int, inAmou
 	return _Logswap.Contract.EmitLogSwap(&_Logswap.TransactOpts, outAmount, inAmount)
 }
 
+// EmitPublicSwap is a paid mutator transaction binding the contract method 0xc94ddf8c.
+//
+// Solidity: function emitPublicSwap(bool enabled) returns()
+func (_Logswap *LogswapTransactor) EmitPublicSwap(opts *bind.TransactOpts, enabled bool) (*types.Transaction, error) {
+	return _Logswap.contract.Transact(opts, "emitPublicSwap", enabled)
+}
+
+// EmitPublicSwap is a paid mutator transaction binding the contract method 0xc94ddf8c.
+//
+// Solidity: function emitPublicSwap(bool enabled) returns()
+func (_Logswap *LogswapSession) EmitPublicSwap(enabled bool) (*types.Transaction, error) {
+	return _Logswap.Contract.EmitPublicSwap(&_Logswap.TransactOpts, enabled)
+}
+
+// EmitPublicSwap is a paid mutator transaction binding the contract method 0xc94ddf8c.
+//
+// Solidity: function emitPublicSwap(bool enabled) returns()
+func (_Logswap *LogswapTransactorSession) EmitPublicSwap(enabled bool) (*types.Transaction, error) {
+	return _Logswap.Contract.EmitPublicSwap(&_Logswap.TransactOpts, enabled)
+}
+
 // IncRando is a paid mutator transaction binding the contract method 0x5d93a794.
 //
 // Solidity: function incRando() returns()
@@ -538,6 +590,182 @@ func (_Logswap *LogswapSession) IncRando() (*types.Transaction, error) {
 // Solidity: function incRando() returns()
 func (_Logswap *LogswapTransactorSession) IncRando() (*types.Transaction, error) {
 	return _Logswap.Contract.IncRando(&_Logswap.TransactOpts)
+}
+
+// SetPublicSwap is a paid mutator transaction binding the contract method 0x1eccc185.
+//
+// Solidity: function setPublicSwap(address pool, bool enabled) returns()
+func (_Logswap *LogswapTransactor) SetPublicSwap(opts *bind.TransactOpts, pool common.Address, enabled bool) (*types.Transaction, error) {
+	return _Logswap.contract.Transact(opts, "setPublicSwap", pool, enabled)
+}
+
+// SetPublicSwap is a paid mutator transaction binding the contract method 0x1eccc185.
+//
+// Solidity: function setPublicSwap(address pool, bool enabled) returns()
+func (_Logswap *LogswapSession) SetPublicSwap(pool common.Address, enabled bool) (*types.Transaction, error) {
+	return _Logswap.Contract.SetPublicSwap(&_Logswap.TransactOpts, pool, enabled)
+}
+
+// SetPublicSwap is a paid mutator transaction binding the contract method 0x1eccc185.
+//
+// Solidity: function setPublicSwap(address pool, bool enabled) returns()
+func (_Logswap *LogswapTransactorSession) SetPublicSwap(pool common.Address, enabled bool) (*types.Transaction, error) {
+	return _Logswap.Contract.SetPublicSwap(&_Logswap.TransactOpts, pool, enabled)
+}
+
+// SetPublicSwap0 is a paid mutator transaction binding the contract method 0x49b59552.
+//
+// Solidity: function setPublicSwap(bool enabled) returns()
+func (_Logswap *LogswapTransactor) SetPublicSwap0(opts *bind.TransactOpts, enabled bool) (*types.Transaction, error) {
+	return _Logswap.contract.Transact(opts, "setPublicSwap0", enabled)
+}
+
+// SetPublicSwap0 is a paid mutator transaction binding the contract method 0x49b59552.
+//
+// Solidity: function setPublicSwap(bool enabled) returns()
+func (_Logswap *LogswapSession) SetPublicSwap0(enabled bool) (*types.Transaction, error) {
+	return _Logswap.Contract.SetPublicSwap0(&_Logswap.TransactOpts, enabled)
+}
+
+// SetPublicSwap0 is a paid mutator transaction binding the contract method 0x49b59552.
+//
+// Solidity: function setPublicSwap(bool enabled) returns()
+func (_Logswap *LogswapTransactorSession) SetPublicSwap0(enabled bool) (*types.Transaction, error) {
+	return _Logswap.Contract.SetPublicSwap0(&_Logswap.TransactOpts, enabled)
+}
+
+// LogswapLOGPUBLICSWAPTOGGLEDIterator is returned from FilterLOGPUBLICSWAPTOGGLED and is used to iterate over the raw logs and unpacked data for LOGPUBLICSWAPTOGGLED events raised by the Logswap contract.
+type LogswapLOGPUBLICSWAPTOGGLEDIterator struct {
+	Event *LogswapLOGPUBLICSWAPTOGGLED // Event containing the contract specifics and raw log
+
+	contract *bind.BoundContract // Generic contract to use for unpacking event data
+	event    string              // Event name to use for unpacking event data
+
+	logs chan types.Log        // Log channel receiving the found contract events
+	sub  ethereum.Subscription // Subscription for errors, completion and termination
+	done bool                  // Whether the subscription completed delivering logs
+	fail error                 // Occurred error to stop iteration
+}
+
+// Next advances the iterator to the subsequent event, returning whether there
+// are any more events found. In case of a retrieval or parsing error, false is
+// returned and Error() can be queried for the exact failure.
+func (it *LogswapLOGPUBLICSWAPTOGGLEDIterator) Next() bool {
+	// If the iterator failed, stop iterating
+	if it.fail != nil {
+		return false
+	}
+	// If the iterator completed, deliver directly whatever's available
+	if it.done {
+		select {
+		case log := <-it.logs:
+			it.Event = new(LogswapLOGPUBLICSWAPTOGGLED)
+			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
+				it.fail = err
+				return false
+			}
+			it.Event.Raw = log
+			return true
+
+		default:
+			return false
+		}
+	}
+	// Iterator still in progress, wait for either a data or an error event
+	select {
+	case log := <-it.logs:
+		it.Event = new(LogswapLOGPUBLICSWAPTOGGLED)
+		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
+			it.fail = err
+			return false
+		}
+		it.Event.Raw = log
+		return true
+
+	case err := <-it.sub.Err():
+		it.done = true
+		it.fail = err
+		return it.Next()
+	}
+}
+
+// Error returns any retrieval or parsing error occurred during filtering.
+func (it *LogswapLOGPUBLICSWAPTOGGLEDIterator) Error() error {
+	return it.fail
+}
+
+// Close terminates the iteration process, releasing any pending underlying
+// resources.
+func (it *LogswapLOGPUBLICSWAPTOGGLEDIterator) Close() error {
+	it.sub.Unsubscribe()
+	return nil
+}
+
+// LogswapLOGPUBLICSWAPTOGGLED represents a LOGPUBLICSWAPTOGGLED event raised by the Logswap contract.
+type LogswapLOGPUBLICSWAPTOGGLED struct {
+	Enabled bool
+	Raw     types.Log // Blockchain specific contextual infos
+}
+
+// FilterLOGPUBLICSWAPTOGGLED is a free log retrieval operation binding the contract event 0x40fc85fbff9305015298ba6fcee88b7e442a64cc803ddb889327680bbd62270a.
+//
+// Solidity: event LOG_PUBLIC_SWAP_TOGGLED(bool enabled)
+func (_Logswap *LogswapFilterer) FilterLOGPUBLICSWAPTOGGLED(opts *bind.FilterOpts) (*LogswapLOGPUBLICSWAPTOGGLEDIterator, error) {
+
+	logs, sub, err := _Logswap.contract.FilterLogs(opts, "LOG_PUBLIC_SWAP_TOGGLED")
+	if err != nil {
+		return nil, err
+	}
+	return &LogswapLOGPUBLICSWAPTOGGLEDIterator{contract: _Logswap.contract, event: "LOG_PUBLIC_SWAP_TOGGLED", logs: logs, sub: sub}, nil
+}
+
+// WatchLOGPUBLICSWAPTOGGLED is a free log subscription operation binding the contract event 0x40fc85fbff9305015298ba6fcee88b7e442a64cc803ddb889327680bbd62270a.
+//
+// Solidity: event LOG_PUBLIC_SWAP_TOGGLED(bool enabled)
+func (_Logswap *LogswapFilterer) WatchLOGPUBLICSWAPTOGGLED(opts *bind.WatchOpts, sink chan<- *LogswapLOGPUBLICSWAPTOGGLED) (event.Subscription, error) {
+
+	logs, sub, err := _Logswap.contract.WatchLogs(opts, "LOG_PUBLIC_SWAP_TOGGLED")
+	if err != nil {
+		return nil, err
+	}
+	return event.NewSubscription(func(quit <-chan struct{}) error {
+		defer sub.Unsubscribe()
+		for {
+			select {
+			case log := <-logs:
+				// New log arrived, parse the event and forward to the user
+				event := new(LogswapLOGPUBLICSWAPTOGGLED)
+				if err := _Logswap.contract.UnpackLog(event, "LOG_PUBLIC_SWAP_TOGGLED", log); err != nil {
+					return err
+				}
+				event.Raw = log
+
+				select {
+				case sink <- event:
+				case err := <-sub.Err():
+					return err
+				case <-quit:
+					return nil
+				}
+			case err := <-sub.Err():
+				return err
+			case <-quit:
+				return nil
+			}
+		}
+	}), nil
+}
+
+// ParseLOGPUBLICSWAPTOGGLED is a log parse operation binding the contract event 0x40fc85fbff9305015298ba6fcee88b7e442a64cc803ddb889327680bbd62270a.
+//
+// Solidity: event LOG_PUBLIC_SWAP_TOGGLED(bool enabled)
+func (_Logswap *LogswapFilterer) ParseLOGPUBLICSWAPTOGGLED(log types.Log) (*LogswapLOGPUBLICSWAPTOGGLED, error) {
+	event := new(LogswapLOGPUBLICSWAPTOGGLED)
+	if err := _Logswap.contract.UnpackLog(event, "LOG_PUBLIC_SWAP_TOGGLED", log); err != nil {
+		return nil, err
+	}
+	event.Raw = log
+	return event, nil
 }
 
 // LogswapLOGSWAPIterator is returned from FilterLOGSWAP and is used to iterate over the raw logs and unpacked data for LOGSWAP events raised by the Logswap contract.

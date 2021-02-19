@@ -100,7 +100,7 @@ version: "3.5"
 services:
   contract-watcher:
     image: indexed-finance/circuit-breaker:v0.0.2
-    command: "contract-watcher"
+    command: "services contract-watcher"
     depends_on:
       - postgres
       - block-listener
@@ -109,7 +109,7 @@ services:
   block-listener:
     image: indexed-finance/circuit-breaker:v0.0.2
     restart: always
-    command: "--db.migrate block-listener"
+    command: "--db.migrate services block-listener"
     depends_on:
       - postgres
     volumes: 
@@ -132,7 +132,7 @@ version: "3.5"
 services:
   contract-watcher:
     image: indexed-finance/circuit-breaker:v0.0.2
-    command: "contract-watcher"
+    command: "services contract-watcher"
     depends_on:
       - postgres
       - block-listener
@@ -142,7 +142,7 @@ services:
   block-listener:
     image: indexed-finance/circuit-breaker:v0.0.2
     restart: always
-    command: "--db.migrate block-listener"
+    command: "--db.migrate services block-listener"
     depends_on:
       - postgres
     volumes: 

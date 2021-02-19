@@ -6,8 +6,8 @@ import (
 	"testing"
 
 	"github.com/bonedaddy/go-indexed/bclient"
-	poolbindings "github.com/bonedaddy/go-indexed/bindings/pool"
 	"github.com/ethereum/go-ethereum/common"
+	"github.com/indexed-finance/circuit-breaker/bindings/sigmacore"
 	"github.com/indexed-finance/circuit-breaker/config"
 	"github.com/stretchr/testify/require"
 )
@@ -33,14 +33,14 @@ func TestPoolTokensFor(t *testing.T) {
 	cfg := getConfig(t)
 	bc, err := bclient.NewInfuraClient(cfg.InfuraAPIKey, true)
 	require.NoError(t, err)
-	var defi5, cc10 *poolbindings.Poolbindings
+	var defi5, cc10 *sigmacore.Sigmacore
 	for _, pool := range cfg.Pools {
 		switch strings.ToLower(pool.Name) {
 		case "cc10":
-			cc10, err = poolbindings.NewPoolbindings(common.HexToAddress(pool.ContractAddress), bc.EthClient())
+			cc10, err = sigmacore.NewSigmacore(common.HexToAddress(pool.ContractAddress), bc.EthClient())
 			require.NoError(t, err)
 		case "defi5":
-			defi5, err = poolbindings.NewPoolbindings(common.HexToAddress(pool.ContractAddress), bc.EthClient())
+			defi5, err = sigmacore.NewSigmacore(common.HexToAddress(pool.ContractAddress), bc.EthClient())
 			require.NoError(t, err)
 		}
 	}

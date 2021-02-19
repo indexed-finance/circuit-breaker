@@ -9,9 +9,11 @@ import (
 	"time"
 
 	"github.com/bonedaddy/go-indexed/bclient"
-	poolbindings "github.com/bonedaddy/go-indexed/bindings/pool"
+	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/indexed-finance/circuit-breaker/alerts"
+	"github.com/indexed-finance/circuit-breaker/bindings/sigmacore"
 	"github.com/indexed-finance/circuit-breaker/config"
 	"github.com/indexed-finance/circuit-breaker/database"
 	"github.com/indexed-finance/circuit-breaker/multicall"
@@ -65,7 +67,7 @@ func TestService(t *testing.T) {
 	require.NoError(t, err)
 	mc, err := multicall.New(ctx, cfg.MultiCallAddress, bc.EthClient())
 	require.NoError(t, err)
-	srv, err := New(ctx, alerts.New(logger, cfg.Alerts), mc, db, bc, auther, logger, cfg.Pools)
+	srv, err := New(ctx, alerts.New(logger, cfg.Alerts), mc, db, bc, auther, logger, cfg.Pools, cfg.EthereumAccount.GasPrice)
 	require.NoError(t, err)
 	var (
 		preCreateBlock                                      uint64
@@ -84,7 +86,7 @@ func TestService(t *testing.T) {
 		case "defi5":
 			nonStalePool = "cc10"
 		}
-		contract, err := poolbindings.NewPoolbindings(common.HexToAddress(pool.ContractAddress), srv.ew.BC().EthClient())
+		contract, err := sigmacore.NewSigmacore(common.HexToAddress(pool.ContractAddress), srv.ew.BC().EthClient())
 		require.NoError(t, err)
 		tokens, err := utils.PoolTokensFor(contract, srv.ew.BC().EthClient())
 		require.NoError(t, err)
@@ -140,7 +142,7 @@ func TestService(t *testing.T) {
 	t.Run("FreshPoolValidate", func(t *testing.T) {
 		pool, err := srv.db.GetPool(nonStalePool)
 		require.NoError(t, err)
-		contract, err := poolbindings.NewPoolbindings(common.HexToAddress(pool.ContractAddress), srv.ew.BC().EthClient())
+		contract, err := sigmacore.NewSigmacore(common.HexToAddress(pool.ContractAddress), srv.ew.BC().EthClient())
 		require.NoError(t, err)
 		poolTokens, err := utils.PoolTokensFor(contract, srv.ew.BC().EthClient())
 		require.NoError(t, err)
@@ -190,6 +192,12 @@ func TestService(t *testing.T) {
 
 	})
 	t.Run("CircuitBreakCheck", func(t *testing.T) {
+		tx, _, err := srv.ew.BC().EthClient().TransactionByHash(
+			ctx,
+			common.HexToHash("0x5b6d669d3a27795f6f162737115a5e605157fb26465de23292c55e9739a198e8"),
+		)
+		require.NoError(t, err)
+		fakeSwap := newFakePublicSwap(tx)
 		type args struct {
 			token         string
 			supply        interface{}
@@ -320,6 +328,7 @@ func TestService(t *testing.T) {
 					tt.args.supply,
 					tt.args.totalSupplies,
 					tt.args.pool,
+					fakeSwap,
 				)
 				if (err != nil) != tt.wantErr {
 					t.Errorf("circuitBreakCheck err %v, wantErr %v", err, tt.wantErr)
@@ -356,4 +365,18 @@ func getFakeBalancesWeightsAndSupplies(
 		i++
 	}
 	return
+}
+
+type fakePublicSwap struct {
+	tx *types.Transaction
+}
+
+// returns a fake public swap struct for use with the circuitBreakCheck
+// function, you must provide a transaction hash that has already been mined
+func newFakePublicSwap(tx *types.Transaction) *fakePublicSwap {
+	return &fakePublicSwap{tx: tx}
+}
+
+func (fpb *fakePublicSwap) SetPublicSwap(opts *bind.TransactOpts, pool common.Address, enabled bool) (*types.Transaction, error) {
+	return fpb.tx, nil
 }

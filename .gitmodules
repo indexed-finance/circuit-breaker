@@ -1,0 +1,3 @@
+[submodule "sigma-core"]
+	path = sigma-core
+	url = https://github.com/indexed-finance/sigma-core.git

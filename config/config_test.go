@@ -1,10 +1,12 @@
 package config
 
 import (
+	"math/big"
 	"os"
 	"strings"
 	"testing"
 
+	"github.com/shopspring/decimal"
 	"github.com/stretchr/testify/require"
 )
 
@@ -49,4 +51,15 @@ func TestLoggerFullOpts(t *testing.T) {
 	})
 	require.NoError(t, err)
 	require.NoError(t, logger.Sync())
+}
+
+func TestToWei(t *testing.T) {
+
+	amount := decimal.NewFromFloat(0.02)
+	got := ToWei(amount, 18)
+	expected := new(big.Int)
+	expected.SetString("20000000000000000", 10)
+	if got.Cmp(expected) != 0 {
+		t.Errorf("Expected %s, got %s", expected, got)
+	}
 }

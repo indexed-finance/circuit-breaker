@@ -9,14 +9,27 @@ contract LogSwapTest {
         uint256 tokenAmountIn,
         uint256 tokenAmountOut
     );
-
+  /** @dev Emitted when public trades are disabled. */
+  event LOG_PUBLIC_SWAP_TOGGLED(bool enabled);
     uint256 internal bigRando = 1;
     string public symbol = "CC10";
     uint8 public decimal = 18;
     uint256 public _swapFee = 25000000000000000; // 2.5%
+    bool internal _publicSwap;
 
     function emitLogSwap(uint256 outAmount, uint256 inAmount) public {
         emit LOG_SWAP(msg.sender, msg.sender, msg.sender, inAmount, outAmount);
+    }
+    function emitPublicSwap(bool enabled) external {
+        emit LOG_PUBLIC_SWAP_TOGGLED(enabled);
+    }
+    function setPublicSwap(bool enabled) external {
+        _publicSwap = enabled;
+    }
+
+    // this is an overridden method for testing purposes
+    function setPublicSwap(address pool, bool enabled) external {
+        _publicSwap = enabled;
     }
 
     // note: this is used to generate a random denorm weight for testing purposes
@@ -57,6 +70,10 @@ contract LogSwapTest {
         uint256 inPrice = uint256(keccak256(abi.encodePacked(block.timestamp, msg.sender, bigRando, tokenIn))) % 250;
         uint256 outPrice = uint256(keccak256(abi.encodePacked(block.timestamp, msg.sender, bigRando, tokenOut))) % 250;
         return (inPrice * (1 ether)) + (outPrice * (1 ether));
+    }
+
+    function getController() public view returns (address) {
+        return address(this);
     }
 
     function totalSupply() public view returns (uint256) {

@@ -13,10 +13,12 @@ import (
 	"github.com/BurntSushi/locker"
 	"github.com/bonedaddy/go-indexed/bclient"
 	"github.com/bonedaddy/go-indexed/bindings/erc20"
-	poolbindings "github.com/bonedaddy/go-indexed/bindings/pool"
+	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/indexed-finance/circuit-breaker/alerts"
+	"github.com/indexed-finance/circuit-breaker/bindings/controller"
+	"github.com/indexed-finance/circuit-breaker/bindings/sigmacore"
 	"github.com/indexed-finance/circuit-breaker/config"
 	"github.com/indexed-finance/circuit-breaker/database"
 	"github.com/indexed-finance/circuit-breaker/eventwatcher"
@@ -38,10 +40,12 @@ type Service struct {
 	cancel context.CancelFunc
 	start  sync.Once
 	// pools represents the index pools to process
-	pools     []config.Pool
-	mx        sync.RWMutex
-	wg        sync.WaitGroup
-	namedLock *locker.Locker
+	pools         []config.Pool
+	mx            sync.RWMutex
+	wg            sync.WaitGroup
+	namedLock     *locker.Locker
+	minimumGwei   *big.Int
+	gasMultiplier *big.Int
 }
 
 // New intializes all needed modules and returns a ready to consume service
@@ -53,19 +57,32 @@ func New(
 	bc *bclient.Client,
 	auther *utils.Authorizer,
 	logger *zap.Logger,
-	pools []config.Pool) (*Service, error) {
+	pools []config.Pool,
+	gasConfig config.GasPrice) (*Service, error) {
 	ctx, cancel := context.WithCancel(ctx)
+	minimumGwei, ok := new(big.Int).SetString(gasConfig.MinimumGwei, 10)
+	if !ok {
+		cancel()
+		return nil, errors.New("failed to parse minimum gwei config")
+	}
+	gasMultiplier, ok := new(big.Int).SetString(gasConfig.Multiplier, 10)
+	if !ok {
+		cancel()
+		return nil, errors.New("failed to parse gas multiplier")
+	}
 	return &Service{
-		db:        db,
-		ew:        eventwatcher.New(bc),
-		logger:    logger.Named("service"),
-		mc:        mc,
-		at:        alert,
-		auther:    auther,
-		ctx:       ctx,
-		cancel:    cancel,
-		pools:     pools,
-		namedLock: locker.NewLocker(),
+		db:            db,
+		ew:            eventwatcher.New(bc),
+		logger:        logger.Named("service"),
+		mc:            mc,
+		at:            alert,
+		auther:        auther,
+		ctx:           ctx,
+		cancel:        cancel,
+		pools:         pools,
+		namedLock:     locker.NewLocker(),
+		minimumGwei:   minimumGwei,
+		gasMultiplier: gasMultiplier,
 	}, nil
 }
 
@@ -87,7 +104,7 @@ func (s *Service) Prepare() error {
 		}
 		for _, pool := range s.pools {
 			// construct the pool contract bindings
-			contract, err := poolbindings.NewPoolbindings(common.HexToAddress(pool.ContractAddress), s.ew.BC().EthClient())
+			contract, err := sigmacore.NewSigmacore(common.HexToAddress(pool.ContractAddress), s.ew.BC().EthClient())
 			if err != nil {
 				s.logger.Error("failed to get pool contract bindings")
 				startErr = err
@@ -186,7 +203,7 @@ func (s *Service) StartWatchers() error {
 		return err
 	}
 
-	watchers, err := s.ew.NewWatchedContracts(s.logger, s.ew.BC().EthClient(), bindings)
+	watchers, err := s.ew.NewWatchedContracts(s.logger, s.ew.BC().EthClient(), bindings, s.minimumGwei, s.gasMultiplier)
 	if err != nil {
 		return err
 	}
@@ -207,7 +224,7 @@ func (s *Service) StartWatchers() error {
 	for _, watcher := range watchers {
 		go func(wtchr *eventwatcher.WatchedContract, bkPercent float64) {
 			defer s.wg.Done()
-			if err := wtchr.Listen(ctx, s.db, s.at, s.auther, bkPercent); err != nil {
+			if err := wtchr.Listen(ctx, s.db, s.at, s.auther, bkPercent, s.ew.BC().EthClient()); err != nil {
 				errCh <- err
 			}
 		}(watcher, spotPriceBreakPercentages[watcher.Name()])
@@ -282,7 +299,7 @@ func (s *Service) StartBlockListener() error {
 					s.logger.Info("updating pool information (supply, balances, weights)", zap.String("pool", pool.Name), zap.Uint64("block.num", blockNum))
 
 					// create bindings for the given contract
-					contract, err := poolbindings.NewPoolbindings(
+					contract, err := sigmacore.NewSigmacore(
 						common.HexToAddress(pool.ContractAddress),
 						s.ew.BC().EthClient(),
 					)
@@ -290,7 +307,6 @@ func (s *Service) StartBlockListener() error {
 						s.logger.Error("failed to get contract binding", zap.Error(err), zap.String("pool", pool.Name))
 						return
 					}
-
 					// update the information stored in the database
 					_, _, totalSupplies, err := s.UpdateBalancesWeightsAndSupplies(blockNum, pool, contract)
 					if err != nil {
@@ -302,8 +318,17 @@ func (s *Service) StartBlockListener() error {
 						// check the total supply for the given token
 						// however if it fails dont abort processing, continue processing
 						// as other tokens may need to be checked
-						if err := s.circuitBreakCheck(tok, supply, totalSupplies, pool); err != nil {
-							s.logger.Error("circuitBreakCheck failed", zap.Error(err), zap.String("pool", pool.Name), zap.String("token", tok))
+						if controllerAddress, err := contract.GetController(nil); err != nil {
+							s.logger.Error("failed to get controller address", zap.Error(err), zap.String("pool", pool.Name), zap.String("token", tok))
+						} else {
+							conContract, err := controller.NewController(controllerAddress, s.ew.BC().EthClient())
+							if err != nil {
+								s.logger.Error("failed to get controller contract", zap.Error(err), zap.String("pool", pool.Name), zap.String("token", tok))
+							} else {
+								if err := s.circuitBreakCheck(tok, supply, totalSupplies, pool, conContract); err != nil {
+									s.logger.Error("circuitBreakCheck failed", zap.Error(err), zap.String("pool", pool.Name), zap.String("token", tok))
+								}
+							}
 						}
 					}
 
@@ -344,6 +369,7 @@ func (s *Service) circuitBreakCheck(
 	tok string, supply interface{},
 	totalSupplies map[string]interface{},
 	pool config.Pool,
+	contract utils.Breaker,
 ) error {
 
 	oldSupplyStr, ok := supply.(string)
@@ -400,7 +426,18 @@ func (s *Service) circuitBreakCheck(
 
 		// lock the authorizer since bind.TransactOpts is not threadsafe
 		s.auther.Lock()
-		// TODO(bonedaddy): replace with actual circuit break transaction
+		// get gas price for break transactoin
+		gasPrice, err := utils.GetGasPrice(s.ctx, s.ew.BC().EthClient(), s.minimumGwei, s.gasMultiplier)
+		if err != nil {
+			s.logger.Error("failed to suggest gasprice", zap.Error(err))
+		} else {
+			s.logger.Info("gas price calculated (includes boost)", zap.String("gas.price", gasPrice.String()))
+			s.setPublicSwap(contract, gasPrice, pool.Name, tok, pool.ContractAddress)
+		}
+		// we need to unset the gas price that we overrode the transactor with
+		// so that future uses of this transactor have the gas price set to nil
+		// this is set within the setPublicSwap call
+		s.auther.TransactOpts.GasPrice = nil
 		s.auther.Unlock()
 
 		if err := s.at.NotifyCircuitBreak(
@@ -426,5 +463,46 @@ func (s *Service) purgeInfoCheck(name string) {
 				s.logger.Error("failed to purge old infos", zap.Error(err))
 			}
 		}
+	}
+}
+
+func (s *Service) setPublicSwap(
+	contract utils.Breaker,
+	gasPrice *big.Int, poolName, tokenName, poolAddress string,
+) {
+	s.auther.GasPrice = gasPrice
+	if tx, err := contract.SetPublicSwap(s.auther.TransactOpts, common.HexToAddress(poolAddress), false); err != nil {
+		s.logger.Error(
+			"failed to broadcast public swap disable transaction",
+			zap.Error(err),
+			zap.String("pool", poolName),
+			zap.String("token", tokenName),
+		)
+	} else {
+		s.wg.Add(1)
+		go func() {
+			defer s.wg.Done()
+			s.logger.Warn(
+				"waiting for public swap disable transaction to be mined",
+				zap.String("pool", poolName),
+				zap.String("token", tokenName),
+				zap.String("tx.hash", tx.Hash().String()),
+			)
+			if rcpt, err := bind.WaitMined(s.ctx, s.ew.BC().EthClient(), tx); err != nil {
+				s.logger.Error(
+					"transaction failed to be mined",
+					zap.String("pool", poolName),
+					zap.String("token", tokenName),
+					zap.String("tx.hash", tx.Hash().String()),
+				)
+			} else {
+				s.logger.Warn(
+					"transaction mined",
+					zap.String("pool", poolName),
+					zap.String("token", tokenName),
+					zap.Any("receipt", rcpt),
+				)
+			}
+		}()
 	}
 }

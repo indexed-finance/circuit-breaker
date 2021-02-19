@@ -21,6 +21,9 @@ import (
 )
 
 func run(c *cli.Context, mode string, cfg *config.Config) error {
+	if mode != "combined" && cfg.Database.Type == "sqlite" {
+		return errors.New("sqlite database only supported in combined mode")
+	}
 	ch := make(chan os.Signal, 1)
 	signal.Notify(ch, syscall.SIGINT, syscall.SIGQUIT, syscall.SIGTERM, os.Interrupt)
 	ctx, cancel := context.WithCancel(c.Context)
@@ -66,7 +69,7 @@ func run(c *cli.Context, mode string, cfg *config.Config) error {
 		return err
 	}
 	logger.Info("initializing service")
-	srv, err := service.New(ctx, alerts.New(logger, cfg.Alerts), mc, db, bc, auther, logger, cfg.Pools)
+	srv, err := service.New(ctx, alerts.New(logger, cfg.Alerts), mc, db, bc, auther, logger, cfg.Pools, cfg.EthereumAccount.GasPrice)
 	if err != nil {
 		db.Close()
 		return err

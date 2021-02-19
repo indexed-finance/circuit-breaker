@@ -9,11 +9,11 @@ import (
 	"time"
 
 	"github.com/bonedaddy/bdsm/testenv"
-	poolbindings "github.com/bonedaddy/go-indexed/bindings/pool"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/indexed-finance/circuit-breaker/alerts"
 	"github.com/indexed-finance/circuit-breaker/bindings/logswap"
+	"github.com/indexed-finance/circuit-breaker/bindings/sigmacore"
 	"github.com/indexed-finance/circuit-breaker/config"
 	"github.com/indexed-finance/circuit-breaker/database"
 	"github.com/indexed-finance/circuit-breaker/utils"
@@ -58,11 +58,21 @@ func TestWatchedContract(t *testing.T) {
 	_, err = tenv.DoWaitDeployed(tx)
 	require.NoError(t, err)
 	ew := &EventWatcher{}
-	pool, err := poolbindings.NewPoolbindings(addr, tenv)
+	pool, err := sigmacore.NewSigmacore(addr, tenv)
 	require.NoError(t, err)
 	/*logger, err := zap.NewDevelopment()
 	require.NoError(t, err)*/
-	watched, err := ew.NewWatchedContracts(zap.NewNop(), tenv, map[string]*poolbindings.Poolbindings{"cc10": pool})
+	minimumGwei, ok := new(big.Int).SetString(cfg.EthereumAccount.GasPrice.MinimumGwei, 10)
+	require.True(t, ok)
+	multiplier, ok := new(big.Int).SetString(cfg.EthereumAccount.GasPrice.Multiplier, 10)
+	require.True(t, ok)
+	watched, err := ew.NewWatchedContracts(
+		zap.NewNop(),
+		tenv,
+		map[string]*sigmacore.Sigmacore{"cc10": pool},
+		minimumGwei,
+		multiplier,
+	)
 	require.NoError(t, err)
 	require.Equal(t, watched[0].Name(), "cc10")
 
@@ -95,7 +105,7 @@ func TestWatchedContract(t *testing.T) {
 	wg.Add(1)
 	go func() {
 		defer wg.Done()
-		watchedContract.Listen(ctx, db, alerts.New(zap.NewNop(), cfg.Alerts), authorizer, 0.1)
+		watchedContract.Listen(ctx, db, alerts.New(zap.NewNop(), cfg.Alerts), authorizer, 0.1, nil)
 	}()
 
 	// we need to spoof some information for easier testing
@@ -109,7 +119,7 @@ func TestWatchedContract(t *testing.T) {
 			require.NoError(t, err)
 			require.NoError(t, tenv.DoWaitMined(tx))
 		}()
-		evLog1 := <-watchedContract.NotifChan()
+		evLog1 := <-watchedContract.NotifChanSwap()
 		currSpot1, err := watchedContract.getCurrentSpotPrice(evLog1)
 		require.NoError(t, err)
 		require.NotEqual(t, 0, currSpot1.Cmp(big.NewInt(0)))
@@ -137,7 +147,7 @@ func TestWatchedContract(t *testing.T) {
 			require.NoError(t, tenv.DoWaitMined(tx))
 		}()
 
-		evLog2 := <-watchedContract.NotifChan()
+		evLog2 := <-watchedContract.NotifChanSwap()
 		currSpot2, err := watchedContract.getCurrentSpotPrice(evLog2)
 		require.NoError(t, err)
 		require.NotEqual(t, 0, currSpot2.Cmp(big.NewInt(0)))
@@ -145,9 +155,38 @@ func TestWatchedContract(t *testing.T) {
 		_, err = watchedContract.getPreviousSpotPrice(db, evLog2, utils.ToWei("0.025", 18))
 		require.NoError(t, err)
 	})
+	t.Run("TestSetPublicSwap", func(t *testing.T) {
+		go func() {
+			time.Sleep(time.Second)
+			tx, err := logswapper.EmitPublicSwap(tenv.Auth, true)
+			require.NoError(t, err)
+			require.NoError(t, tenv.DoWaitMined(tx))
+		}()
+		evLog1 := <-watchedContract.notifToggleCh
+		require.True(t, evLog1.Enabled)
+		// lock to prevent race
+		watchedContract.brokenLock.Lock()
+		require.False(t, watchedContract.broken)
+		watchedContract.brokenLock.Unlock()
+		go func() {
+			time.Sleep(time.Second)
+			tx, err := logswapper.EmitPublicSwap(tenv.Auth, false)
+			require.NoError(t, err)
+			require.NoError(t, tenv.DoWaitMined(tx))
+		}()
+		evLog2 := <-watchedContract.notifToggleCh
+		require.False(t, evLog2.Enabled)
+		// lock to prevent race
+		watchedContract.brokenLock.Lock()
+		require.True(t, watchedContract.broken)
+		watchedContract.brokenLock.Unlock()
+	})
 
 	// now lets send an event to trigger the removed log code
-	watchedContract.evCh <- &poolbindings.PoolbindingsLOGSWAP{Raw: types.Log{Removed: true}}
+	watchedContract.swapCh <- &sigmacore.SigmacoreLOGSWAP{Raw: types.Log{Removed: true}}
+	watchedContract.toggleCh <- &sigmacore.SigmacoreLOGPUBLICSWAPTOGGLED{Raw: types.Log{Removed: true}}
+
+	// send a genearlized
 	time.Sleep(time.Second * 3)
 	cancel()
 	wg.Wait()
