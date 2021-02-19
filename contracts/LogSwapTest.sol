@@ -9,7 +9,8 @@ contract LogSwapTest {
         uint256 tokenAmountIn,
         uint256 tokenAmountOut
     );
-
+  /** @dev Emitted when public trades are disabled. */
+  event LOG_PUBLIC_SWAP_TOGGLED(bool enabled);
     uint256 internal bigRando = 1;
     string public symbol = "CC10";
     uint8 public decimal = 18;
@@ -19,7 +20,9 @@ contract LogSwapTest {
     function emitLogSwap(uint256 outAmount, uint256 inAmount) public {
         emit LOG_SWAP(msg.sender, msg.sender, msg.sender, inAmount, outAmount);
     }
-
+    function emitPublicSwap(bool enabled) external {
+        emit LOG_PUBLIC_SWAP_TOGGLED(enabled);
+    }
     function setPublicSwap(bool enabled) external {
         _publicSwap = enabled;
     }

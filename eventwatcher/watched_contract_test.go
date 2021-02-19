@@ -119,7 +119,7 @@ func TestWatchedContract(t *testing.T) {
 			require.NoError(t, err)
 			require.NoError(t, tenv.DoWaitMined(tx))
 		}()
-		evLog1 := <-watchedContract.NotifChan()
+		evLog1 := <-watchedContract.NotifChanSwap()
 		currSpot1, err := watchedContract.getCurrentSpotPrice(evLog1)
 		require.NoError(t, err)
 		require.NotEqual(t, 0, currSpot1.Cmp(big.NewInt(0)))
@@ -147,7 +147,7 @@ func TestWatchedContract(t *testing.T) {
 			require.NoError(t, tenv.DoWaitMined(tx))
 		}()
 
-		evLog2 := <-watchedContract.NotifChan()
+		evLog2 := <-watchedContract.NotifChanSwap()
 		currSpot2, err := watchedContract.getCurrentSpotPrice(evLog2)
 		require.NoError(t, err)
 		require.NotEqual(t, 0, currSpot2.Cmp(big.NewInt(0)))
@@ -155,9 +155,38 @@ func TestWatchedContract(t *testing.T) {
 		_, err = watchedContract.getPreviousSpotPrice(db, evLog2, utils.ToWei("0.025", 18))
 		require.NoError(t, err)
 	})
+	t.Run("TestSetPublicSwap", func(t *testing.T) {
+		go func() {
+			time.Sleep(time.Second)
+			tx, err := logswapper.EmitPublicSwap(tenv.Auth, true)
+			require.NoError(t, err)
+			require.NoError(t, tenv.DoWaitMined(tx))
+		}()
+		evLog1 := <-watchedContract.notifToggleCh
+		require.True(t, evLog1.Enabled)
+		// lock to prevent race
+		watchedContract.brokenLock.Lock()
+		require.False(t, watchedContract.broken)
+		watchedContract.brokenLock.Unlock()
+		go func() {
+			time.Sleep(time.Second)
+			tx, err := logswapper.EmitPublicSwap(tenv.Auth, false)
+			require.NoError(t, err)
+			require.NoError(t, tenv.DoWaitMined(tx))
+		}()
+		evLog2 := <-watchedContract.notifToggleCh
+		require.False(t, evLog2.Enabled)
+		// lock to prevent race
+		watchedContract.brokenLock.Lock()
+		require.True(t, watchedContract.broken)
+		watchedContract.brokenLock.Unlock()
+	})
 
 	// now lets send an event to trigger the removed log code
-	watchedContract.evCh <- &sigmacore.SigmacoreLOGSWAP{Raw: types.Log{Removed: true}}
+	watchedContract.swapCh <- &sigmacore.SigmacoreLOGSWAP{Raw: types.Log{Removed: true}}
+	watchedContract.toggleCh <- &sigmacore.SigmacoreLOGPUBLICSWAPTOGGLED{Raw: types.Log{Removed: true}}
+
+	// send a genearlized
 	time.Sleep(time.Second * 3)
 	cancel()
 	wg.Wait()

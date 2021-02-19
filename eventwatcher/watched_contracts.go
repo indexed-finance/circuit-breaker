@@ -23,11 +23,12 @@ import (
 
 // WatchedContract is a singular watched contract
 type WatchedContract struct {
-	name           string
-	binding        *sigmacore.Sigmacore
-	evCh           chan *sigmacore.SigmacoreLOGSWAP
-	notifCh        chan *sigmacore.SigmacoreLOGSWAP // duplicate of evCh to send events to watchers
-	sub            event.Subscription
+	name    string
+	binding *sigmacore.Sigmacore
+
+	notifSwapCh   chan *sigmacore.SigmacoreLOGSWAP              // duplicate of swapCh to send events to watchers
+	notifToggleCh chan *sigmacore.SigmacoreLOGPUBLICSWAPTOGGLED // duplicate of toggleCh to send events to watchers
+
 	logger         *zap.Logger
 	tokenAddresses map[string]common.Address
 	tokenNames     map[common.Address]string
@@ -36,8 +37,18 @@ type WatchedContract struct {
 	controller     *controller.Controller
 	minimumGwei    *big.Int
 	gasMultiplier  *big.Int
-	breakLock      sync.Mutex
-	breaking       bool
+
+	breakLock sync.Mutex
+	breaking  bool
+
+	brokenLock sync.Mutex
+	broken     bool
+
+	toggleCh  chan *sigmacore.SigmacoreLOGPUBLICSWAPTOGGLED
+	toggleSub event.Subscription
+
+	swapCh  chan *sigmacore.SigmacoreLOGSWAP
+	swapSub event.Subscription
 }
 
 // NewWatchedContracts initializes watched contracts and prepares them for event listening
@@ -49,8 +60,13 @@ func (ew *EventWatcher) NewWatchedContracts(
 ) ([]*WatchedContract, error) {
 	out := make([]*WatchedContract, 0)
 	for name, contract := range bindings {
-		ch := make(chan *sigmacore.SigmacoreLOGSWAP, 100) // todo: we may want to change this in the future
-		sub, err := contract.WatchLOGSWAP(nil, ch, nil, nil, nil)
+		swapCh := make(chan *sigmacore.SigmacoreLOGSWAP, 100) // todo: we may want to change this in the future
+		swapSub, err := contract.WatchLOGSWAP(nil, swapCh, nil, nil, nil)
+		if err != nil {
+			return nil, err
+		}
+		toggleCh := make(chan *sigmacore.SigmacoreLOGPUBLICSWAPTOGGLED, 100)
+		toggleSub, err := contract.WatchLOGPUBLICSWAPTOGGLED(nil, toggleCh)
 		if err != nil {
 			return nil, err
 		}
@@ -78,9 +94,10 @@ func (ew *EventWatcher) NewWatchedContracts(
 		out = append(out, &WatchedContract{
 			name:           name,
 			binding:        contract,
-			evCh:           ch,
-			notifCh:        make(chan *sigmacore.SigmacoreLOGSWAP),
-			sub:            sub,
+			swapCh:         swapCh,
+			notifSwapCh:    make(chan *sigmacore.SigmacoreLOGSWAP),
+			notifToggleCh:  make(chan *sigmacore.SigmacoreLOGPUBLICSWAPTOGGLED),
+			swapSub:        swapSub,
 			logger:         logger.Named("contract.watcher").With(zap.String("pool", name)),
 			tokenAddresses: addrs,
 			tokenNames:     names,
@@ -88,6 +105,8 @@ func (ew *EventWatcher) NewWatchedContracts(
 			controller:     control,
 			minimumGwei:    minimumGwei,
 			gasMultiplier:  gasMultiplier,
+			toggleCh:       toggleCh,
+			toggleSub:      toggleSub,
 		})
 	}
 	return out, nil
@@ -95,6 +114,15 @@ func (ew *EventWatcher) NewWatchedContracts(
 
 // Listen stars the watche contract listening process waiting for incoming events
 func (wc *WatchedContract) Listen(ctx context.Context, db *database.Database, alerter *alerts.Alerter, authorizer *utils.Authorizer, breakPercentage float64, ec *ethclient.Client) error {
+	// register channel closures to prevent possible issues
+	defer func() {
+		wc.toggleSub.Unsubscribe()
+		wc.swapSub.Unsubscribe()
+		close(wc.swapCh)
+		close(wc.notifSwapCh)
+		close(wc.notifToggleCh)
+		close(wc.toggleCh)
+	}()
 	wc.logger.Info("contract watcher started listening for events")
 	// get the pool contract address
 	dbInfo, err := db.GetPool(wc.name)
@@ -105,18 +133,36 @@ func (wc *WatchedContract) Listen(ctx context.Context, db *database.Database, al
 	for {
 		select {
 		case <-ctx.Done():
-			wc.sub.Unsubscribe()
-			close(wc.evCh)
-			close(wc.notifCh)
 			return nil
-		case err := <-wc.sub.Err():
-			wc.logger.Error("event subscription error received", zap.Error(err))
-			wc.sub.Unsubscribe()
-			close(wc.evCh)
-			close(wc.notifCh)
+		case err := <-wc.toggleSub.Err():
+			wc.logger.Error("toggle subscription error received", zap.Error(err))
 			return err
-		case evLog := <-wc.evCh:
-			wc.logger.Debug("received new event", zap.Any("event", evLog))
+		case err := <-wc.swapSub.Err():
+			wc.logger.Error("event subscription error received", zap.Error(err))
+			return err
+		case evLog := <-wc.toggleCh:
+			wc.logger.Debug("received new event (swap toggle)", zap.Any("event", evLog))
+			// skip reverted logs
+			if evLog.Raw.Removed {
+				wc.logger.Warn("event was marked as removed by blockchain due to reorg")
+				continue
+			}
+
+			select {
+			case wc.notifToggleCh <- evLog:
+			default:
+			}
+
+			wc.brokenLock.Lock()
+			if !evLog.Enabled { // indicates swap has been disabled
+				wc.broken = true
+			} else {
+				wc.broken = false
+			}
+			wc.brokenLock.Unlock()
+
+		case evLog := <-wc.swapCh:
+			wc.logger.Debug("received new event (log swap)", zap.Any("event", evLog))
 			// skip reverted logs
 			if evLog.Raw.Removed {
 				wc.logger.Warn("event was marked as removed by blockchain due to reorg")
@@ -125,7 +171,7 @@ func (wc *WatchedContract) Listen(ctx context.Context, db *database.Database, al
 
 			// send event to watchers
 			select {
-			case wc.notifCh <- evLog:
+			case wc.notifSwapCh <- evLog:
 			default:
 			}
 
@@ -175,11 +221,25 @@ func (wc *WatchedContract) Listen(ctx context.Context, db *database.Database, al
 				// and if the change is outside the break precentage window
 				// to do this we calculate the absolute value of the change percentage
 				if math.Abs(change) >= breakPercentage {
+
+					// if the circuit is already broken there is no need to send another transaction
+					wc.brokenLock.Lock()
+					if wc.broken {
+						wc.logger.Warn(
+							"price fluctuation outside of acceptable bounds, but circuit already broken this indicates we had some delayed events",
+						)
+						wc.brokenLock.Unlock()
+						continue
+					}
+					wc.brokenLock.Unlock()
+
 					wc.logger.Warn(
 						"price fluctuation outside of acceptable bounds, breaking!",
 					)
+
 					// lock the authorizer since bind.TransactOpts is not threadsafe
 					authorizer.Lock()
+
 					gasPrice, err := utils.GetGasPrice(ctx, wc.backend, wc.minimumGwei, wc.gasMultiplier)
 					if err != nil {
 						wc.logger.Error("failed to suggest gasprice", zap.Error(err))
@@ -187,6 +247,7 @@ func (wc *WatchedContract) Listen(ctx context.Context, db *database.Database, al
 						wc.logger.Info("gas price calculated (includes boost)", zap.String("gas.price", gasPrice.String()))
 						wc.setPublicSwap(ctx, authorizer, poolAddress, gasPrice, wc.name, ec)
 					}
+
 					// we need to unset the gas price that we overrode the transactor with
 					// so that future uses of this transactor have the gas price set to nil
 					authorizer.TransactOpts.GasPrice = nil
@@ -207,11 +268,18 @@ func (wc *WatchedContract) Listen(ctx context.Context, db *database.Database, al
 	}
 }
 
-// NotifChan returns events when listened on, this is used to notify any
+// NotifChanSwap returns events when listened on, this is used to notify any
 // listening goroutines of received events without having to worry about multi channel listeners
 // as if we have multiple listeners on a channel golang will randomly choose 1
-func (wc *WatchedContract) NotifChan() <-chan *sigmacore.SigmacoreLOGSWAP {
-	return wc.notifCh
+func (wc *WatchedContract) NotifChanSwap() <-chan *sigmacore.SigmacoreLOGSWAP {
+	return wc.notifSwapCh
+}
+
+// NotifChanToggle returns events when listened on, this is used to notify any
+// listening goroutines of received events without having to worry about multi channel listeners
+// as if we have multiple listeners on a channel golang will randomly choose 1
+func (wc *WatchedContract) NotifChanToggle() <-chan *sigmacore.SigmacoreLOGPUBLICSWAPTOGGLED {
+	return wc.notifToggleCh
 }
 
 // Name returns the name of the indexed pool this watcher monitors
