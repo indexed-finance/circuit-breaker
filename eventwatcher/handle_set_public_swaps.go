@@ -7,18 +7,17 @@ import (
 )
 
 func (wc *WatchedContract) handleSwapToggles(ctx context.Context) {
+	defer func() {
+		wc.toggleSub.Unsubscribe()
+		close(wc.notifToggleCh)
+		close(wc.toggleCh)
+	}()
 	for {
 		select {
 		case <-ctx.Done():
-			wc.toggleSub.Unsubscribe()
-			close(wc.notifToggleCh)
-			close(wc.toggleCh)
 			return
 		case err := <-wc.toggleSub.Err():
 			wc.logger.Error("toggle subscription error received", zap.Error(err))
-			wc.toggleSub.Unsubscribe()
-			close(wc.notifToggleCh)
-			close(wc.toggleCh)
 			return
 		case evLog := <-wc.toggleCh:
 			wc.logger.Debug("received new event (swap toggle)", zap.Any("event", evLog))
