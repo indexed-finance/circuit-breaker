@@ -38,8 +38,8 @@ test-ci:
 
 .PHONY: docker-build
 docker-build:
-	docker build --build-arg VERSION=$(GIT_VERSION) -t bonedaddy/circuit-breaker:$(GIT_VERSION) .
-	docker image tag bonedaddy/circuit-breaker:$(GIT_VERSION) bonedaddy/circuit-breaker:latest
+	docker build --build-arg VERSION=$(GIT_VERSION) -t indexed-finance/circuit-breaker:$(GIT_VERSION) .
+	docker image tag indexed-finance/circuit-breaker:$(GIT_VERSION) indexed-finance/circuit-breaker:latest
 
 .PHONY: release
 release:
