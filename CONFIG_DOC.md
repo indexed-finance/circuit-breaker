@@ -81,7 +81,7 @@ This is an array of values, with each element of the array starting with `- name
 * `spot_price_break_percentage`
   * The change in spot price between two blocks that should break a circuit
 * `supply_break_percentage`
-  * The increase/decrease in total supply between two blocks that should break a circuit
+  * The increase/decrease in total supply for any of the indexed assets between two blocks that should break a circuit
 
 # database
 
