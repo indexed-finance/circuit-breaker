@@ -101,6 +101,7 @@ services:
   contract-watcher:
     image: indexed-finance/circuit-breaker:v0.0.2
     command: "services contract-watcher"
+    restart: always
     depends_on:
       - postgres
       - block-listener
@@ -133,6 +134,7 @@ services:
   contract-watcher:
     image: indexed-finance/circuit-breaker:v0.0.2
     command: "services contract-watcher"
+    restart: always
     depends_on:
       - postgres
       - block-listener
