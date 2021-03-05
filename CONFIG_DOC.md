@@ -79,7 +79,7 @@ This is an array of values, with each element of the array starting with `- name
 * `contract_address`
   * This is the address of the index pool smart contract
 * `spot_price_break_percentage`
-  * The decrease in spot price between two blocks that should break a circuit
+  * The change in spot price between two blocks that should break a circuit
 * `supply_break_percentage`
   * The increase/decrease in total supply between two blocks that should break a circuit
 
