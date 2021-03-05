@@ -2,7 +2,7 @@ GIT_VERSION=`git describe --tags`
 
 .PHONY: cli
 cli:
-	go build --tags "json1" -o circuit-breaker ./cmd
+	CGO_ENABLED=0 go build --tags "json1" -o circuit-breaker ./cmd
 	
 .PHONY: contracts-all
 contracts-all: build-contracts abigen

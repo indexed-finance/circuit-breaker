@@ -11,7 +11,7 @@ VERSION=`git describe --tags`
 docker build --build-arg VERSION=$VERSION -t indexed-finance/circuit-breaker:$VERSION .
 docker image save indexed-finance/circuit-breaker:$VERSION --output release/circuit-breaker-docker_$VERSION.tar
 
-go build -o release/"circuit-breaker-$VERSION" -ldflags "-X main.Version=$VERSION" ./cmd
+CGO_ENABLED=0 go build -o release/"circuit-breaker-$VERSION" -ldflags "-X main.Version=$VERSION" ./cmd
 
 ls ./release/* > files
 for i in $(cat files); do
