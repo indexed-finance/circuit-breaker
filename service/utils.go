@@ -1,6 +1,8 @@
 package service
 
 import (
+	"errors"
+	"math/big"
 	"strings"
 	"time"
 
@@ -13,6 +15,7 @@ import (
 
 // GetBalancesWeightsAndSupplies returns the balance, weights
 // and total supplies of all tokens held by an IndexPool
+// all keys of the maps are the symbols of a tokein lower case
 func (s *Service) GetBalancesWeightsAndSupplies(
 	contract *sigmacore.Sigmacore,
 	block uint64,
@@ -61,6 +64,34 @@ func (s *Service) GetBalancesWeightsAndSupplies(
 		if err != nil {
 			s.logger.Error("failed to get total supplies after a retry", zap.Error(err))
 			return
+		}
+	}
+	for symbol, value := range balances {
+		valBig, ok := new(big.Int).SetString(value.(string), 10)
+		if !ok {
+			s.logger.Error("failed to parse balance", zap.String("symbol", symbol))
+			err = errors.New("invalid balance")
+			return
+		}
+		if valBig.Cmp(big.NewInt(0)) == 0 {
+			s.logger.Warn("encountered token with balance of 0 removing", zap.String("symbol", symbol))
+			delete(balances, symbol)
+			delete(denormWeights, symbol)
+			delete(totalSupplies, symbol)
+		}
+	}
+	for symbol, value := range denormWeights {
+		valBig, ok := new(big.Int).SetString(value.(string), 10)
+		if !ok {
+			s.logger.Error("failed to parse denormalized weight", zap.String("symbol", symbol))
+			err = errors.New("invalid weight")
+			return
+		}
+		if valBig.Cmp(big.NewInt(0)) == 0 {
+			s.logger.Warn("encountered token with weight less than or equal to 0", zap.String("symbol", symbol))
+			delete(balances, symbol)
+			delete(denormWeights, symbol)
+			delete(totalSupplies, symbol)
 		}
 	}
 	return
