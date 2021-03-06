@@ -146,10 +146,15 @@ func TestService(t *testing.T) {
 		require.NoError(t, err)
 		poolTokens, err := utils.PoolTokensFor(contract, srv.ew.BC().EthClient())
 		require.NoError(t, err)
+		currBlock, err := srv.ew.BC().CurrentBlock()
+		require.NoError(t, err)
+		balances, weights, supplies, err := srv.GetBalancesWeightsAndSupplies(contract, currBlock, pool.ContractAddress, poolTokens)
+		require.NoError(t, err)
 		info, err := db.GetInfo(pool.Name, pool.LastUpdateAt)
 		require.NoError(t, err)
-		require.Len(t, info.Balances, len(poolTokens))
-		require.Len(t, info.DenormalizedWeights, len(poolTokens))
+		require.Len(t, info.Balances, len(balances))
+		require.Len(t, info.DenormalizedWeights, len(weights))
+		require.Len(t, info.TokenTotalSupplies, len(supplies))
 		// validate non zero weight
 		t.Run("WeightValidation", func(t *testing.T) {
 			for _, weight := range info.DenormalizedWeights {
