@@ -1,4 +1,4 @@
-pragma solidity >=0.7.0 <0.8.0;
+pragma solidity >=0.8.0 <0.9.0;
 
 /**
     * @notice this interface is taken from indexed-core commit hash dae7f231d0f58bfc0993f6c01199cd6b74b01895
