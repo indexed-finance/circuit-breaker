@@ -9,10 +9,10 @@ contracts-all: build-contracts abigen
 
 .PHONY: build-contracts
 build-contracts:
-	solc --bin --abi -o bin --overwrite contracts/BMath.sol
-	solc --bin --abi -o bin --overwrite contracts/LogSwapTest.sol
-	solc --bin --abi -o bin --overwrite contracts/FreeTokens.sol
-	solc --optimize --bin --abi -o bin --overwrite contracts/SimpleMultiCall.sol
+	compilers/solc-0.7.4 --bin --abi -o bin --overwrite contracts/BMath.sol
+	compilers/solc-0.7.4 --bin --abi -o bin --overwrite contracts/LogSwapTest.sol
+	compilers/solc-0.7.4 --bin --abi -o bin --overwrite contracts/FreeTokens.sol
+	compilers/solc-0.7.4 --optimize --bin --abi -o bin --overwrite contracts/SimpleMultiCall.sol
 
 .PHONY: abigen
 abigen:
