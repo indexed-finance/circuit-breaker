@@ -325,8 +325,19 @@ func (s *Service) StartBlockListener() error {
 							if err != nil {
 								s.logger.Error("failed to get controller contract", zap.Error(err), zap.String("pool", pool.Name), zap.String("token", tok))
 							} else {
-								if err := s.circuitBreakCheck(tok, supply, totalSupplies, pool, conContract); err != nil {
-									s.logger.Error("circuitBreakCheck failed", zap.Error(err), zap.String("pool", pool.Name), zap.String("token", tok))
+								// get the circuit breaker address
+								circuitBreakerAddr, err := conContract.CircuitBreaker(nil)
+								if err != nil {
+									s.logger.Error("failed to get circuit breaker contract address", zap.Error(err), zap.String("pool", pool.Name), zap.String("token", tok))
+								} else {
+									breaker, err := controller.NewController(circuitBreakerAddr, s.ew.BC().EthClient())
+									if err != nil {
+										s.logger.Error("failed to get circuit breaker contract", zap.Error(err), zap.String("pool", pool.Name), zap.String("token", tok))
+									} else {
+										if err := s.circuitBreakCheck(tok, supply, totalSupplies, pool, breaker); err != nil {
+											s.logger.Error("circuitBreakCheck failed", zap.Error(err), zap.String("pool", pool.Name), zap.String("token", tok))
+										}
+									}
 								}
 							}
 						}

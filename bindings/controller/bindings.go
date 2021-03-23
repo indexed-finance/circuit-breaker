@@ -26,13 +26,8 @@ var (
 	_ = event.NewSubscription
 )
 
-// FixedPointuq112x112 is an auto generated low-level Go binding around an user-defined struct.
-type FixedPointuq112x112 struct {
-	X *big.Int
-}
-
 // ControllerABI is the input ABI used to generate the binding from.
-const ControllerABI = "[{\"inputs\":[{\"internalType\":\"contractIIndexedUniswapV2Oracle\",\"name\":\"uniswapOracle_\",\"type\":\"address\"},{\"internalType\":\"contractIPoolFactory\",\"name\":\"poolFactory_\",\"type\":\"address\"},{\"internalType\":\"contractIDelegateCallProxyManager\",\"name\":\"proxyManager_\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"defaultExitFeeRecipient_\",\"type\":\"address\"}],\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"categoryID\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"bytes32\",\"name\":\"metadataHash\",\"type\":\"bytes32\"},{\"indexed\":false,\"internalType\":\"bool\",\"name\":\"useFullyDilutedMarketCaps\",\"type\":\"bool\"},{\"indexed\":false,\"internalType\":\"uint128\",\"name\":\"minMarketCap\",\"type\":\"uint128\"},{\"indexed\":false,\"internalType\":\"uint128\",\"name\":\"maxMarketCap\",\"type\":\"uint128\"}],\"name\":\"CategoryAdded\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"categoryID\",\"type\":\"uint256\"}],\"name\":\"CategorySorted\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"address\",\"name\":\"pool\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"address\",\"name\":\"initializer\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"categoryID\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"indexSize\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"enumMarketCapSqrtController.WeightingFormula\",\"name\":\"formula\",\"type\":\"uint8\"}],\"name\":\"NewPoolInitializer\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"previousOwner\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"OwnershipTransferred\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"address\",\"name\":\"pool\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"address\",\"name\":\"unboundTokenSeller\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"categoryID\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"indexSize\",\"type\":\"uint256\"}],\"name\":\"PoolInitialized\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"address\",\"name\":\"token\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"categoryID\",\"type\":\"uint256\"}],\"name\":\"TokenAdded\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"address\",\"name\":\"token\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"categoryID\",\"type\":\"uint256\"}],\"name\":\"TokenRemoved\",\"type\":\"event\"},{\"inputs\":[],\"name\":\"INITIALIZER_IMPLEMENTATION_ID\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"LONG_TWAP_MAX_TIME_ELAPSED\",\"outputs\":[{\"internalType\":\"uint32\",\"name\":\"\",\"type\":\"uint32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"LONG_TWAP_MIN_TIME_ELAPSED\",\"outputs\":[{\"internalType\":\"uint32\",\"name\":\"\",\"type\":\"uint32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"MAX_CATEGORY_TOKENS\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"MAX_INDEX_SIZE\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"MAX_SORT_DELAY\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"MIN_BALANCE\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"MIN_INDEX_SIZE\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"POOL_IMPLEMENTATION_ID\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"POOL_REWEIGH_DELAY\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"REWEIGHS_BEFORE_REINDEX\",\"outputs\":[{\"internalType\":\"uint8\",\"name\":\"\",\"type\":\"uint8\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"SELLER_IMPLEMENTATION_ID\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"SHORT_TWAP_MAX_TIME_ELAPSED\",\"outputs\":[{\"internalType\":\"uint32\",\"name\":\"\",\"type\":\"uint32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"SHORT_TWAP_MIN_TIME_ELAPSED\",\"outputs\":[{\"internalType\":\"uint32\",\"name\":\"\",\"type\":\"uint32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"WEIGHT_MULTIPLIER\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"categoryID\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"token\",\"type\":\"address\"}],\"name\":\"addToken\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"categoryID\",\"type\":\"uint256\"},{\"internalType\":\"address[]\",\"name\":\"tokens\",\"type\":\"address[]\"}],\"name\":\"addTokens\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"categoryIndex\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"circuitBreaker\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"circulatingMarketCapOracle\",\"outputs\":[{\"internalType\":\"contractICirculatingMarketCapOracle\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"poolAddress\",\"type\":\"address\"}],\"name\":\"computeInitializerAddress\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"initializerAddress\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"categoryID\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"indexSize\",\"type\":\"uint256\"}],\"name\":\"computePoolAddress\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"poolAddress\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"poolAddress\",\"type\":\"address\"}],\"name\":\"computeSellerAddress\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"sellerAddress\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"enumMarketCapSqrtController.WeightingFormula\",\"name\":\"formula\",\"type\":\"uint8\"},{\"internalType\":\"uint256[]\",\"name\":\"marketCaps\",\"type\":\"uint256[]\"}],\"name\":\"computeWeights\",\"outputs\":[{\"components\":[{\"internalType\":\"uint224\",\"name\":\"_x\",\"type\":\"uint224\"}],\"internalType\":\"structFixedPoint.uq112x112[]\",\"name\":\"fractionalWeights\",\"type\":\"tuple[]\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"metadataHash\",\"type\":\"bytes32\"},{\"internalType\":\"bool\",\"name\":\"useFullyDilutedMarketCaps\",\"type\":\"bool\"},{\"internalType\":\"uint112\",\"name\":\"minMarketCap\",\"type\":\"uint112\"},{\"internalType\":\"uint112\",\"name\":\"maxMarketCap\",\"type\":\"uint112\"}],\"name\":\"createCategory\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"defaultExitFeeRecipient\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"defaultSellerPremium\",\"outputs\":[{\"internalType\":\"uint8\",\"name\":\"\",\"type\":\"uint8\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"pool\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"token\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"delegatee\",\"type\":\"address\"}],\"name\":\"delegateCompLikeTokenFromPool\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"poolAddress\",\"type\":\"address\"},{\"internalType\":\"address[]\",\"name\":\"tokens\",\"type\":\"address[]\"},{\"internalType\":\"uint256[]\",\"name\":\"balances\",\"type\":\"uint256[]\"}],\"name\":\"finishPreparedIndexPool\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"poolAddress\",\"type\":\"address\"}],\"name\":\"forceReindexPool\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"categoryID\",\"type\":\"uint256\"}],\"name\":\"getCategoryConfig\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"useFullyDilutedMarketCaps\",\"type\":\"bool\"},{\"internalType\":\"uint112\",\"name\":\"minMarketCap\",\"type\":\"uint112\"},{\"internalType\":\"uint112\",\"name\":\"maxMarketCap\",\"type\":\"uint112\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"categoryID\",\"type\":\"uint256\"}],\"name\":\"getCategoryTokens\",\"outputs\":[{\"internalType\":\"address[]\",\"name\":\"tokens\",\"type\":\"address[]\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address[]\",\"name\":\"tokens\",\"type\":\"address[]\"}],\"name\":\"getCirculatingMarketCaps\",\"outputs\":[{\"internalType\":\"uint256[]\",\"name\":\"marketCaps\",\"type\":\"uint256[]\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address[]\",\"name\":\"tokens\",\"type\":\"address[]\"}],\"name\":\"getFullyDilutedMarketCaps\",\"outputs\":[{\"internalType\":\"uint256[]\",\"name\":\"marketCaps\",\"type\":\"uint256[]\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"categoryID\",\"type\":\"uint256\"},{\"internalType\":\"enumMarketCapSqrtController.WeightingFormula\",\"name\":\"formula\",\"type\":\"uint8\"},{\"internalType\":\"uint256\",\"name\":\"indexSize\",\"type\":\"uint256\"},{\"internalType\":\"uint144\",\"name\":\"wethValue\",\"type\":\"uint144\"}],\"name\":\"getInitialTokensAndBalances\",\"outputs\":[{\"internalType\":\"address[]\",\"name\":\"tokens\",\"type\":\"address[]\"},{\"internalType\":\"uint256[]\",\"name\":\"balances\",\"type\":\"uint256[]\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bool\",\"name\":\"useFullyDilutedMarketCaps\",\"type\":\"bool\"},{\"internalType\":\"address[]\",\"name\":\"tokens\",\"type\":\"address[]\"}],\"name\":\"getMarketCaps\",\"outputs\":[{\"internalType\":\"uint256[]\",\"name\":\"marketCaps\",\"type\":\"uint256[]\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"categoryID\",\"type\":\"uint256\"}],\"name\":\"getSortedAndFilteredTokensAndMarketCaps\",\"outputs\":[{\"internalType\":\"address[]\",\"name\":\"categoryTokens\",\"type\":\"address[]\"},{\"internalType\":\"uint256[]\",\"name\":\"marketCaps\",\"type\":\"uint256[]\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"categoryID\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"count\",\"type\":\"uint256\"}],\"name\":\"getTopCategoryTokensAndMarketCaps\",\"outputs\":[{\"internalType\":\"address[]\",\"name\":\"categoryTokens\",\"type\":\"address[]\"},{\"internalType\":\"uint256[]\",\"name\":\"marketCaps\",\"type\":\"uint256[]\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"categoryID\",\"type\":\"uint256\"}],\"name\":\"hasCategory\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"name\":\"indexPoolMetadata\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"initialized\",\"type\":\"bool\"},{\"internalType\":\"uint16\",\"name\":\"categoryID\",\"type\":\"uint16\"},{\"internalType\":\"uint8\",\"name\":\"indexSize\",\"type\":\"uint8\"},{\"internalType\":\"uint8\",\"name\":\"reweighIndex\",\"type\":\"uint8\"},{\"internalType\":\"uint64\",\"name\":\"lastReweigh\",\"type\":\"uint64\"},{\"internalType\":\"enumMarketCapSqrtController.WeightingFormula\",\"name\":\"formula\",\"type\":\"uint8\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"circulatingMarketCapOracle_\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"circuitBreaker_\",\"type\":\"address\"}],\"name\":\"initialize\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"circulatingMarketCapOracle_\",\"type\":\"address\"}],\"name\":\"initialize\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"categoryID\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"token\",\"type\":\"address\"}],\"name\":\"isTokenInCategory\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"owner\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"poolFactory\",\"outputs\":[{\"internalType\":\"contractIPoolFactory\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"categoryID\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"indexSize\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"initialWethValue\",\"type\":\"uint256\"},{\"internalType\":\"enumMarketCapSqrtController.WeightingFormula\",\"name\":\"formula\",\"type\":\"uint8\"},{\"internalType\":\"string\",\"name\":\"name\",\"type\":\"string\"},{\"internalType\":\"string\",\"name\":\"symbol\",\"type\":\"string\"}],\"name\":\"prepareIndexPool\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"poolAddress\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"initializerAddress\",\"type\":\"address\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"proxyManager\",\"outputs\":[{\"internalType\":\"contractIDelegateCallProxyManager\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"poolAddress\",\"type\":\"address\"}],\"name\":\"reindexPool\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"categoryID\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"token\",\"type\":\"address\"}],\"name\":\"removeToken\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"renounceOwnership\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"poolAddress\",\"type\":\"address\"}],\"name\":\"reweighPool\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"circuitBreaker_\",\"type\":\"address\"}],\"name\":\"setCircuitBreaker\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"circulatingMarketCapOracle_\",\"type\":\"address\"}],\"name\":\"setCirculatingMarketCapOracle\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint8\",\"name\":\"_defaultSellerPremium\",\"type\":\"uint8\"}],\"name\":\"setDefaultSellerPremium\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"indexPool_\",\"type\":\"address\"},{\"internalType\":\"bool\",\"name\":\"publicSwap\",\"type\":\"bool\"}],\"name\":\"setPublicSwap\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"poolAddress\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"swapFee\",\"type\":\"uint256\"}],\"name\":\"setSwapFee\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"categoryID\",\"type\":\"uint256\"}],\"name\":\"sortAndFilterTokens\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"transferOwnership\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"uniswapOracle\",\"outputs\":[{\"internalType\":\"contractIIndexedUniswapV2Oracle\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"categoryID\",\"type\":\"uint256\"}],\"name\":\"updateCategoryMarketCaps\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"categoryID\",\"type\":\"uint256\"}],\"name\":\"updateCategoryPrices\",\"outputs\":[{\"internalType\":\"bool[]\",\"name\":\"pricesUpdated\",\"type\":\"bool[]\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"contractIIndexPool\",\"name\":\"pool\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"tokenAddress\",\"type\":\"address\"}],\"name\":\"updateMinimumBalance\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"tokenSeller\",\"type\":\"address\"},{\"internalType\":\"uint8\",\"name\":\"premiumPercent\",\"type\":\"uint8\"}],\"name\":\"updateSellerPremium\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}]"
+const ControllerABI = "[{\"inputs\":[{\"internalType\":\"contractIIndexedUniswapV2Oracle\",\"name\":\"uniswapOracle_\",\"type\":\"address\"},{\"internalType\":\"contractIPoolFactory\",\"name\":\"poolFactory_\",\"type\":\"address\"},{\"internalType\":\"contractIDelegateCallProxyManager\",\"name\":\"proxyManager_\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"defaultExitFeeRecipient_\",\"type\":\"address\"}],\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"address\",\"name\":\"pool\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"address\",\"name\":\"initializer\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"listID\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"indexSize\",\"type\":\"uint256\"}],\"name\":\"NewPoolInitializer\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"previousOwner\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"OwnershipTransferred\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"address\",\"name\":\"pool\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"address\",\"name\":\"unboundTokenSeller\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"listID\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"indexSize\",\"type\":\"uint256\"}],\"name\":\"PoolInitialized\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"address\",\"name\":\"token\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"listID\",\"type\":\"uint256\"}],\"name\":\"TokenAdded\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"listID\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"bytes32\",\"name\":\"metadataHash\",\"type\":\"bytes32\"},{\"indexed\":false,\"internalType\":\"address\",\"name\":\"scoringStrategy\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint128\",\"name\":\"minimumScore\",\"type\":\"uint128\"},{\"indexed\":false,\"internalType\":\"uint128\",\"name\":\"maximumScore\",\"type\":\"uint128\"}],\"name\":\"TokenListAdded\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"listID\",\"type\":\"uint256\"}],\"name\":\"TokenListSorted\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"address\",\"name\":\"token\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"listID\",\"type\":\"uint256\"}],\"name\":\"TokenRemoved\",\"type\":\"event\"},{\"inputs\":[],\"name\":\"INITIALIZER_IMPLEMENTATION_ID\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"MAX_INDEX_SIZE\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"MAX_LIST_TOKENS\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"MIN_BALANCE\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"MIN_INDEX_SIZE\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"POOL_IMPLEMENTATION_ID\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"POOL_REWEIGH_DELAY\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"REWEIGHS_BEFORE_REINDEX\",\"outputs\":[{\"internalType\":\"uint8\",\"name\":\"\",\"type\":\"uint8\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"SELLER_IMPLEMENTATION_ID\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"SHORT_TWAP_MAX_TIME_ELAPSED\",\"outputs\":[{\"internalType\":\"uint32\",\"name\":\"\",\"type\":\"uint32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"SHORT_TWAP_MIN_TIME_ELAPSED\",\"outputs\":[{\"internalType\":\"uint32\",\"name\":\"\",\"type\":\"uint32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"listID\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"token\",\"type\":\"address\"}],\"name\":\"addToken\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"listID\",\"type\":\"uint256\"},{\"internalType\":\"address[]\",\"name\":\"tokens\",\"type\":\"address[]\"}],\"name\":\"addTokens\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"circuitBreaker\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"circulatingMarketCapOracle\",\"outputs\":[{\"internalType\":\"contractICirculatingMarketCapOracle\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"poolAddress\",\"type\":\"address\"}],\"name\":\"computeInitializerAddress\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"initializerAddress\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"listID\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"indexSize\",\"type\":\"uint256\"}],\"name\":\"computePoolAddress\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"poolAddress\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"poolAddress\",\"type\":\"address\"}],\"name\":\"computeSellerAddress\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"sellerAddress\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"metadataHash\",\"type\":\"bytes32\"},{\"internalType\":\"address\",\"name\":\"scoringStrategy\",\"type\":\"address\"},{\"internalType\":\"uint128\",\"name\":\"minimumScore\",\"type\":\"uint128\"},{\"internalType\":\"uint128\",\"name\":\"maximumScore\",\"type\":\"uint128\"}],\"name\":\"createTokenList\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"defaultExitFeeRecipient\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"defaultSellerPremium\",\"outputs\":[{\"internalType\":\"uint8\",\"name\":\"\",\"type\":\"uint8\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"pool\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"token\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"delegatee\",\"type\":\"address\"}],\"name\":\"delegateCompLikeTokenFromPool\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"poolAddress\",\"type\":\"address\"},{\"internalType\":\"address[]\",\"name\":\"tokens\",\"type\":\"address[]\"},{\"internalType\":\"uint256[]\",\"name\":\"balances\",\"type\":\"uint256[]\"}],\"name\":\"finishPreparedIndexPool\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"poolAddress\",\"type\":\"address\"}],\"name\":\"forceReindexPool\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"listID\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"indexSize\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"wethValue\",\"type\":\"uint256\"}],\"name\":\"getInitialTokensAndBalances\",\"outputs\":[{\"internalType\":\"address[]\",\"name\":\"tokens\",\"type\":\"address[]\"},{\"internalType\":\"uint256[]\",\"name\":\"balances\",\"type\":\"uint256[]\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"listID\",\"type\":\"uint256\"}],\"name\":\"getSortedAndFilteredTokensAndScores\",\"outputs\":[{\"internalType\":\"address[]\",\"name\":\"tokens\",\"type\":\"address[]\"},{\"internalType\":\"uint256[]\",\"name\":\"scores\",\"type\":\"uint256[]\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"listID\",\"type\":\"uint256\"}],\"name\":\"getTokenList\",\"outputs\":[{\"internalType\":\"address[]\",\"name\":\"tokens\",\"type\":\"address[]\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"listID\",\"type\":\"uint256\"}],\"name\":\"getTokenListConfig\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"scoringStrategy\",\"type\":\"address\"},{\"internalType\":\"uint128\",\"name\":\"minimumScore\",\"type\":\"uint128\"},{\"internalType\":\"uint128\",\"name\":\"maximumScore\",\"type\":\"uint128\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"listID\",\"type\":\"uint256\"},{\"internalType\":\"address[]\",\"name\":\"tokens\",\"type\":\"address[]\"}],\"name\":\"getTokenScores\",\"outputs\":[{\"internalType\":\"uint256[]\",\"name\":\"scores\",\"type\":\"uint256[]\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"listID\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"count\",\"type\":\"uint256\"}],\"name\":\"getTopTokensAndScores\",\"outputs\":[{\"internalType\":\"address[]\",\"name\":\"tokens\",\"type\":\"address[]\"},{\"internalType\":\"uint256[]\",\"name\":\"scores\",\"type\":\"uint256[]\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"name\":\"indexPoolMetadata\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"initialized\",\"type\":\"bool\"},{\"internalType\":\"uint16\",\"name\":\"listID\",\"type\":\"uint16\"},{\"internalType\":\"uint8\",\"name\":\"indexSize\",\"type\":\"uint8\"},{\"internalType\":\"uint8\",\"name\":\"reweighIndex\",\"type\":\"uint8\"},{\"internalType\":\"uint64\",\"name\":\"lastReweigh\",\"type\":\"uint64\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"initialize\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"circuitBreaker_\",\"type\":\"address\"}],\"name\":\"initialize\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"listID\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"token\",\"type\":\"address\"}],\"name\":\"isTokenInlist\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"owner\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"poolFactory\",\"outputs\":[{\"internalType\":\"contractIPoolFactory\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"listID\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"indexSize\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"initialWethValue\",\"type\":\"uint256\"},{\"internalType\":\"string\",\"name\":\"name\",\"type\":\"string\"},{\"internalType\":\"string\",\"name\":\"symbol\",\"type\":\"string\"}],\"name\":\"prepareIndexPool\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"poolAddress\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"initializerAddress\",\"type\":\"address\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"proxyManager\",\"outputs\":[{\"internalType\":\"contractIDelegateCallProxyManager\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"poolAddress\",\"type\":\"address\"}],\"name\":\"reindexPool\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"listID\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"token\",\"type\":\"address\"}],\"name\":\"removeToken\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"renounceOwnership\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"poolAddress\",\"type\":\"address\"}],\"name\":\"reweighPool\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"circuitBreaker_\",\"type\":\"address\"}],\"name\":\"setCircuitBreaker\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint8\",\"name\":\"_defaultSellerPremium\",\"type\":\"uint8\"}],\"name\":\"setDefaultSellerPremium\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"indexPool_\",\"type\":\"address\"},{\"internalType\":\"bool\",\"name\":\"publicSwap\",\"type\":\"bool\"}],\"name\":\"setPublicSwap\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"poolAddress\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"swapFee\",\"type\":\"uint256\"}],\"name\":\"setSwapFee\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"listID\",\"type\":\"uint256\"}],\"name\":\"sortAndFilterTokens\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"tokenListCount\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"transferOwnership\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"uniswapOracle\",\"outputs\":[{\"internalType\":\"contractIIndexedUniswapV2Oracle\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"pool\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"tokenAddress\",\"type\":\"address\"}],\"name\":\"updateMinimumBalance\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"tokenSeller\",\"type\":\"address\"},{\"internalType\":\"uint8\",\"name\":\"premiumPercent\",\"type\":\"uint8\"}],\"name\":\"updateSellerPremium\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"listID\",\"type\":\"uint256\"}],\"name\":\"updateTokenPrices\",\"outputs\":[{\"internalType\":\"bool[]\",\"name\":\"pricesUpdated\",\"type\":\"bool[]\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}]"
 
 // Controller is an auto generated Go binding around an Ethereum contract.
 type Controller struct {
@@ -207,99 +202,6 @@ func (_Controller *ControllerCallerSession) INITIALIZERIMPLEMENTATIONID() ([32]b
 	return _Controller.Contract.INITIALIZERIMPLEMENTATIONID(&_Controller.CallOpts)
 }
 
-// LONGTWAPMAXTIMEELAPSED is a free data retrieval call binding the contract method 0x43ec8923.
-//
-// Solidity: function LONG_TWAP_MAX_TIME_ELAPSED() view returns(uint32)
-func (_Controller *ControllerCaller) LONGTWAPMAXTIMEELAPSED(opts *bind.CallOpts) (uint32, error) {
-	var out []interface{}
-	err := _Controller.contract.Call(opts, &out, "LONG_TWAP_MAX_TIME_ELAPSED")
-
-	if err != nil {
-		return *new(uint32), err
-	}
-
-	out0 := *abi.ConvertType(out[0], new(uint32)).(*uint32)
-
-	return out0, err
-
-}
-
-// LONGTWAPMAXTIMEELAPSED is a free data retrieval call binding the contract method 0x43ec8923.
-//
-// Solidity: function LONG_TWAP_MAX_TIME_ELAPSED() view returns(uint32)
-func (_Controller *ControllerSession) LONGTWAPMAXTIMEELAPSED() (uint32, error) {
-	return _Controller.Contract.LONGTWAPMAXTIMEELAPSED(&_Controller.CallOpts)
-}
-
-// LONGTWAPMAXTIMEELAPSED is a free data retrieval call binding the contract method 0x43ec8923.
-//
-// Solidity: function LONG_TWAP_MAX_TIME_ELAPSED() view returns(uint32)
-func (_Controller *ControllerCallerSession) LONGTWAPMAXTIMEELAPSED() (uint32, error) {
-	return _Controller.Contract.LONGTWAPMAXTIMEELAPSED(&_Controller.CallOpts)
-}
-
-// LONGTWAPMINTIMEELAPSED is a free data retrieval call binding the contract method 0x70ffd3e0.
-//
-// Solidity: function LONG_TWAP_MIN_TIME_ELAPSED() view returns(uint32)
-func (_Controller *ControllerCaller) LONGTWAPMINTIMEELAPSED(opts *bind.CallOpts) (uint32, error) {
-	var out []interface{}
-	err := _Controller.contract.Call(opts, &out, "LONG_TWAP_MIN_TIME_ELAPSED")
-
-	if err != nil {
-		return *new(uint32), err
-	}
-
-	out0 := *abi.ConvertType(out[0], new(uint32)).(*uint32)
-
-	return out0, err
-
-}
-
-// LONGTWAPMINTIMEELAPSED is a free data retrieval call binding the contract method 0x70ffd3e0.
-//
-// Solidity: function LONG_TWAP_MIN_TIME_ELAPSED() view returns(uint32)
-func (_Controller *ControllerSession) LONGTWAPMINTIMEELAPSED() (uint32, error) {
-	return _Controller.Contract.LONGTWAPMINTIMEELAPSED(&_Controller.CallOpts)
-}
-
-// LONGTWAPMINTIMEELAPSED is a free data retrieval call binding the contract method 0x70ffd3e0.
-//
-// Solidity: function LONG_TWAP_MIN_TIME_ELAPSED() view returns(uint32)
-func (_Controller *ControllerCallerSession) LONGTWAPMINTIMEELAPSED() (uint32, error) {
-	return _Controller.Contract.LONGTWAPMINTIMEELAPSED(&_Controller.CallOpts)
-}
-
-// MAXCATEGORYTOKENS is a free data retrieval call binding the contract method 0x84fca9cd.
-//
-// Solidity: function MAX_CATEGORY_TOKENS() view returns(uint256)
-func (_Controller *ControllerCaller) MAXCATEGORYTOKENS(opts *bind.CallOpts) (*big.Int, error) {
-	var out []interface{}
-	err := _Controller.contract.Call(opts, &out, "MAX_CATEGORY_TOKENS")
-
-	if err != nil {
-		return *new(*big.Int), err
-	}
-
-	out0 := *abi.ConvertType(out[0], new(*big.Int)).(**big.Int)
-
-	return out0, err
-
-}
-
-// MAXCATEGORYTOKENS is a free data retrieval call binding the contract method 0x84fca9cd.
-//
-// Solidity: function MAX_CATEGORY_TOKENS() view returns(uint256)
-func (_Controller *ControllerSession) MAXCATEGORYTOKENS() (*big.Int, error) {
-	return _Controller.Contract.MAXCATEGORYTOKENS(&_Controller.CallOpts)
-}
-
-// MAXCATEGORYTOKENS is a free data retrieval call binding the contract method 0x84fca9cd.
-//
-// Solidity: function MAX_CATEGORY_TOKENS() view returns(uint256)
-func (_Controller *ControllerCallerSession) MAXCATEGORYTOKENS() (*big.Int, error) {
-	return _Controller.Contract.MAXCATEGORYTOKENS(&_Controller.CallOpts)
-}
-
 // MAXINDEXSIZE is a free data retrieval call binding the contract method 0xacbfc96d.
 //
 // Solidity: function MAX_INDEX_SIZE() view returns(uint256)
@@ -331,12 +233,12 @@ func (_Controller *ControllerCallerSession) MAXINDEXSIZE() (*big.Int, error) {
 	return _Controller.Contract.MAXINDEXSIZE(&_Controller.CallOpts)
 }
 
-// MAXSORTDELAY is a free data retrieval call binding the contract method 0xfdcfa2ec.
+// MAXLISTTOKENS is a free data retrieval call binding the contract method 0xec0915c7.
 //
-// Solidity: function MAX_SORT_DELAY() view returns(uint256)
-func (_Controller *ControllerCaller) MAXSORTDELAY(opts *bind.CallOpts) (*big.Int, error) {
+// Solidity: function MAX_LIST_TOKENS() view returns(uint256)
+func (_Controller *ControllerCaller) MAXLISTTOKENS(opts *bind.CallOpts) (*big.Int, error) {
 	var out []interface{}
-	err := _Controller.contract.Call(opts, &out, "MAX_SORT_DELAY")
+	err := _Controller.contract.Call(opts, &out, "MAX_LIST_TOKENS")
 
 	if err != nil {
 		return *new(*big.Int), err
@@ -348,18 +250,18 @@ func (_Controller *ControllerCaller) MAXSORTDELAY(opts *bind.CallOpts) (*big.Int
 
 }
 
-// MAXSORTDELAY is a free data retrieval call binding the contract method 0xfdcfa2ec.
+// MAXLISTTOKENS is a free data retrieval call binding the contract method 0xec0915c7.
 //
-// Solidity: function MAX_SORT_DELAY() view returns(uint256)
-func (_Controller *ControllerSession) MAXSORTDELAY() (*big.Int, error) {
-	return _Controller.Contract.MAXSORTDELAY(&_Controller.CallOpts)
+// Solidity: function MAX_LIST_TOKENS() view returns(uint256)
+func (_Controller *ControllerSession) MAXLISTTOKENS() (*big.Int, error) {
+	return _Controller.Contract.MAXLISTTOKENS(&_Controller.CallOpts)
 }
 
-// MAXSORTDELAY is a free data retrieval call binding the contract method 0xfdcfa2ec.
+// MAXLISTTOKENS is a free data retrieval call binding the contract method 0xec0915c7.
 //
-// Solidity: function MAX_SORT_DELAY() view returns(uint256)
-func (_Controller *ControllerCallerSession) MAXSORTDELAY() (*big.Int, error) {
-	return _Controller.Contract.MAXSORTDELAY(&_Controller.CallOpts)
+// Solidity: function MAX_LIST_TOKENS() view returns(uint256)
+func (_Controller *ControllerCallerSession) MAXLISTTOKENS() (*big.Int, error) {
+	return _Controller.Contract.MAXLISTTOKENS(&_Controller.CallOpts)
 }
 
 // MINBALANCE is a free data retrieval call binding the contract method 0x867378c5.
@@ -610,68 +512,6 @@ func (_Controller *ControllerCallerSession) SHORTTWAPMINTIMEELAPSED() (uint32, e
 	return _Controller.Contract.SHORTTWAPMINTIMEELAPSED(&_Controller.CallOpts)
 }
 
-// WEIGHTMULTIPLIER is a free data retrieval call binding the contract method 0xc290d8bd.
-//
-// Solidity: function WEIGHT_MULTIPLIER() view returns(uint256)
-func (_Controller *ControllerCaller) WEIGHTMULTIPLIER(opts *bind.CallOpts) (*big.Int, error) {
-	var out []interface{}
-	err := _Controller.contract.Call(opts, &out, "WEIGHT_MULTIPLIER")
-
-	if err != nil {
-		return *new(*big.Int), err
-	}
-
-	out0 := *abi.ConvertType(out[0], new(*big.Int)).(**big.Int)
-
-	return out0, err
-
-}
-
-// WEIGHTMULTIPLIER is a free data retrieval call binding the contract method 0xc290d8bd.
-//
-// Solidity: function WEIGHT_MULTIPLIER() view returns(uint256)
-func (_Controller *ControllerSession) WEIGHTMULTIPLIER() (*big.Int, error) {
-	return _Controller.Contract.WEIGHTMULTIPLIER(&_Controller.CallOpts)
-}
-
-// WEIGHTMULTIPLIER is a free data retrieval call binding the contract method 0xc290d8bd.
-//
-// Solidity: function WEIGHT_MULTIPLIER() view returns(uint256)
-func (_Controller *ControllerCallerSession) WEIGHTMULTIPLIER() (*big.Int, error) {
-	return _Controller.Contract.WEIGHTMULTIPLIER(&_Controller.CallOpts)
-}
-
-// CategoryIndex is a free data retrieval call binding the contract method 0xea99fc04.
-//
-// Solidity: function categoryIndex() view returns(uint256)
-func (_Controller *ControllerCaller) CategoryIndex(opts *bind.CallOpts) (*big.Int, error) {
-	var out []interface{}
-	err := _Controller.contract.Call(opts, &out, "categoryIndex")
-
-	if err != nil {
-		return *new(*big.Int), err
-	}
-
-	out0 := *abi.ConvertType(out[0], new(*big.Int)).(**big.Int)
-
-	return out0, err
-
-}
-
-// CategoryIndex is a free data retrieval call binding the contract method 0xea99fc04.
-//
-// Solidity: function categoryIndex() view returns(uint256)
-func (_Controller *ControllerSession) CategoryIndex() (*big.Int, error) {
-	return _Controller.Contract.CategoryIndex(&_Controller.CallOpts)
-}
-
-// CategoryIndex is a free data retrieval call binding the contract method 0xea99fc04.
-//
-// Solidity: function categoryIndex() view returns(uint256)
-func (_Controller *ControllerCallerSession) CategoryIndex() (*big.Int, error) {
-	return _Controller.Contract.CategoryIndex(&_Controller.CallOpts)
-}
-
 // CircuitBreaker is a free data retrieval call binding the contract method 0x16efd941.
 //
 // Solidity: function circuitBreaker() view returns(address)
@@ -767,10 +607,10 @@ func (_Controller *ControllerCallerSession) ComputeInitializerAddress(poolAddres
 
 // ComputePoolAddress is a free data retrieval call binding the contract method 0x9dd19a52.
 //
-// Solidity: function computePoolAddress(uint256 categoryID, uint256 indexSize) view returns(address poolAddress)
-func (_Controller *ControllerCaller) ComputePoolAddress(opts *bind.CallOpts, categoryID *big.Int, indexSize *big.Int) (common.Address, error) {
+// Solidity: function computePoolAddress(uint256 listID, uint256 indexSize) view returns(address poolAddress)
+func (_Controller *ControllerCaller) ComputePoolAddress(opts *bind.CallOpts, listID *big.Int, indexSize *big.Int) (common.Address, error) {
 	var out []interface{}
-	err := _Controller.contract.Call(opts, &out, "computePoolAddress", categoryID, indexSize)
+	err := _Controller.contract.Call(opts, &out, "computePoolAddress", listID, indexSize)
 
 	if err != nil {
 		return *new(common.Address), err
@@ -784,16 +624,16 @@ func (_Controller *ControllerCaller) ComputePoolAddress(opts *bind.CallOpts, cat
 
 // ComputePoolAddress is a free data retrieval call binding the contract method 0x9dd19a52.
 //
-// Solidity: function computePoolAddress(uint256 categoryID, uint256 indexSize) view returns(address poolAddress)
-func (_Controller *ControllerSession) ComputePoolAddress(categoryID *big.Int, indexSize *big.Int) (common.Address, error) {
-	return _Controller.Contract.ComputePoolAddress(&_Controller.CallOpts, categoryID, indexSize)
+// Solidity: function computePoolAddress(uint256 listID, uint256 indexSize) view returns(address poolAddress)
+func (_Controller *ControllerSession) ComputePoolAddress(listID *big.Int, indexSize *big.Int) (common.Address, error) {
+	return _Controller.Contract.ComputePoolAddress(&_Controller.CallOpts, listID, indexSize)
 }
 
 // ComputePoolAddress is a free data retrieval call binding the contract method 0x9dd19a52.
 //
-// Solidity: function computePoolAddress(uint256 categoryID, uint256 indexSize) view returns(address poolAddress)
-func (_Controller *ControllerCallerSession) ComputePoolAddress(categoryID *big.Int, indexSize *big.Int) (common.Address, error) {
-	return _Controller.Contract.ComputePoolAddress(&_Controller.CallOpts, categoryID, indexSize)
+// Solidity: function computePoolAddress(uint256 listID, uint256 indexSize) view returns(address poolAddress)
+func (_Controller *ControllerCallerSession) ComputePoolAddress(listID *big.Int, indexSize *big.Int) (common.Address, error) {
+	return _Controller.Contract.ComputePoolAddress(&_Controller.CallOpts, listID, indexSize)
 }
 
 // ComputeSellerAddress is a free data retrieval call binding the contract method 0x582edc9b.
@@ -825,37 +665,6 @@ func (_Controller *ControllerSession) ComputeSellerAddress(poolAddress common.Ad
 // Solidity: function computeSellerAddress(address poolAddress) view returns(address sellerAddress)
 func (_Controller *ControllerCallerSession) ComputeSellerAddress(poolAddress common.Address) (common.Address, error) {
 	return _Controller.Contract.ComputeSellerAddress(&_Controller.CallOpts, poolAddress)
-}
-
-// ComputeWeights is a free data retrieval call binding the contract method 0xa4d09816.
-//
-// Solidity: function computeWeights(uint8 formula, uint256[] marketCaps) view returns((uint224)[] fractionalWeights)
-func (_Controller *ControllerCaller) ComputeWeights(opts *bind.CallOpts, formula uint8, marketCaps []*big.Int) ([]FixedPointuq112x112, error) {
-	var out []interface{}
-	err := _Controller.contract.Call(opts, &out, "computeWeights", formula, marketCaps)
-
-	if err != nil {
-		return *new([]FixedPointuq112x112), err
-	}
-
-	out0 := *abi.ConvertType(out[0], new([]FixedPointuq112x112)).(*[]FixedPointuq112x112)
-
-	return out0, err
-
-}
-
-// ComputeWeights is a free data retrieval call binding the contract method 0xa4d09816.
-//
-// Solidity: function computeWeights(uint8 formula, uint256[] marketCaps) view returns((uint224)[] fractionalWeights)
-func (_Controller *ControllerSession) ComputeWeights(formula uint8, marketCaps []*big.Int) ([]FixedPointuq112x112, error) {
-	return _Controller.Contract.ComputeWeights(&_Controller.CallOpts, formula, marketCaps)
-}
-
-// ComputeWeights is a free data retrieval call binding the contract method 0xa4d09816.
-//
-// Solidity: function computeWeights(uint8 formula, uint256[] marketCaps) view returns((uint224)[] fractionalWeights)
-func (_Controller *ControllerCallerSession) ComputeWeights(formula uint8, marketCaps []*big.Int) ([]FixedPointuq112x112, error) {
-	return _Controller.Contract.ComputeWeights(&_Controller.CallOpts, formula, marketCaps)
 }
 
 // DefaultExitFeeRecipient is a free data retrieval call binding the contract method 0xa8eb80ab.
@@ -920,158 +729,15 @@ func (_Controller *ControllerCallerSession) DefaultSellerPremium() (uint8, error
 	return _Controller.Contract.DefaultSellerPremium(&_Controller.CallOpts)
 }
 
-// GetCategoryConfig is a free data retrieval call binding the contract method 0x28b996c1.
+// GetInitialTokensAndBalances is a free data retrieval call binding the contract method 0x774cf0cb.
 //
-// Solidity: function getCategoryConfig(uint256 categoryID) view returns(bool useFullyDilutedMarketCaps, uint112 minMarketCap, uint112 maxMarketCap)
-func (_Controller *ControllerCaller) GetCategoryConfig(opts *bind.CallOpts, categoryID *big.Int) (struct {
-	UseFullyDilutedMarketCaps bool
-	MinMarketCap              *big.Int
-	MaxMarketCap              *big.Int
-}, error) {
-	var out []interface{}
-	err := _Controller.contract.Call(opts, &out, "getCategoryConfig", categoryID)
-
-	outstruct := new(struct {
-		UseFullyDilutedMarketCaps bool
-		MinMarketCap              *big.Int
-		MaxMarketCap              *big.Int
-	})
-	if err != nil {
-		return *outstruct, err
-	}
-
-	outstruct.UseFullyDilutedMarketCaps = out[0].(bool)
-	outstruct.MinMarketCap = out[1].(*big.Int)
-	outstruct.MaxMarketCap = out[2].(*big.Int)
-
-	return *outstruct, err
-
-}
-
-// GetCategoryConfig is a free data retrieval call binding the contract method 0x28b996c1.
-//
-// Solidity: function getCategoryConfig(uint256 categoryID) view returns(bool useFullyDilutedMarketCaps, uint112 minMarketCap, uint112 maxMarketCap)
-func (_Controller *ControllerSession) GetCategoryConfig(categoryID *big.Int) (struct {
-	UseFullyDilutedMarketCaps bool
-	MinMarketCap              *big.Int
-	MaxMarketCap              *big.Int
-}, error) {
-	return _Controller.Contract.GetCategoryConfig(&_Controller.CallOpts, categoryID)
-}
-
-// GetCategoryConfig is a free data retrieval call binding the contract method 0x28b996c1.
-//
-// Solidity: function getCategoryConfig(uint256 categoryID) view returns(bool useFullyDilutedMarketCaps, uint112 minMarketCap, uint112 maxMarketCap)
-func (_Controller *ControllerCallerSession) GetCategoryConfig(categoryID *big.Int) (struct {
-	UseFullyDilutedMarketCaps bool
-	MinMarketCap              *big.Int
-	MaxMarketCap              *big.Int
-}, error) {
-	return _Controller.Contract.GetCategoryConfig(&_Controller.CallOpts, categoryID)
-}
-
-// GetCategoryTokens is a free data retrieval call binding the contract method 0xde105dbd.
-//
-// Solidity: function getCategoryTokens(uint256 categoryID) view returns(address[] tokens)
-func (_Controller *ControllerCaller) GetCategoryTokens(opts *bind.CallOpts, categoryID *big.Int) ([]common.Address, error) {
-	var out []interface{}
-	err := _Controller.contract.Call(opts, &out, "getCategoryTokens", categoryID)
-
-	if err != nil {
-		return *new([]common.Address), err
-	}
-
-	out0 := *abi.ConvertType(out[0], new([]common.Address)).(*[]common.Address)
-
-	return out0, err
-
-}
-
-// GetCategoryTokens is a free data retrieval call binding the contract method 0xde105dbd.
-//
-// Solidity: function getCategoryTokens(uint256 categoryID) view returns(address[] tokens)
-func (_Controller *ControllerSession) GetCategoryTokens(categoryID *big.Int) ([]common.Address, error) {
-	return _Controller.Contract.GetCategoryTokens(&_Controller.CallOpts, categoryID)
-}
-
-// GetCategoryTokens is a free data retrieval call binding the contract method 0xde105dbd.
-//
-// Solidity: function getCategoryTokens(uint256 categoryID) view returns(address[] tokens)
-func (_Controller *ControllerCallerSession) GetCategoryTokens(categoryID *big.Int) ([]common.Address, error) {
-	return _Controller.Contract.GetCategoryTokens(&_Controller.CallOpts, categoryID)
-}
-
-// GetCirculatingMarketCaps is a free data retrieval call binding the contract method 0xbf99568f.
-//
-// Solidity: function getCirculatingMarketCaps(address[] tokens) view returns(uint256[] marketCaps)
-func (_Controller *ControllerCaller) GetCirculatingMarketCaps(opts *bind.CallOpts, tokens []common.Address) ([]*big.Int, error) {
-	var out []interface{}
-	err := _Controller.contract.Call(opts, &out, "getCirculatingMarketCaps", tokens)
-
-	if err != nil {
-		return *new([]*big.Int), err
-	}
-
-	out0 := *abi.ConvertType(out[0], new([]*big.Int)).(*[]*big.Int)
-
-	return out0, err
-
-}
-
-// GetCirculatingMarketCaps is a free data retrieval call binding the contract method 0xbf99568f.
-//
-// Solidity: function getCirculatingMarketCaps(address[] tokens) view returns(uint256[] marketCaps)
-func (_Controller *ControllerSession) GetCirculatingMarketCaps(tokens []common.Address) ([]*big.Int, error) {
-	return _Controller.Contract.GetCirculatingMarketCaps(&_Controller.CallOpts, tokens)
-}
-
-// GetCirculatingMarketCaps is a free data retrieval call binding the contract method 0xbf99568f.
-//
-// Solidity: function getCirculatingMarketCaps(address[] tokens) view returns(uint256[] marketCaps)
-func (_Controller *ControllerCallerSession) GetCirculatingMarketCaps(tokens []common.Address) ([]*big.Int, error) {
-	return _Controller.Contract.GetCirculatingMarketCaps(&_Controller.CallOpts, tokens)
-}
-
-// GetFullyDilutedMarketCaps is a free data retrieval call binding the contract method 0xc0f40a6b.
-//
-// Solidity: function getFullyDilutedMarketCaps(address[] tokens) view returns(uint256[] marketCaps)
-func (_Controller *ControllerCaller) GetFullyDilutedMarketCaps(opts *bind.CallOpts, tokens []common.Address) ([]*big.Int, error) {
-	var out []interface{}
-	err := _Controller.contract.Call(opts, &out, "getFullyDilutedMarketCaps", tokens)
-
-	if err != nil {
-		return *new([]*big.Int), err
-	}
-
-	out0 := *abi.ConvertType(out[0], new([]*big.Int)).(*[]*big.Int)
-
-	return out0, err
-
-}
-
-// GetFullyDilutedMarketCaps is a free data retrieval call binding the contract method 0xc0f40a6b.
-//
-// Solidity: function getFullyDilutedMarketCaps(address[] tokens) view returns(uint256[] marketCaps)
-func (_Controller *ControllerSession) GetFullyDilutedMarketCaps(tokens []common.Address) ([]*big.Int, error) {
-	return _Controller.Contract.GetFullyDilutedMarketCaps(&_Controller.CallOpts, tokens)
-}
-
-// GetFullyDilutedMarketCaps is a free data retrieval call binding the contract method 0xc0f40a6b.
-//
-// Solidity: function getFullyDilutedMarketCaps(address[] tokens) view returns(uint256[] marketCaps)
-func (_Controller *ControllerCallerSession) GetFullyDilutedMarketCaps(tokens []common.Address) ([]*big.Int, error) {
-	return _Controller.Contract.GetFullyDilutedMarketCaps(&_Controller.CallOpts, tokens)
-}
-
-// GetInitialTokensAndBalances is a free data retrieval call binding the contract method 0xeef34dfe.
-//
-// Solidity: function getInitialTokensAndBalances(uint256 categoryID, uint8 formula, uint256 indexSize, uint144 wethValue) view returns(address[] tokens, uint256[] balances)
-func (_Controller *ControllerCaller) GetInitialTokensAndBalances(opts *bind.CallOpts, categoryID *big.Int, formula uint8, indexSize *big.Int, wethValue *big.Int) (struct {
+// Solidity: function getInitialTokensAndBalances(uint256 listID, uint256 indexSize, uint256 wethValue) view returns(address[] tokens, uint256[] balances)
+func (_Controller *ControllerCaller) GetInitialTokensAndBalances(opts *bind.CallOpts, listID *big.Int, indexSize *big.Int, wethValue *big.Int) (struct {
 	Tokens   []common.Address
 	Balances []*big.Int
 }, error) {
 	var out []interface{}
-	err := _Controller.contract.Call(opts, &out, "getInitialTokensAndBalances", categoryID, formula, indexSize, wethValue)
+	err := _Controller.contract.Call(opts, &out, "getInitialTokensAndBalances", listID, indexSize, wethValue)
 
 	outstruct := new(struct {
 		Tokens   []common.Address
@@ -1088,32 +754,158 @@ func (_Controller *ControllerCaller) GetInitialTokensAndBalances(opts *bind.Call
 
 }
 
-// GetInitialTokensAndBalances is a free data retrieval call binding the contract method 0xeef34dfe.
+// GetInitialTokensAndBalances is a free data retrieval call binding the contract method 0x774cf0cb.
 //
-// Solidity: function getInitialTokensAndBalances(uint256 categoryID, uint8 formula, uint256 indexSize, uint144 wethValue) view returns(address[] tokens, uint256[] balances)
-func (_Controller *ControllerSession) GetInitialTokensAndBalances(categoryID *big.Int, formula uint8, indexSize *big.Int, wethValue *big.Int) (struct {
+// Solidity: function getInitialTokensAndBalances(uint256 listID, uint256 indexSize, uint256 wethValue) view returns(address[] tokens, uint256[] balances)
+func (_Controller *ControllerSession) GetInitialTokensAndBalances(listID *big.Int, indexSize *big.Int, wethValue *big.Int) (struct {
 	Tokens   []common.Address
 	Balances []*big.Int
 }, error) {
-	return _Controller.Contract.GetInitialTokensAndBalances(&_Controller.CallOpts, categoryID, formula, indexSize, wethValue)
+	return _Controller.Contract.GetInitialTokensAndBalances(&_Controller.CallOpts, listID, indexSize, wethValue)
 }
 
-// GetInitialTokensAndBalances is a free data retrieval call binding the contract method 0xeef34dfe.
+// GetInitialTokensAndBalances is a free data retrieval call binding the contract method 0x774cf0cb.
 //
-// Solidity: function getInitialTokensAndBalances(uint256 categoryID, uint8 formula, uint256 indexSize, uint144 wethValue) view returns(address[] tokens, uint256[] balances)
-func (_Controller *ControllerCallerSession) GetInitialTokensAndBalances(categoryID *big.Int, formula uint8, indexSize *big.Int, wethValue *big.Int) (struct {
+// Solidity: function getInitialTokensAndBalances(uint256 listID, uint256 indexSize, uint256 wethValue) view returns(address[] tokens, uint256[] balances)
+func (_Controller *ControllerCallerSession) GetInitialTokensAndBalances(listID *big.Int, indexSize *big.Int, wethValue *big.Int) (struct {
 	Tokens   []common.Address
 	Balances []*big.Int
 }, error) {
-	return _Controller.Contract.GetInitialTokensAndBalances(&_Controller.CallOpts, categoryID, formula, indexSize, wethValue)
+	return _Controller.Contract.GetInitialTokensAndBalances(&_Controller.CallOpts, listID, indexSize, wethValue)
 }
 
-// GetMarketCaps is a free data retrieval call binding the contract method 0x7645e3f2.
+// GetSortedAndFilteredTokensAndScores is a free data retrieval call binding the contract method 0xf2d75471.
 //
-// Solidity: function getMarketCaps(bool useFullyDilutedMarketCaps, address[] tokens) view returns(uint256[] marketCaps)
-func (_Controller *ControllerCaller) GetMarketCaps(opts *bind.CallOpts, useFullyDilutedMarketCaps bool, tokens []common.Address) ([]*big.Int, error) {
+// Solidity: function getSortedAndFilteredTokensAndScores(uint256 listID) view returns(address[] tokens, uint256[] scores)
+func (_Controller *ControllerCaller) GetSortedAndFilteredTokensAndScores(opts *bind.CallOpts, listID *big.Int) (struct {
+	Tokens []common.Address
+	Scores []*big.Int
+}, error) {
 	var out []interface{}
-	err := _Controller.contract.Call(opts, &out, "getMarketCaps", useFullyDilutedMarketCaps, tokens)
+	err := _Controller.contract.Call(opts, &out, "getSortedAndFilteredTokensAndScores", listID)
+
+	outstruct := new(struct {
+		Tokens []common.Address
+		Scores []*big.Int
+	})
+	if err != nil {
+		return *outstruct, err
+	}
+
+	outstruct.Tokens = out[0].([]common.Address)
+	outstruct.Scores = out[1].([]*big.Int)
+
+	return *outstruct, err
+
+}
+
+// GetSortedAndFilteredTokensAndScores is a free data retrieval call binding the contract method 0xf2d75471.
+//
+// Solidity: function getSortedAndFilteredTokensAndScores(uint256 listID) view returns(address[] tokens, uint256[] scores)
+func (_Controller *ControllerSession) GetSortedAndFilteredTokensAndScores(listID *big.Int) (struct {
+	Tokens []common.Address
+	Scores []*big.Int
+}, error) {
+	return _Controller.Contract.GetSortedAndFilteredTokensAndScores(&_Controller.CallOpts, listID)
+}
+
+// GetSortedAndFilteredTokensAndScores is a free data retrieval call binding the contract method 0xf2d75471.
+//
+// Solidity: function getSortedAndFilteredTokensAndScores(uint256 listID) view returns(address[] tokens, uint256[] scores)
+func (_Controller *ControllerCallerSession) GetSortedAndFilteredTokensAndScores(listID *big.Int) (struct {
+	Tokens []common.Address
+	Scores []*big.Int
+}, error) {
+	return _Controller.Contract.GetSortedAndFilteredTokensAndScores(&_Controller.CallOpts, listID)
+}
+
+// GetTokenList is a free data retrieval call binding the contract method 0x41b63bd8.
+//
+// Solidity: function getTokenList(uint256 listID) view returns(address[] tokens)
+func (_Controller *ControllerCaller) GetTokenList(opts *bind.CallOpts, listID *big.Int) ([]common.Address, error) {
+	var out []interface{}
+	err := _Controller.contract.Call(opts, &out, "getTokenList", listID)
+
+	if err != nil {
+		return *new([]common.Address), err
+	}
+
+	out0 := *abi.ConvertType(out[0], new([]common.Address)).(*[]common.Address)
+
+	return out0, err
+
+}
+
+// GetTokenList is a free data retrieval call binding the contract method 0x41b63bd8.
+//
+// Solidity: function getTokenList(uint256 listID) view returns(address[] tokens)
+func (_Controller *ControllerSession) GetTokenList(listID *big.Int) ([]common.Address, error) {
+	return _Controller.Contract.GetTokenList(&_Controller.CallOpts, listID)
+}
+
+// GetTokenList is a free data retrieval call binding the contract method 0x41b63bd8.
+//
+// Solidity: function getTokenList(uint256 listID) view returns(address[] tokens)
+func (_Controller *ControllerCallerSession) GetTokenList(listID *big.Int) ([]common.Address, error) {
+	return _Controller.Contract.GetTokenList(&_Controller.CallOpts, listID)
+}
+
+// GetTokenListConfig is a free data retrieval call binding the contract method 0x13b75360.
+//
+// Solidity: function getTokenListConfig(uint256 listID) view returns(address scoringStrategy, uint128 minimumScore, uint128 maximumScore)
+func (_Controller *ControllerCaller) GetTokenListConfig(opts *bind.CallOpts, listID *big.Int) (struct {
+	ScoringStrategy common.Address
+	MinimumScore    *big.Int
+	MaximumScore    *big.Int
+}, error) {
+	var out []interface{}
+	err := _Controller.contract.Call(opts, &out, "getTokenListConfig", listID)
+
+	outstruct := new(struct {
+		ScoringStrategy common.Address
+		MinimumScore    *big.Int
+		MaximumScore    *big.Int
+	})
+	if err != nil {
+		return *outstruct, err
+	}
+
+	outstruct.ScoringStrategy = out[0].(common.Address)
+	outstruct.MinimumScore = out[1].(*big.Int)
+	outstruct.MaximumScore = out[2].(*big.Int)
+
+	return *outstruct, err
+
+}
+
+// GetTokenListConfig is a free data retrieval call binding the contract method 0x13b75360.
+//
+// Solidity: function getTokenListConfig(uint256 listID) view returns(address scoringStrategy, uint128 minimumScore, uint128 maximumScore)
+func (_Controller *ControllerSession) GetTokenListConfig(listID *big.Int) (struct {
+	ScoringStrategy common.Address
+	MinimumScore    *big.Int
+	MaximumScore    *big.Int
+}, error) {
+	return _Controller.Contract.GetTokenListConfig(&_Controller.CallOpts, listID)
+}
+
+// GetTokenListConfig is a free data retrieval call binding the contract method 0x13b75360.
+//
+// Solidity: function getTokenListConfig(uint256 listID) view returns(address scoringStrategy, uint128 minimumScore, uint128 maximumScore)
+func (_Controller *ControllerCallerSession) GetTokenListConfig(listID *big.Int) (struct {
+	ScoringStrategy common.Address
+	MinimumScore    *big.Int
+	MaximumScore    *big.Int
+}, error) {
+	return _Controller.Contract.GetTokenListConfig(&_Controller.CallOpts, listID)
+}
+
+// GetTokenScores is a free data retrieval call binding the contract method 0x297c3430.
+//
+// Solidity: function getTokenScores(uint256 listID, address[] tokens) view returns(uint256[] scores)
+func (_Controller *ControllerCaller) GetTokenScores(opts *bind.CallOpts, listID *big.Int, tokens []common.Address) ([]*big.Int, error) {
+	var out []interface{}
+	err := _Controller.contract.Call(opts, &out, "getTokenScores", listID, tokens)
 
 	if err != nil {
 		return *new([]*big.Int), err
@@ -1125,173 +917,94 @@ func (_Controller *ControllerCaller) GetMarketCaps(opts *bind.CallOpts, useFully
 
 }
 
-// GetMarketCaps is a free data retrieval call binding the contract method 0x7645e3f2.
+// GetTokenScores is a free data retrieval call binding the contract method 0x297c3430.
 //
-// Solidity: function getMarketCaps(bool useFullyDilutedMarketCaps, address[] tokens) view returns(uint256[] marketCaps)
-func (_Controller *ControllerSession) GetMarketCaps(useFullyDilutedMarketCaps bool, tokens []common.Address) ([]*big.Int, error) {
-	return _Controller.Contract.GetMarketCaps(&_Controller.CallOpts, useFullyDilutedMarketCaps, tokens)
+// Solidity: function getTokenScores(uint256 listID, address[] tokens) view returns(uint256[] scores)
+func (_Controller *ControllerSession) GetTokenScores(listID *big.Int, tokens []common.Address) ([]*big.Int, error) {
+	return _Controller.Contract.GetTokenScores(&_Controller.CallOpts, listID, tokens)
 }
 
-// GetMarketCaps is a free data retrieval call binding the contract method 0x7645e3f2.
+// GetTokenScores is a free data retrieval call binding the contract method 0x297c3430.
 //
-// Solidity: function getMarketCaps(bool useFullyDilutedMarketCaps, address[] tokens) view returns(uint256[] marketCaps)
-func (_Controller *ControllerCallerSession) GetMarketCaps(useFullyDilutedMarketCaps bool, tokens []common.Address) ([]*big.Int, error) {
-	return _Controller.Contract.GetMarketCaps(&_Controller.CallOpts, useFullyDilutedMarketCaps, tokens)
+// Solidity: function getTokenScores(uint256 listID, address[] tokens) view returns(uint256[] scores)
+func (_Controller *ControllerCallerSession) GetTokenScores(listID *big.Int, tokens []common.Address) ([]*big.Int, error) {
+	return _Controller.Contract.GetTokenScores(&_Controller.CallOpts, listID, tokens)
 }
 
-// GetSortedAndFilteredTokensAndMarketCaps is a free data retrieval call binding the contract method 0x7a92d7ce.
+// GetTopTokensAndScores is a free data retrieval call binding the contract method 0x861a9ec9.
 //
-// Solidity: function getSortedAndFilteredTokensAndMarketCaps(uint256 categoryID) view returns(address[] categoryTokens, uint256[] marketCaps)
-func (_Controller *ControllerCaller) GetSortedAndFilteredTokensAndMarketCaps(opts *bind.CallOpts, categoryID *big.Int) (struct {
-	CategoryTokens []common.Address
-	MarketCaps     []*big.Int
+// Solidity: function getTopTokensAndScores(uint256 listID, uint256 count) view returns(address[] tokens, uint256[] scores)
+func (_Controller *ControllerCaller) GetTopTokensAndScores(opts *bind.CallOpts, listID *big.Int, count *big.Int) (struct {
+	Tokens []common.Address
+	Scores []*big.Int
 }, error) {
 	var out []interface{}
-	err := _Controller.contract.Call(opts, &out, "getSortedAndFilteredTokensAndMarketCaps", categoryID)
+	err := _Controller.contract.Call(opts, &out, "getTopTokensAndScores", listID, count)
 
 	outstruct := new(struct {
-		CategoryTokens []common.Address
-		MarketCaps     []*big.Int
+		Tokens []common.Address
+		Scores []*big.Int
 	})
 	if err != nil {
 		return *outstruct, err
 	}
 
-	outstruct.CategoryTokens = out[0].([]common.Address)
-	outstruct.MarketCaps = out[1].([]*big.Int)
+	outstruct.Tokens = out[0].([]common.Address)
+	outstruct.Scores = out[1].([]*big.Int)
 
 	return *outstruct, err
 
 }
 
-// GetSortedAndFilteredTokensAndMarketCaps is a free data retrieval call binding the contract method 0x7a92d7ce.
+// GetTopTokensAndScores is a free data retrieval call binding the contract method 0x861a9ec9.
 //
-// Solidity: function getSortedAndFilteredTokensAndMarketCaps(uint256 categoryID) view returns(address[] categoryTokens, uint256[] marketCaps)
-func (_Controller *ControllerSession) GetSortedAndFilteredTokensAndMarketCaps(categoryID *big.Int) (struct {
-	CategoryTokens []common.Address
-	MarketCaps     []*big.Int
+// Solidity: function getTopTokensAndScores(uint256 listID, uint256 count) view returns(address[] tokens, uint256[] scores)
+func (_Controller *ControllerSession) GetTopTokensAndScores(listID *big.Int, count *big.Int) (struct {
+	Tokens []common.Address
+	Scores []*big.Int
 }, error) {
-	return _Controller.Contract.GetSortedAndFilteredTokensAndMarketCaps(&_Controller.CallOpts, categoryID)
+	return _Controller.Contract.GetTopTokensAndScores(&_Controller.CallOpts, listID, count)
 }
 
-// GetSortedAndFilteredTokensAndMarketCaps is a free data retrieval call binding the contract method 0x7a92d7ce.
+// GetTopTokensAndScores is a free data retrieval call binding the contract method 0x861a9ec9.
 //
-// Solidity: function getSortedAndFilteredTokensAndMarketCaps(uint256 categoryID) view returns(address[] categoryTokens, uint256[] marketCaps)
-func (_Controller *ControllerCallerSession) GetSortedAndFilteredTokensAndMarketCaps(categoryID *big.Int) (struct {
-	CategoryTokens []common.Address
-	MarketCaps     []*big.Int
+// Solidity: function getTopTokensAndScores(uint256 listID, uint256 count) view returns(address[] tokens, uint256[] scores)
+func (_Controller *ControllerCallerSession) GetTopTokensAndScores(listID *big.Int, count *big.Int) (struct {
+	Tokens []common.Address
+	Scores []*big.Int
 }, error) {
-	return _Controller.Contract.GetSortedAndFilteredTokensAndMarketCaps(&_Controller.CallOpts, categoryID)
-}
-
-// GetTopCategoryTokensAndMarketCaps is a free data retrieval call binding the contract method 0xb61beade.
-//
-// Solidity: function getTopCategoryTokensAndMarketCaps(uint256 categoryID, uint256 count) view returns(address[] categoryTokens, uint256[] marketCaps)
-func (_Controller *ControllerCaller) GetTopCategoryTokensAndMarketCaps(opts *bind.CallOpts, categoryID *big.Int, count *big.Int) (struct {
-	CategoryTokens []common.Address
-	MarketCaps     []*big.Int
-}, error) {
-	var out []interface{}
-	err := _Controller.contract.Call(opts, &out, "getTopCategoryTokensAndMarketCaps", categoryID, count)
-
-	outstruct := new(struct {
-		CategoryTokens []common.Address
-		MarketCaps     []*big.Int
-	})
-	if err != nil {
-		return *outstruct, err
-	}
-
-	outstruct.CategoryTokens = out[0].([]common.Address)
-	outstruct.MarketCaps = out[1].([]*big.Int)
-
-	return *outstruct, err
-
-}
-
-// GetTopCategoryTokensAndMarketCaps is a free data retrieval call binding the contract method 0xb61beade.
-//
-// Solidity: function getTopCategoryTokensAndMarketCaps(uint256 categoryID, uint256 count) view returns(address[] categoryTokens, uint256[] marketCaps)
-func (_Controller *ControllerSession) GetTopCategoryTokensAndMarketCaps(categoryID *big.Int, count *big.Int) (struct {
-	CategoryTokens []common.Address
-	MarketCaps     []*big.Int
-}, error) {
-	return _Controller.Contract.GetTopCategoryTokensAndMarketCaps(&_Controller.CallOpts, categoryID, count)
-}
-
-// GetTopCategoryTokensAndMarketCaps is a free data retrieval call binding the contract method 0xb61beade.
-//
-// Solidity: function getTopCategoryTokensAndMarketCaps(uint256 categoryID, uint256 count) view returns(address[] categoryTokens, uint256[] marketCaps)
-func (_Controller *ControllerCallerSession) GetTopCategoryTokensAndMarketCaps(categoryID *big.Int, count *big.Int) (struct {
-	CategoryTokens []common.Address
-	MarketCaps     []*big.Int
-}, error) {
-	return _Controller.Contract.GetTopCategoryTokensAndMarketCaps(&_Controller.CallOpts, categoryID, count)
-}
-
-// HasCategory is a free data retrieval call binding the contract method 0x1ab66317.
-//
-// Solidity: function hasCategory(uint256 categoryID) view returns(bool)
-func (_Controller *ControllerCaller) HasCategory(opts *bind.CallOpts, categoryID *big.Int) (bool, error) {
-	var out []interface{}
-	err := _Controller.contract.Call(opts, &out, "hasCategory", categoryID)
-
-	if err != nil {
-		return *new(bool), err
-	}
-
-	out0 := *abi.ConvertType(out[0], new(bool)).(*bool)
-
-	return out0, err
-
-}
-
-// HasCategory is a free data retrieval call binding the contract method 0x1ab66317.
-//
-// Solidity: function hasCategory(uint256 categoryID) view returns(bool)
-func (_Controller *ControllerSession) HasCategory(categoryID *big.Int) (bool, error) {
-	return _Controller.Contract.HasCategory(&_Controller.CallOpts, categoryID)
-}
-
-// HasCategory is a free data retrieval call binding the contract method 0x1ab66317.
-//
-// Solidity: function hasCategory(uint256 categoryID) view returns(bool)
-func (_Controller *ControllerCallerSession) HasCategory(categoryID *big.Int) (bool, error) {
-	return _Controller.Contract.HasCategory(&_Controller.CallOpts, categoryID)
+	return _Controller.Contract.GetTopTokensAndScores(&_Controller.CallOpts, listID, count)
 }
 
 // IndexPoolMetadata is a free data retrieval call binding the contract method 0x9dfab092.
 //
-// Solidity: function indexPoolMetadata(address ) view returns(bool initialized, uint16 categoryID, uint8 indexSize, uint8 reweighIndex, uint64 lastReweigh, uint8 formula)
+// Solidity: function indexPoolMetadata(address ) view returns(bool initialized, uint16 listID, uint8 indexSize, uint8 reweighIndex, uint64 lastReweigh)
 func (_Controller *ControllerCaller) IndexPoolMetadata(opts *bind.CallOpts, arg0 common.Address) (struct {
 	Initialized  bool
-	CategoryID   uint16
+	ListID       uint16
 	IndexSize    uint8
 	ReweighIndex uint8
 	LastReweigh  uint64
-	Formula      uint8
 }, error) {
 	var out []interface{}
 	err := _Controller.contract.Call(opts, &out, "indexPoolMetadata", arg0)
 
 	outstruct := new(struct {
 		Initialized  bool
-		CategoryID   uint16
+		ListID       uint16
 		IndexSize    uint8
 		ReweighIndex uint8
 		LastReweigh  uint64
-		Formula      uint8
 	})
 	if err != nil {
 		return *outstruct, err
 	}
 
 	outstruct.Initialized = out[0].(bool)
-	outstruct.CategoryID = out[1].(uint16)
+	outstruct.ListID = out[1].(uint16)
 	outstruct.IndexSize = out[2].(uint8)
 	outstruct.ReweighIndex = out[3].(uint8)
 	outstruct.LastReweigh = out[4].(uint64)
-	outstruct.Formula = out[5].(uint8)
 
 	return *outstruct, err
 
@@ -1299,38 +1012,36 @@ func (_Controller *ControllerCaller) IndexPoolMetadata(opts *bind.CallOpts, arg0
 
 // IndexPoolMetadata is a free data retrieval call binding the contract method 0x9dfab092.
 //
-// Solidity: function indexPoolMetadata(address ) view returns(bool initialized, uint16 categoryID, uint8 indexSize, uint8 reweighIndex, uint64 lastReweigh, uint8 formula)
+// Solidity: function indexPoolMetadata(address ) view returns(bool initialized, uint16 listID, uint8 indexSize, uint8 reweighIndex, uint64 lastReweigh)
 func (_Controller *ControllerSession) IndexPoolMetadata(arg0 common.Address) (struct {
 	Initialized  bool
-	CategoryID   uint16
+	ListID       uint16
 	IndexSize    uint8
 	ReweighIndex uint8
 	LastReweigh  uint64
-	Formula      uint8
 }, error) {
 	return _Controller.Contract.IndexPoolMetadata(&_Controller.CallOpts, arg0)
 }
 
 // IndexPoolMetadata is a free data retrieval call binding the contract method 0x9dfab092.
 //
-// Solidity: function indexPoolMetadata(address ) view returns(bool initialized, uint16 categoryID, uint8 indexSize, uint8 reweighIndex, uint64 lastReweigh, uint8 formula)
+// Solidity: function indexPoolMetadata(address ) view returns(bool initialized, uint16 listID, uint8 indexSize, uint8 reweighIndex, uint64 lastReweigh)
 func (_Controller *ControllerCallerSession) IndexPoolMetadata(arg0 common.Address) (struct {
 	Initialized  bool
-	CategoryID   uint16
+	ListID       uint16
 	IndexSize    uint8
 	ReweighIndex uint8
 	LastReweigh  uint64
-	Formula      uint8
 }, error) {
 	return _Controller.Contract.IndexPoolMetadata(&_Controller.CallOpts, arg0)
 }
 
-// IsTokenInCategory is a free data retrieval call binding the contract method 0x1fbaf275.
+// IsTokenInlist is a free data retrieval call binding the contract method 0x8a15f964.
 //
-// Solidity: function isTokenInCategory(uint256 categoryID, address token) view returns(bool)
-func (_Controller *ControllerCaller) IsTokenInCategory(opts *bind.CallOpts, categoryID *big.Int, token common.Address) (bool, error) {
+// Solidity: function isTokenInlist(uint256 listID, address token) view returns(bool)
+func (_Controller *ControllerCaller) IsTokenInlist(opts *bind.CallOpts, listID *big.Int, token common.Address) (bool, error) {
 	var out []interface{}
-	err := _Controller.contract.Call(opts, &out, "isTokenInCategory", categoryID, token)
+	err := _Controller.contract.Call(opts, &out, "isTokenInlist", listID, token)
 
 	if err != nil {
 		return *new(bool), err
@@ -1342,18 +1053,18 @@ func (_Controller *ControllerCaller) IsTokenInCategory(opts *bind.CallOpts, cate
 
 }
 
-// IsTokenInCategory is a free data retrieval call binding the contract method 0x1fbaf275.
+// IsTokenInlist is a free data retrieval call binding the contract method 0x8a15f964.
 //
-// Solidity: function isTokenInCategory(uint256 categoryID, address token) view returns(bool)
-func (_Controller *ControllerSession) IsTokenInCategory(categoryID *big.Int, token common.Address) (bool, error) {
-	return _Controller.Contract.IsTokenInCategory(&_Controller.CallOpts, categoryID, token)
+// Solidity: function isTokenInlist(uint256 listID, address token) view returns(bool)
+func (_Controller *ControllerSession) IsTokenInlist(listID *big.Int, token common.Address) (bool, error) {
+	return _Controller.Contract.IsTokenInlist(&_Controller.CallOpts, listID, token)
 }
 
-// IsTokenInCategory is a free data retrieval call binding the contract method 0x1fbaf275.
+// IsTokenInlist is a free data retrieval call binding the contract method 0x8a15f964.
 //
-// Solidity: function isTokenInCategory(uint256 categoryID, address token) view returns(bool)
-func (_Controller *ControllerCallerSession) IsTokenInCategory(categoryID *big.Int, token common.Address) (bool, error) {
-	return _Controller.Contract.IsTokenInCategory(&_Controller.CallOpts, categoryID, token)
+// Solidity: function isTokenInlist(uint256 listID, address token) view returns(bool)
+func (_Controller *ControllerCallerSession) IsTokenInlist(listID *big.Int, token common.Address) (bool, error) {
+	return _Controller.Contract.IsTokenInlist(&_Controller.CallOpts, listID, token)
 }
 
 // Owner is a free data retrieval call binding the contract method 0x8da5cb5b.
@@ -1449,6 +1160,37 @@ func (_Controller *ControllerCallerSession) ProxyManager() (common.Address, erro
 	return _Controller.Contract.ProxyManager(&_Controller.CallOpts)
 }
 
+// TokenListCount is a free data retrieval call binding the contract method 0xa43ad7e7.
+//
+// Solidity: function tokenListCount() view returns(uint256)
+func (_Controller *ControllerCaller) TokenListCount(opts *bind.CallOpts) (*big.Int, error) {
+	var out []interface{}
+	err := _Controller.contract.Call(opts, &out, "tokenListCount")
+
+	if err != nil {
+		return *new(*big.Int), err
+	}
+
+	out0 := *abi.ConvertType(out[0], new(*big.Int)).(**big.Int)
+
+	return out0, err
+
+}
+
+// TokenListCount is a free data retrieval call binding the contract method 0xa43ad7e7.
+//
+// Solidity: function tokenListCount() view returns(uint256)
+func (_Controller *ControllerSession) TokenListCount() (*big.Int, error) {
+	return _Controller.Contract.TokenListCount(&_Controller.CallOpts)
+}
+
+// TokenListCount is a free data retrieval call binding the contract method 0xa43ad7e7.
+//
+// Solidity: function tokenListCount() view returns(uint256)
+func (_Controller *ControllerCallerSession) TokenListCount() (*big.Int, error) {
+	return _Controller.Contract.TokenListCount(&_Controller.CallOpts)
+}
+
 // UniswapOracle is a free data retrieval call binding the contract method 0x120c6c5b.
 //
 // Solidity: function uniswapOracle() view returns(address)
@@ -1482,65 +1224,65 @@ func (_Controller *ControllerCallerSession) UniswapOracle() (common.Address, err
 
 // AddToken is a paid mutator transaction binding the contract method 0x57016b0a.
 //
-// Solidity: function addToken(uint256 categoryID, address token) returns()
-func (_Controller *ControllerTransactor) AddToken(opts *bind.TransactOpts, categoryID *big.Int, token common.Address) (*types.Transaction, error) {
-	return _Controller.contract.Transact(opts, "addToken", categoryID, token)
+// Solidity: function addToken(uint256 listID, address token) returns()
+func (_Controller *ControllerTransactor) AddToken(opts *bind.TransactOpts, listID *big.Int, token common.Address) (*types.Transaction, error) {
+	return _Controller.contract.Transact(opts, "addToken", listID, token)
 }
 
 // AddToken is a paid mutator transaction binding the contract method 0x57016b0a.
 //
-// Solidity: function addToken(uint256 categoryID, address token) returns()
-func (_Controller *ControllerSession) AddToken(categoryID *big.Int, token common.Address) (*types.Transaction, error) {
-	return _Controller.Contract.AddToken(&_Controller.TransactOpts, categoryID, token)
+// Solidity: function addToken(uint256 listID, address token) returns()
+func (_Controller *ControllerSession) AddToken(listID *big.Int, token common.Address) (*types.Transaction, error) {
+	return _Controller.Contract.AddToken(&_Controller.TransactOpts, listID, token)
 }
 
 // AddToken is a paid mutator transaction binding the contract method 0x57016b0a.
 //
-// Solidity: function addToken(uint256 categoryID, address token) returns()
-func (_Controller *ControllerTransactorSession) AddToken(categoryID *big.Int, token common.Address) (*types.Transaction, error) {
-	return _Controller.Contract.AddToken(&_Controller.TransactOpts, categoryID, token)
+// Solidity: function addToken(uint256 listID, address token) returns()
+func (_Controller *ControllerTransactorSession) AddToken(listID *big.Int, token common.Address) (*types.Transaction, error) {
+	return _Controller.Contract.AddToken(&_Controller.TransactOpts, listID, token)
 }
 
 // AddTokens is a paid mutator transaction binding the contract method 0x6b5b8808.
 //
-// Solidity: function addTokens(uint256 categoryID, address[] tokens) returns()
-func (_Controller *ControllerTransactor) AddTokens(opts *bind.TransactOpts, categoryID *big.Int, tokens []common.Address) (*types.Transaction, error) {
-	return _Controller.contract.Transact(opts, "addTokens", categoryID, tokens)
+// Solidity: function addTokens(uint256 listID, address[] tokens) returns()
+func (_Controller *ControllerTransactor) AddTokens(opts *bind.TransactOpts, listID *big.Int, tokens []common.Address) (*types.Transaction, error) {
+	return _Controller.contract.Transact(opts, "addTokens", listID, tokens)
 }
 
 // AddTokens is a paid mutator transaction binding the contract method 0x6b5b8808.
 //
-// Solidity: function addTokens(uint256 categoryID, address[] tokens) returns()
-func (_Controller *ControllerSession) AddTokens(categoryID *big.Int, tokens []common.Address) (*types.Transaction, error) {
-	return _Controller.Contract.AddTokens(&_Controller.TransactOpts, categoryID, tokens)
+// Solidity: function addTokens(uint256 listID, address[] tokens) returns()
+func (_Controller *ControllerSession) AddTokens(listID *big.Int, tokens []common.Address) (*types.Transaction, error) {
+	return _Controller.Contract.AddTokens(&_Controller.TransactOpts, listID, tokens)
 }
 
 // AddTokens is a paid mutator transaction binding the contract method 0x6b5b8808.
 //
-// Solidity: function addTokens(uint256 categoryID, address[] tokens) returns()
-func (_Controller *ControllerTransactorSession) AddTokens(categoryID *big.Int, tokens []common.Address) (*types.Transaction, error) {
-	return _Controller.Contract.AddTokens(&_Controller.TransactOpts, categoryID, tokens)
+// Solidity: function addTokens(uint256 listID, address[] tokens) returns()
+func (_Controller *ControllerTransactorSession) AddTokens(listID *big.Int, tokens []common.Address) (*types.Transaction, error) {
+	return _Controller.Contract.AddTokens(&_Controller.TransactOpts, listID, tokens)
 }
 
-// CreateCategory is a paid mutator transaction binding the contract method 0xa151e0f4.
+// CreateTokenList is a paid mutator transaction binding the contract method 0x88d6c096.
 //
-// Solidity: function createCategory(bytes32 metadataHash, bool useFullyDilutedMarketCaps, uint112 minMarketCap, uint112 maxMarketCap) returns()
-func (_Controller *ControllerTransactor) CreateCategory(opts *bind.TransactOpts, metadataHash [32]byte, useFullyDilutedMarketCaps bool, minMarketCap *big.Int, maxMarketCap *big.Int) (*types.Transaction, error) {
-	return _Controller.contract.Transact(opts, "createCategory", metadataHash, useFullyDilutedMarketCaps, minMarketCap, maxMarketCap)
+// Solidity: function createTokenList(bytes32 metadataHash, address scoringStrategy, uint128 minimumScore, uint128 maximumScore) returns()
+func (_Controller *ControllerTransactor) CreateTokenList(opts *bind.TransactOpts, metadataHash [32]byte, scoringStrategy common.Address, minimumScore *big.Int, maximumScore *big.Int) (*types.Transaction, error) {
+	return _Controller.contract.Transact(opts, "createTokenList", metadataHash, scoringStrategy, minimumScore, maximumScore)
 }
 
-// CreateCategory is a paid mutator transaction binding the contract method 0xa151e0f4.
+// CreateTokenList is a paid mutator transaction binding the contract method 0x88d6c096.
 //
-// Solidity: function createCategory(bytes32 metadataHash, bool useFullyDilutedMarketCaps, uint112 minMarketCap, uint112 maxMarketCap) returns()
-func (_Controller *ControllerSession) CreateCategory(metadataHash [32]byte, useFullyDilutedMarketCaps bool, minMarketCap *big.Int, maxMarketCap *big.Int) (*types.Transaction, error) {
-	return _Controller.Contract.CreateCategory(&_Controller.TransactOpts, metadataHash, useFullyDilutedMarketCaps, minMarketCap, maxMarketCap)
+// Solidity: function createTokenList(bytes32 metadataHash, address scoringStrategy, uint128 minimumScore, uint128 maximumScore) returns()
+func (_Controller *ControllerSession) CreateTokenList(metadataHash [32]byte, scoringStrategy common.Address, minimumScore *big.Int, maximumScore *big.Int) (*types.Transaction, error) {
+	return _Controller.Contract.CreateTokenList(&_Controller.TransactOpts, metadataHash, scoringStrategy, minimumScore, maximumScore)
 }
 
-// CreateCategory is a paid mutator transaction binding the contract method 0xa151e0f4.
+// CreateTokenList is a paid mutator transaction binding the contract method 0x88d6c096.
 //
-// Solidity: function createCategory(bytes32 metadataHash, bool useFullyDilutedMarketCaps, uint112 minMarketCap, uint112 maxMarketCap) returns()
-func (_Controller *ControllerTransactorSession) CreateCategory(metadataHash [32]byte, useFullyDilutedMarketCaps bool, minMarketCap *big.Int, maxMarketCap *big.Int) (*types.Transaction, error) {
-	return _Controller.Contract.CreateCategory(&_Controller.TransactOpts, metadataHash, useFullyDilutedMarketCaps, minMarketCap, maxMarketCap)
+// Solidity: function createTokenList(bytes32 metadataHash, address scoringStrategy, uint128 minimumScore, uint128 maximumScore) returns()
+func (_Controller *ControllerTransactorSession) CreateTokenList(metadataHash [32]byte, scoringStrategy common.Address, minimumScore *big.Int, maximumScore *big.Int) (*types.Transaction, error) {
+	return _Controller.Contract.CreateTokenList(&_Controller.TransactOpts, metadataHash, scoringStrategy, minimumScore, maximumScore)
 }
 
 // DelegateCompLikeTokenFromPool is a paid mutator transaction binding the contract method 0xc6acb34f.
@@ -1606,67 +1348,67 @@ func (_Controller *ControllerTransactorSession) ForceReindexPool(poolAddress com
 	return _Controller.Contract.ForceReindexPool(&_Controller.TransactOpts, poolAddress)
 }
 
-// Initialize is a paid mutator transaction binding the contract method 0x485cc955.
+// Initialize is a paid mutator transaction binding the contract method 0x8129fc1c.
 //
-// Solidity: function initialize(address circulatingMarketCapOracle_, address circuitBreaker_) returns()
-func (_Controller *ControllerTransactor) Initialize(opts *bind.TransactOpts, circulatingMarketCapOracle_ common.Address, circuitBreaker_ common.Address) (*types.Transaction, error) {
-	return _Controller.contract.Transact(opts, "initialize", circulatingMarketCapOracle_, circuitBreaker_)
+// Solidity: function initialize() returns()
+func (_Controller *ControllerTransactor) Initialize(opts *bind.TransactOpts) (*types.Transaction, error) {
+	return _Controller.contract.Transact(opts, "initialize")
 }
 
-// Initialize is a paid mutator transaction binding the contract method 0x485cc955.
+// Initialize is a paid mutator transaction binding the contract method 0x8129fc1c.
 //
-// Solidity: function initialize(address circulatingMarketCapOracle_, address circuitBreaker_) returns()
-func (_Controller *ControllerSession) Initialize(circulatingMarketCapOracle_ common.Address, circuitBreaker_ common.Address) (*types.Transaction, error) {
-	return _Controller.Contract.Initialize(&_Controller.TransactOpts, circulatingMarketCapOracle_, circuitBreaker_)
+// Solidity: function initialize() returns()
+func (_Controller *ControllerSession) Initialize() (*types.Transaction, error) {
+	return _Controller.Contract.Initialize(&_Controller.TransactOpts)
 }
 
-// Initialize is a paid mutator transaction binding the contract method 0x485cc955.
+// Initialize is a paid mutator transaction binding the contract method 0x8129fc1c.
 //
-// Solidity: function initialize(address circulatingMarketCapOracle_, address circuitBreaker_) returns()
-func (_Controller *ControllerTransactorSession) Initialize(circulatingMarketCapOracle_ common.Address, circuitBreaker_ common.Address) (*types.Transaction, error) {
-	return _Controller.Contract.Initialize(&_Controller.TransactOpts, circulatingMarketCapOracle_, circuitBreaker_)
-}
-
-// Initialize0 is a paid mutator transaction binding the contract method 0xc4d66de8.
-//
-// Solidity: function initialize(address circulatingMarketCapOracle_) returns()
-func (_Controller *ControllerTransactor) Initialize0(opts *bind.TransactOpts, circulatingMarketCapOracle_ common.Address) (*types.Transaction, error) {
-	return _Controller.contract.Transact(opts, "initialize0", circulatingMarketCapOracle_)
+// Solidity: function initialize() returns()
+func (_Controller *ControllerTransactorSession) Initialize() (*types.Transaction, error) {
+	return _Controller.Contract.Initialize(&_Controller.TransactOpts)
 }
 
 // Initialize0 is a paid mutator transaction binding the contract method 0xc4d66de8.
 //
-// Solidity: function initialize(address circulatingMarketCapOracle_) returns()
-func (_Controller *ControllerSession) Initialize0(circulatingMarketCapOracle_ common.Address) (*types.Transaction, error) {
-	return _Controller.Contract.Initialize0(&_Controller.TransactOpts, circulatingMarketCapOracle_)
+// Solidity: function initialize(address circuitBreaker_) returns()
+func (_Controller *ControllerTransactor) Initialize0(opts *bind.TransactOpts, circuitBreaker_ common.Address) (*types.Transaction, error) {
+	return _Controller.contract.Transact(opts, "initialize0", circuitBreaker_)
 }
 
 // Initialize0 is a paid mutator transaction binding the contract method 0xc4d66de8.
 //
-// Solidity: function initialize(address circulatingMarketCapOracle_) returns()
-func (_Controller *ControllerTransactorSession) Initialize0(circulatingMarketCapOracle_ common.Address) (*types.Transaction, error) {
-	return _Controller.Contract.Initialize0(&_Controller.TransactOpts, circulatingMarketCapOracle_)
+// Solidity: function initialize(address circuitBreaker_) returns()
+func (_Controller *ControllerSession) Initialize0(circuitBreaker_ common.Address) (*types.Transaction, error) {
+	return _Controller.Contract.Initialize0(&_Controller.TransactOpts, circuitBreaker_)
 }
 
-// PrepareIndexPool is a paid mutator transaction binding the contract method 0xf5bde611.
+// Initialize0 is a paid mutator transaction binding the contract method 0xc4d66de8.
 //
-// Solidity: function prepareIndexPool(uint256 categoryID, uint256 indexSize, uint256 initialWethValue, uint8 formula, string name, string symbol) returns(address poolAddress, address initializerAddress)
-func (_Controller *ControllerTransactor) PrepareIndexPool(opts *bind.TransactOpts, categoryID *big.Int, indexSize *big.Int, initialWethValue *big.Int, formula uint8, name string, symbol string) (*types.Transaction, error) {
-	return _Controller.contract.Transact(opts, "prepareIndexPool", categoryID, indexSize, initialWethValue, formula, name, symbol)
+// Solidity: function initialize(address circuitBreaker_) returns()
+func (_Controller *ControllerTransactorSession) Initialize0(circuitBreaker_ common.Address) (*types.Transaction, error) {
+	return _Controller.Contract.Initialize0(&_Controller.TransactOpts, circuitBreaker_)
 }
 
-// PrepareIndexPool is a paid mutator transaction binding the contract method 0xf5bde611.
+// PrepareIndexPool is a paid mutator transaction binding the contract method 0x74a58783.
 //
-// Solidity: function prepareIndexPool(uint256 categoryID, uint256 indexSize, uint256 initialWethValue, uint8 formula, string name, string symbol) returns(address poolAddress, address initializerAddress)
-func (_Controller *ControllerSession) PrepareIndexPool(categoryID *big.Int, indexSize *big.Int, initialWethValue *big.Int, formula uint8, name string, symbol string) (*types.Transaction, error) {
-	return _Controller.Contract.PrepareIndexPool(&_Controller.TransactOpts, categoryID, indexSize, initialWethValue, formula, name, symbol)
+// Solidity: function prepareIndexPool(uint256 listID, uint256 indexSize, uint256 initialWethValue, string name, string symbol) returns(address poolAddress, address initializerAddress)
+func (_Controller *ControllerTransactor) PrepareIndexPool(opts *bind.TransactOpts, listID *big.Int, indexSize *big.Int, initialWethValue *big.Int, name string, symbol string) (*types.Transaction, error) {
+	return _Controller.contract.Transact(opts, "prepareIndexPool", listID, indexSize, initialWethValue, name, symbol)
 }
 
-// PrepareIndexPool is a paid mutator transaction binding the contract method 0xf5bde611.
+// PrepareIndexPool is a paid mutator transaction binding the contract method 0x74a58783.
 //
-// Solidity: function prepareIndexPool(uint256 categoryID, uint256 indexSize, uint256 initialWethValue, uint8 formula, string name, string symbol) returns(address poolAddress, address initializerAddress)
-func (_Controller *ControllerTransactorSession) PrepareIndexPool(categoryID *big.Int, indexSize *big.Int, initialWethValue *big.Int, formula uint8, name string, symbol string) (*types.Transaction, error) {
-	return _Controller.Contract.PrepareIndexPool(&_Controller.TransactOpts, categoryID, indexSize, initialWethValue, formula, name, symbol)
+// Solidity: function prepareIndexPool(uint256 listID, uint256 indexSize, uint256 initialWethValue, string name, string symbol) returns(address poolAddress, address initializerAddress)
+func (_Controller *ControllerSession) PrepareIndexPool(listID *big.Int, indexSize *big.Int, initialWethValue *big.Int, name string, symbol string) (*types.Transaction, error) {
+	return _Controller.Contract.PrepareIndexPool(&_Controller.TransactOpts, listID, indexSize, initialWethValue, name, symbol)
+}
+
+// PrepareIndexPool is a paid mutator transaction binding the contract method 0x74a58783.
+//
+// Solidity: function prepareIndexPool(uint256 listID, uint256 indexSize, uint256 initialWethValue, string name, string symbol) returns(address poolAddress, address initializerAddress)
+func (_Controller *ControllerTransactorSession) PrepareIndexPool(listID *big.Int, indexSize *big.Int, initialWethValue *big.Int, name string, symbol string) (*types.Transaction, error) {
+	return _Controller.Contract.PrepareIndexPool(&_Controller.TransactOpts, listID, indexSize, initialWethValue, name, symbol)
 }
 
 // ReindexPool is a paid mutator transaction binding the contract method 0x50b1e342.
@@ -1692,23 +1434,23 @@ func (_Controller *ControllerTransactorSession) ReindexPool(poolAddress common.A
 
 // RemoveToken is a paid mutator transaction binding the contract method 0x33fe5676.
 //
-// Solidity: function removeToken(uint256 categoryID, address token) returns()
-func (_Controller *ControllerTransactor) RemoveToken(opts *bind.TransactOpts, categoryID *big.Int, token common.Address) (*types.Transaction, error) {
-	return _Controller.contract.Transact(opts, "removeToken", categoryID, token)
+// Solidity: function removeToken(uint256 listID, address token) returns()
+func (_Controller *ControllerTransactor) RemoveToken(opts *bind.TransactOpts, listID *big.Int, token common.Address) (*types.Transaction, error) {
+	return _Controller.contract.Transact(opts, "removeToken", listID, token)
 }
 
 // RemoveToken is a paid mutator transaction binding the contract method 0x33fe5676.
 //
-// Solidity: function removeToken(uint256 categoryID, address token) returns()
-func (_Controller *ControllerSession) RemoveToken(categoryID *big.Int, token common.Address) (*types.Transaction, error) {
-	return _Controller.Contract.RemoveToken(&_Controller.TransactOpts, categoryID, token)
+// Solidity: function removeToken(uint256 listID, address token) returns()
+func (_Controller *ControllerSession) RemoveToken(listID *big.Int, token common.Address) (*types.Transaction, error) {
+	return _Controller.Contract.RemoveToken(&_Controller.TransactOpts, listID, token)
 }
 
 // RemoveToken is a paid mutator transaction binding the contract method 0x33fe5676.
 //
-// Solidity: function removeToken(uint256 categoryID, address token) returns()
-func (_Controller *ControllerTransactorSession) RemoveToken(categoryID *big.Int, token common.Address) (*types.Transaction, error) {
-	return _Controller.Contract.RemoveToken(&_Controller.TransactOpts, categoryID, token)
+// Solidity: function removeToken(uint256 listID, address token) returns()
+func (_Controller *ControllerTransactorSession) RemoveToken(listID *big.Int, token common.Address) (*types.Transaction, error) {
+	return _Controller.Contract.RemoveToken(&_Controller.TransactOpts, listID, token)
 }
 
 // RenounceOwnership is a paid mutator transaction binding the contract method 0x715018a6.
@@ -1772,27 +1514,6 @@ func (_Controller *ControllerSession) SetCircuitBreaker(circuitBreaker_ common.A
 // Solidity: function setCircuitBreaker(address circuitBreaker_) returns()
 func (_Controller *ControllerTransactorSession) SetCircuitBreaker(circuitBreaker_ common.Address) (*types.Transaction, error) {
 	return _Controller.Contract.SetCircuitBreaker(&_Controller.TransactOpts, circuitBreaker_)
-}
-
-// SetCirculatingMarketCapOracle is a paid mutator transaction binding the contract method 0x4ee6411e.
-//
-// Solidity: function setCirculatingMarketCapOracle(address circulatingMarketCapOracle_) returns()
-func (_Controller *ControllerTransactor) SetCirculatingMarketCapOracle(opts *bind.TransactOpts, circulatingMarketCapOracle_ common.Address) (*types.Transaction, error) {
-	return _Controller.contract.Transact(opts, "setCirculatingMarketCapOracle", circulatingMarketCapOracle_)
-}
-
-// SetCirculatingMarketCapOracle is a paid mutator transaction binding the contract method 0x4ee6411e.
-//
-// Solidity: function setCirculatingMarketCapOracle(address circulatingMarketCapOracle_) returns()
-func (_Controller *ControllerSession) SetCirculatingMarketCapOracle(circulatingMarketCapOracle_ common.Address) (*types.Transaction, error) {
-	return _Controller.Contract.SetCirculatingMarketCapOracle(&_Controller.TransactOpts, circulatingMarketCapOracle_)
-}
-
-// SetCirculatingMarketCapOracle is a paid mutator transaction binding the contract method 0x4ee6411e.
-//
-// Solidity: function setCirculatingMarketCapOracle(address circulatingMarketCapOracle_) returns()
-func (_Controller *ControllerTransactorSession) SetCirculatingMarketCapOracle(circulatingMarketCapOracle_ common.Address) (*types.Transaction, error) {
-	return _Controller.Contract.SetCirculatingMarketCapOracle(&_Controller.TransactOpts, circulatingMarketCapOracle_)
 }
 
 // SetDefaultSellerPremium is a paid mutator transaction binding the contract method 0xdf8e238a.
@@ -1860,23 +1581,23 @@ func (_Controller *ControllerTransactorSession) SetSwapFee(poolAddress common.Ad
 
 // SortAndFilterTokens is a paid mutator transaction binding the contract method 0x88b9813a.
 //
-// Solidity: function sortAndFilterTokens(uint256 categoryID) returns()
-func (_Controller *ControllerTransactor) SortAndFilterTokens(opts *bind.TransactOpts, categoryID *big.Int) (*types.Transaction, error) {
-	return _Controller.contract.Transact(opts, "sortAndFilterTokens", categoryID)
+// Solidity: function sortAndFilterTokens(uint256 listID) returns()
+func (_Controller *ControllerTransactor) SortAndFilterTokens(opts *bind.TransactOpts, listID *big.Int) (*types.Transaction, error) {
+	return _Controller.contract.Transact(opts, "sortAndFilterTokens", listID)
 }
 
 // SortAndFilterTokens is a paid mutator transaction binding the contract method 0x88b9813a.
 //
-// Solidity: function sortAndFilterTokens(uint256 categoryID) returns()
-func (_Controller *ControllerSession) SortAndFilterTokens(categoryID *big.Int) (*types.Transaction, error) {
-	return _Controller.Contract.SortAndFilterTokens(&_Controller.TransactOpts, categoryID)
+// Solidity: function sortAndFilterTokens(uint256 listID) returns()
+func (_Controller *ControllerSession) SortAndFilterTokens(listID *big.Int) (*types.Transaction, error) {
+	return _Controller.Contract.SortAndFilterTokens(&_Controller.TransactOpts, listID)
 }
 
 // SortAndFilterTokens is a paid mutator transaction binding the contract method 0x88b9813a.
 //
-// Solidity: function sortAndFilterTokens(uint256 categoryID) returns()
-func (_Controller *ControllerTransactorSession) SortAndFilterTokens(categoryID *big.Int) (*types.Transaction, error) {
-	return _Controller.Contract.SortAndFilterTokens(&_Controller.TransactOpts, categoryID)
+// Solidity: function sortAndFilterTokens(uint256 listID) returns()
+func (_Controller *ControllerTransactorSession) SortAndFilterTokens(listID *big.Int) (*types.Transaction, error) {
+	return _Controller.Contract.SortAndFilterTokens(&_Controller.TransactOpts, listID)
 }
 
 // TransferOwnership is a paid mutator transaction binding the contract method 0xf2fde38b.
@@ -1898,48 +1619,6 @@ func (_Controller *ControllerSession) TransferOwnership(newOwner common.Address)
 // Solidity: function transferOwnership(address newOwner) returns()
 func (_Controller *ControllerTransactorSession) TransferOwnership(newOwner common.Address) (*types.Transaction, error) {
 	return _Controller.Contract.TransferOwnership(&_Controller.TransactOpts, newOwner)
-}
-
-// UpdateCategoryMarketCaps is a paid mutator transaction binding the contract method 0x90bec8ac.
-//
-// Solidity: function updateCategoryMarketCaps(uint256 categoryID) returns()
-func (_Controller *ControllerTransactor) UpdateCategoryMarketCaps(opts *bind.TransactOpts, categoryID *big.Int) (*types.Transaction, error) {
-	return _Controller.contract.Transact(opts, "updateCategoryMarketCaps", categoryID)
-}
-
-// UpdateCategoryMarketCaps is a paid mutator transaction binding the contract method 0x90bec8ac.
-//
-// Solidity: function updateCategoryMarketCaps(uint256 categoryID) returns()
-func (_Controller *ControllerSession) UpdateCategoryMarketCaps(categoryID *big.Int) (*types.Transaction, error) {
-	return _Controller.Contract.UpdateCategoryMarketCaps(&_Controller.TransactOpts, categoryID)
-}
-
-// UpdateCategoryMarketCaps is a paid mutator transaction binding the contract method 0x90bec8ac.
-//
-// Solidity: function updateCategoryMarketCaps(uint256 categoryID) returns()
-func (_Controller *ControllerTransactorSession) UpdateCategoryMarketCaps(categoryID *big.Int) (*types.Transaction, error) {
-	return _Controller.Contract.UpdateCategoryMarketCaps(&_Controller.TransactOpts, categoryID)
-}
-
-// UpdateCategoryPrices is a paid mutator transaction binding the contract method 0x6866ada8.
-//
-// Solidity: function updateCategoryPrices(uint256 categoryID) returns(bool[] pricesUpdated)
-func (_Controller *ControllerTransactor) UpdateCategoryPrices(opts *bind.TransactOpts, categoryID *big.Int) (*types.Transaction, error) {
-	return _Controller.contract.Transact(opts, "updateCategoryPrices", categoryID)
-}
-
-// UpdateCategoryPrices is a paid mutator transaction binding the contract method 0x6866ada8.
-//
-// Solidity: function updateCategoryPrices(uint256 categoryID) returns(bool[] pricesUpdated)
-func (_Controller *ControllerSession) UpdateCategoryPrices(categoryID *big.Int) (*types.Transaction, error) {
-	return _Controller.Contract.UpdateCategoryPrices(&_Controller.TransactOpts, categoryID)
-}
-
-// UpdateCategoryPrices is a paid mutator transaction binding the contract method 0x6866ada8.
-//
-// Solidity: function updateCategoryPrices(uint256 categoryID) returns(bool[] pricesUpdated)
-func (_Controller *ControllerTransactorSession) UpdateCategoryPrices(categoryID *big.Int) (*types.Transaction, error) {
-	return _Controller.Contract.UpdateCategoryPrices(&_Controller.TransactOpts, categoryID)
 }
 
 // UpdateMinimumBalance is a paid mutator transaction binding the contract method 0x034b904e.
@@ -1984,276 +1663,25 @@ func (_Controller *ControllerTransactorSession) UpdateSellerPremium(tokenSeller 
 	return _Controller.Contract.UpdateSellerPremium(&_Controller.TransactOpts, tokenSeller, premiumPercent)
 }
 
-// ControllerCategoryAddedIterator is returned from FilterCategoryAdded and is used to iterate over the raw logs and unpacked data for CategoryAdded events raised by the Controller contract.
-type ControllerCategoryAddedIterator struct {
-	Event *ControllerCategoryAdded // Event containing the contract specifics and raw log
-
-	contract *bind.BoundContract // Generic contract to use for unpacking event data
-	event    string              // Event name to use for unpacking event data
-
-	logs chan types.Log        // Log channel receiving the found contract events
-	sub  ethereum.Subscription // Subscription for errors, completion and termination
-	done bool                  // Whether the subscription completed delivering logs
-	fail error                 // Occurred error to stop iteration
-}
-
-// Next advances the iterator to the subsequent event, returning whether there
-// are any more events found. In case of a retrieval or parsing error, false is
-// returned and Error() can be queried for the exact failure.
-func (it *ControllerCategoryAddedIterator) Next() bool {
-	// If the iterator failed, stop iterating
-	if it.fail != nil {
-		return false
-	}
-	// If the iterator completed, deliver directly whatever's available
-	if it.done {
-		select {
-		case log := <-it.logs:
-			it.Event = new(ControllerCategoryAdded)
-			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
-				it.fail = err
-				return false
-			}
-			it.Event.Raw = log
-			return true
-
-		default:
-			return false
-		}
-	}
-	// Iterator still in progress, wait for either a data or an error event
-	select {
-	case log := <-it.logs:
-		it.Event = new(ControllerCategoryAdded)
-		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
-			it.fail = err
-			return false
-		}
-		it.Event.Raw = log
-		return true
-
-	case err := <-it.sub.Err():
-		it.done = true
-		it.fail = err
-		return it.Next()
-	}
-}
-
-// Error returns any retrieval or parsing error occurred during filtering.
-func (it *ControllerCategoryAddedIterator) Error() error {
-	return it.fail
-}
-
-// Close terminates the iteration process, releasing any pending underlying
-// resources.
-func (it *ControllerCategoryAddedIterator) Close() error {
-	it.sub.Unsubscribe()
-	return nil
-}
-
-// ControllerCategoryAdded represents a CategoryAdded event raised by the Controller contract.
-type ControllerCategoryAdded struct {
-	CategoryID                *big.Int
-	MetadataHash              [32]byte
-	UseFullyDilutedMarketCaps bool
-	MinMarketCap              *big.Int
-	MaxMarketCap              *big.Int
-	Raw                       types.Log // Blockchain specific contextual infos
-}
-
-// FilterCategoryAdded is a free log retrieval operation binding the contract event 0x204e69e7c4d704d675be18559b3a36c31d58c335c1e1027f9a98c65d762441d3.
+// UpdateTokenPrices is a paid mutator transaction binding the contract method 0xde16eb99.
 //
-// Solidity: event CategoryAdded(uint256 categoryID, bytes32 metadataHash, bool useFullyDilutedMarketCaps, uint128 minMarketCap, uint128 maxMarketCap)
-func (_Controller *ControllerFilterer) FilterCategoryAdded(opts *bind.FilterOpts) (*ControllerCategoryAddedIterator, error) {
-
-	logs, sub, err := _Controller.contract.FilterLogs(opts, "CategoryAdded")
-	if err != nil {
-		return nil, err
-	}
-	return &ControllerCategoryAddedIterator{contract: _Controller.contract, event: "CategoryAdded", logs: logs, sub: sub}, nil
+// Solidity: function updateTokenPrices(uint256 listID) returns(bool[] pricesUpdated)
+func (_Controller *ControllerTransactor) UpdateTokenPrices(opts *bind.TransactOpts, listID *big.Int) (*types.Transaction, error) {
+	return _Controller.contract.Transact(opts, "updateTokenPrices", listID)
 }
 
-// WatchCategoryAdded is a free log subscription operation binding the contract event 0x204e69e7c4d704d675be18559b3a36c31d58c335c1e1027f9a98c65d762441d3.
+// UpdateTokenPrices is a paid mutator transaction binding the contract method 0xde16eb99.
 //
-// Solidity: event CategoryAdded(uint256 categoryID, bytes32 metadataHash, bool useFullyDilutedMarketCaps, uint128 minMarketCap, uint128 maxMarketCap)
-func (_Controller *ControllerFilterer) WatchCategoryAdded(opts *bind.WatchOpts, sink chan<- *ControllerCategoryAdded) (event.Subscription, error) {
-
-	logs, sub, err := _Controller.contract.WatchLogs(opts, "CategoryAdded")
-	if err != nil {
-		return nil, err
-	}
-	return event.NewSubscription(func(quit <-chan struct{}) error {
-		defer sub.Unsubscribe()
-		for {
-			select {
-			case log := <-logs:
-				// New log arrived, parse the event and forward to the user
-				event := new(ControllerCategoryAdded)
-				if err := _Controller.contract.UnpackLog(event, "CategoryAdded", log); err != nil {
-					return err
-				}
-				event.Raw = log
-
-				select {
-				case sink <- event:
-				case err := <-sub.Err():
-					return err
-				case <-quit:
-					return nil
-				}
-			case err := <-sub.Err():
-				return err
-			case <-quit:
-				return nil
-			}
-		}
-	}), nil
+// Solidity: function updateTokenPrices(uint256 listID) returns(bool[] pricesUpdated)
+func (_Controller *ControllerSession) UpdateTokenPrices(listID *big.Int) (*types.Transaction, error) {
+	return _Controller.Contract.UpdateTokenPrices(&_Controller.TransactOpts, listID)
 }
 
-// ParseCategoryAdded is a log parse operation binding the contract event 0x204e69e7c4d704d675be18559b3a36c31d58c335c1e1027f9a98c65d762441d3.
+// UpdateTokenPrices is a paid mutator transaction binding the contract method 0xde16eb99.
 //
-// Solidity: event CategoryAdded(uint256 categoryID, bytes32 metadataHash, bool useFullyDilutedMarketCaps, uint128 minMarketCap, uint128 maxMarketCap)
-func (_Controller *ControllerFilterer) ParseCategoryAdded(log types.Log) (*ControllerCategoryAdded, error) {
-	event := new(ControllerCategoryAdded)
-	if err := _Controller.contract.UnpackLog(event, "CategoryAdded", log); err != nil {
-		return nil, err
-	}
-	event.Raw = log
-	return event, nil
-}
-
-// ControllerCategorySortedIterator is returned from FilterCategorySorted and is used to iterate over the raw logs and unpacked data for CategorySorted events raised by the Controller contract.
-type ControllerCategorySortedIterator struct {
-	Event *ControllerCategorySorted // Event containing the contract specifics and raw log
-
-	contract *bind.BoundContract // Generic contract to use for unpacking event data
-	event    string              // Event name to use for unpacking event data
-
-	logs chan types.Log        // Log channel receiving the found contract events
-	sub  ethereum.Subscription // Subscription for errors, completion and termination
-	done bool                  // Whether the subscription completed delivering logs
-	fail error                 // Occurred error to stop iteration
-}
-
-// Next advances the iterator to the subsequent event, returning whether there
-// are any more events found. In case of a retrieval or parsing error, false is
-// returned and Error() can be queried for the exact failure.
-func (it *ControllerCategorySortedIterator) Next() bool {
-	// If the iterator failed, stop iterating
-	if it.fail != nil {
-		return false
-	}
-	// If the iterator completed, deliver directly whatever's available
-	if it.done {
-		select {
-		case log := <-it.logs:
-			it.Event = new(ControllerCategorySorted)
-			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
-				it.fail = err
-				return false
-			}
-			it.Event.Raw = log
-			return true
-
-		default:
-			return false
-		}
-	}
-	// Iterator still in progress, wait for either a data or an error event
-	select {
-	case log := <-it.logs:
-		it.Event = new(ControllerCategorySorted)
-		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
-			it.fail = err
-			return false
-		}
-		it.Event.Raw = log
-		return true
-
-	case err := <-it.sub.Err():
-		it.done = true
-		it.fail = err
-		return it.Next()
-	}
-}
-
-// Error returns any retrieval or parsing error occurred during filtering.
-func (it *ControllerCategorySortedIterator) Error() error {
-	return it.fail
-}
-
-// Close terminates the iteration process, releasing any pending underlying
-// resources.
-func (it *ControllerCategorySortedIterator) Close() error {
-	it.sub.Unsubscribe()
-	return nil
-}
-
-// ControllerCategorySorted represents a CategorySorted event raised by the Controller contract.
-type ControllerCategorySorted struct {
-	CategoryID *big.Int
-	Raw        types.Log // Blockchain specific contextual infos
-}
-
-// FilterCategorySorted is a free log retrieval operation binding the contract event 0x60d2f5fd1812c906f738651cc42bfcb9c52908b88265a1ec508ce32367af72c3.
-//
-// Solidity: event CategorySorted(uint256 categoryID)
-func (_Controller *ControllerFilterer) FilterCategorySorted(opts *bind.FilterOpts) (*ControllerCategorySortedIterator, error) {
-
-	logs, sub, err := _Controller.contract.FilterLogs(opts, "CategorySorted")
-	if err != nil {
-		return nil, err
-	}
-	return &ControllerCategorySortedIterator{contract: _Controller.contract, event: "CategorySorted", logs: logs, sub: sub}, nil
-}
-
-// WatchCategorySorted is a free log subscription operation binding the contract event 0x60d2f5fd1812c906f738651cc42bfcb9c52908b88265a1ec508ce32367af72c3.
-//
-// Solidity: event CategorySorted(uint256 categoryID)
-func (_Controller *ControllerFilterer) WatchCategorySorted(opts *bind.WatchOpts, sink chan<- *ControllerCategorySorted) (event.Subscription, error) {
-
-	logs, sub, err := _Controller.contract.WatchLogs(opts, "CategorySorted")
-	if err != nil {
-		return nil, err
-	}
-	return event.NewSubscription(func(quit <-chan struct{}) error {
-		defer sub.Unsubscribe()
-		for {
-			select {
-			case log := <-logs:
-				// New log arrived, parse the event and forward to the user
-				event := new(ControllerCategorySorted)
-				if err := _Controller.contract.UnpackLog(event, "CategorySorted", log); err != nil {
-					return err
-				}
-				event.Raw = log
-
-				select {
-				case sink <- event:
-				case err := <-sub.Err():
-					return err
-				case <-quit:
-					return nil
-				}
-			case err := <-sub.Err():
-				return err
-			case <-quit:
-				return nil
-			}
-		}
-	}), nil
-}
-
-// ParseCategorySorted is a log parse operation binding the contract event 0x60d2f5fd1812c906f738651cc42bfcb9c52908b88265a1ec508ce32367af72c3.
-//
-// Solidity: event CategorySorted(uint256 categoryID)
-func (_Controller *ControllerFilterer) ParseCategorySorted(log types.Log) (*ControllerCategorySorted, error) {
-	event := new(ControllerCategorySorted)
-	if err := _Controller.contract.UnpackLog(event, "CategorySorted", log); err != nil {
-		return nil, err
-	}
-	event.Raw = log
-	return event, nil
+// Solidity: function updateTokenPrices(uint256 listID) returns(bool[] pricesUpdated)
+func (_Controller *ControllerTransactorSession) UpdateTokenPrices(listID *big.Int) (*types.Transaction, error) {
+	return _Controller.Contract.UpdateTokenPrices(&_Controller.TransactOpts, listID)
 }
 
 // ControllerNewPoolInitializerIterator is returned from FilterNewPoolInitializer and is used to iterate over the raw logs and unpacked data for NewPoolInitializer events raised by the Controller contract.
@@ -2327,15 +1755,14 @@ func (it *ControllerNewPoolInitializerIterator) Close() error {
 type ControllerNewPoolInitializer struct {
 	Pool        common.Address
 	Initializer common.Address
-	CategoryID  *big.Int
+	ListID      *big.Int
 	IndexSize   *big.Int
-	Formula     uint8
 	Raw         types.Log // Blockchain specific contextual infos
 }
 
-// FilterNewPoolInitializer is a free log retrieval operation binding the contract event 0x290721d63c4f9911fe368948944f0df2c9ebce49e6a204da0d0886a758733115.
+// FilterNewPoolInitializer is a free log retrieval operation binding the contract event 0x7ad23833dba658b2bdc6f260fb60a3240b3868086ad60b4e42276f5eeba73e6a.
 //
-// Solidity: event NewPoolInitializer(address pool, address initializer, uint256 categoryID, uint256 indexSize, uint8 formula)
+// Solidity: event NewPoolInitializer(address pool, address initializer, uint256 listID, uint256 indexSize)
 func (_Controller *ControllerFilterer) FilterNewPoolInitializer(opts *bind.FilterOpts) (*ControllerNewPoolInitializerIterator, error) {
 
 	logs, sub, err := _Controller.contract.FilterLogs(opts, "NewPoolInitializer")
@@ -2345,9 +1772,9 @@ func (_Controller *ControllerFilterer) FilterNewPoolInitializer(opts *bind.Filte
 	return &ControllerNewPoolInitializerIterator{contract: _Controller.contract, event: "NewPoolInitializer", logs: logs, sub: sub}, nil
 }
 
-// WatchNewPoolInitializer is a free log subscription operation binding the contract event 0x290721d63c4f9911fe368948944f0df2c9ebce49e6a204da0d0886a758733115.
+// WatchNewPoolInitializer is a free log subscription operation binding the contract event 0x7ad23833dba658b2bdc6f260fb60a3240b3868086ad60b4e42276f5eeba73e6a.
 //
-// Solidity: event NewPoolInitializer(address pool, address initializer, uint256 categoryID, uint256 indexSize, uint8 formula)
+// Solidity: event NewPoolInitializer(address pool, address initializer, uint256 listID, uint256 indexSize)
 func (_Controller *ControllerFilterer) WatchNewPoolInitializer(opts *bind.WatchOpts, sink chan<- *ControllerNewPoolInitializer) (event.Subscription, error) {
 
 	logs, sub, err := _Controller.contract.WatchLogs(opts, "NewPoolInitializer")
@@ -2382,9 +1809,9 @@ func (_Controller *ControllerFilterer) WatchNewPoolInitializer(opts *bind.WatchO
 	}), nil
 }
 
-// ParseNewPoolInitializer is a log parse operation binding the contract event 0x290721d63c4f9911fe368948944f0df2c9ebce49e6a204da0d0886a758733115.
+// ParseNewPoolInitializer is a log parse operation binding the contract event 0x7ad23833dba658b2bdc6f260fb60a3240b3868086ad60b4e42276f5eeba73e6a.
 //
-// Solidity: event NewPoolInitializer(address pool, address initializer, uint256 categoryID, uint256 indexSize, uint8 formula)
+// Solidity: event NewPoolInitializer(address pool, address initializer, uint256 listID, uint256 indexSize)
 func (_Controller *ControllerFilterer) ParseNewPoolInitializer(log types.Log) (*ControllerNewPoolInitializer, error) {
 	event := new(ControllerNewPoolInitializer)
 	if err := _Controller.contract.UnpackLog(event, "NewPoolInitializer", log); err != nil {
@@ -2618,14 +2045,14 @@ func (it *ControllerPoolInitializedIterator) Close() error {
 type ControllerPoolInitialized struct {
 	Pool               common.Address
 	UnboundTokenSeller common.Address
-	CategoryID         *big.Int
+	ListID             *big.Int
 	IndexSize          *big.Int
 	Raw                types.Log // Blockchain specific contextual infos
 }
 
 // FilterPoolInitialized is a free log retrieval operation binding the contract event 0x9ff2050ac7faae9dc192e1cc9abe73b18a9b849f9b43f509914d80fa104d5903.
 //
-// Solidity: event PoolInitialized(address pool, address unboundTokenSeller, uint256 categoryID, uint256 indexSize)
+// Solidity: event PoolInitialized(address pool, address unboundTokenSeller, uint256 listID, uint256 indexSize)
 func (_Controller *ControllerFilterer) FilterPoolInitialized(opts *bind.FilterOpts) (*ControllerPoolInitializedIterator, error) {
 
 	logs, sub, err := _Controller.contract.FilterLogs(opts, "PoolInitialized")
@@ -2637,7 +2064,7 @@ func (_Controller *ControllerFilterer) FilterPoolInitialized(opts *bind.FilterOp
 
 // WatchPoolInitialized is a free log subscription operation binding the contract event 0x9ff2050ac7faae9dc192e1cc9abe73b18a9b849f9b43f509914d80fa104d5903.
 //
-// Solidity: event PoolInitialized(address pool, address unboundTokenSeller, uint256 categoryID, uint256 indexSize)
+// Solidity: event PoolInitialized(address pool, address unboundTokenSeller, uint256 listID, uint256 indexSize)
 func (_Controller *ControllerFilterer) WatchPoolInitialized(opts *bind.WatchOpts, sink chan<- *ControllerPoolInitialized) (event.Subscription, error) {
 
 	logs, sub, err := _Controller.contract.WatchLogs(opts, "PoolInitialized")
@@ -2674,7 +2101,7 @@ func (_Controller *ControllerFilterer) WatchPoolInitialized(opts *bind.WatchOpts
 
 // ParsePoolInitialized is a log parse operation binding the contract event 0x9ff2050ac7faae9dc192e1cc9abe73b18a9b849f9b43f509914d80fa104d5903.
 //
-// Solidity: event PoolInitialized(address pool, address unboundTokenSeller, uint256 categoryID, uint256 indexSize)
+// Solidity: event PoolInitialized(address pool, address unboundTokenSeller, uint256 listID, uint256 indexSize)
 func (_Controller *ControllerFilterer) ParsePoolInitialized(log types.Log) (*ControllerPoolInitialized, error) {
 	event := new(ControllerPoolInitialized)
 	if err := _Controller.contract.UnpackLog(event, "PoolInitialized", log); err != nil {
@@ -2753,14 +2180,14 @@ func (it *ControllerTokenAddedIterator) Close() error {
 
 // ControllerTokenAdded represents a TokenAdded event raised by the Controller contract.
 type ControllerTokenAdded struct {
-	Token      common.Address
-	CategoryID *big.Int
-	Raw        types.Log // Blockchain specific contextual infos
+	Token  common.Address
+	ListID *big.Int
+	Raw    types.Log // Blockchain specific contextual infos
 }
 
 // FilterTokenAdded is a free log retrieval operation binding the contract event 0xf4c563a3ea86ff1f4275e8c207df0375a51963f2b831b7bf4da8be938d92876c.
 //
-// Solidity: event TokenAdded(address token, uint256 categoryID)
+// Solidity: event TokenAdded(address token, uint256 listID)
 func (_Controller *ControllerFilterer) FilterTokenAdded(opts *bind.FilterOpts) (*ControllerTokenAddedIterator, error) {
 
 	logs, sub, err := _Controller.contract.FilterLogs(opts, "TokenAdded")
@@ -2772,7 +2199,7 @@ func (_Controller *ControllerFilterer) FilterTokenAdded(opts *bind.FilterOpts) (
 
 // WatchTokenAdded is a free log subscription operation binding the contract event 0xf4c563a3ea86ff1f4275e8c207df0375a51963f2b831b7bf4da8be938d92876c.
 //
-// Solidity: event TokenAdded(address token, uint256 categoryID)
+// Solidity: event TokenAdded(address token, uint256 listID)
 func (_Controller *ControllerFilterer) WatchTokenAdded(opts *bind.WatchOpts, sink chan<- *ControllerTokenAdded) (event.Subscription, error) {
 
 	logs, sub, err := _Controller.contract.WatchLogs(opts, "TokenAdded")
@@ -2809,10 +2236,282 @@ func (_Controller *ControllerFilterer) WatchTokenAdded(opts *bind.WatchOpts, sin
 
 // ParseTokenAdded is a log parse operation binding the contract event 0xf4c563a3ea86ff1f4275e8c207df0375a51963f2b831b7bf4da8be938d92876c.
 //
-// Solidity: event TokenAdded(address token, uint256 categoryID)
+// Solidity: event TokenAdded(address token, uint256 listID)
 func (_Controller *ControllerFilterer) ParseTokenAdded(log types.Log) (*ControllerTokenAdded, error) {
 	event := new(ControllerTokenAdded)
 	if err := _Controller.contract.UnpackLog(event, "TokenAdded", log); err != nil {
+		return nil, err
+	}
+	event.Raw = log
+	return event, nil
+}
+
+// ControllerTokenListAddedIterator is returned from FilterTokenListAdded and is used to iterate over the raw logs and unpacked data for TokenListAdded events raised by the Controller contract.
+type ControllerTokenListAddedIterator struct {
+	Event *ControllerTokenListAdded // Event containing the contract specifics and raw log
+
+	contract *bind.BoundContract // Generic contract to use for unpacking event data
+	event    string              // Event name to use for unpacking event data
+
+	logs chan types.Log        // Log channel receiving the found contract events
+	sub  ethereum.Subscription // Subscription for errors, completion and termination
+	done bool                  // Whether the subscription completed delivering logs
+	fail error                 // Occurred error to stop iteration
+}
+
+// Next advances the iterator to the subsequent event, returning whether there
+// are any more events found. In case of a retrieval or parsing error, false is
+// returned and Error() can be queried for the exact failure.
+func (it *ControllerTokenListAddedIterator) Next() bool {
+	// If the iterator failed, stop iterating
+	if it.fail != nil {
+		return false
+	}
+	// If the iterator completed, deliver directly whatever's available
+	if it.done {
+		select {
+		case log := <-it.logs:
+			it.Event = new(ControllerTokenListAdded)
+			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
+				it.fail = err
+				return false
+			}
+			it.Event.Raw = log
+			return true
+
+		default:
+			return false
+		}
+	}
+	// Iterator still in progress, wait for either a data or an error event
+	select {
+	case log := <-it.logs:
+		it.Event = new(ControllerTokenListAdded)
+		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
+			it.fail = err
+			return false
+		}
+		it.Event.Raw = log
+		return true
+
+	case err := <-it.sub.Err():
+		it.done = true
+		it.fail = err
+		return it.Next()
+	}
+}
+
+// Error returns any retrieval or parsing error occurred during filtering.
+func (it *ControllerTokenListAddedIterator) Error() error {
+	return it.fail
+}
+
+// Close terminates the iteration process, releasing any pending underlying
+// resources.
+func (it *ControllerTokenListAddedIterator) Close() error {
+	it.sub.Unsubscribe()
+	return nil
+}
+
+// ControllerTokenListAdded represents a TokenListAdded event raised by the Controller contract.
+type ControllerTokenListAdded struct {
+	ListID          *big.Int
+	MetadataHash    [32]byte
+	ScoringStrategy common.Address
+	MinimumScore    *big.Int
+	MaximumScore    *big.Int
+	Raw             types.Log // Blockchain specific contextual infos
+}
+
+// FilterTokenListAdded is a free log retrieval operation binding the contract event 0xd5e8e673f6e24dc7176b58a5620dcee488e08e985c6fd9db96b1b6d214004117.
+//
+// Solidity: event TokenListAdded(uint256 listID, bytes32 metadataHash, address scoringStrategy, uint128 minimumScore, uint128 maximumScore)
+func (_Controller *ControllerFilterer) FilterTokenListAdded(opts *bind.FilterOpts) (*ControllerTokenListAddedIterator, error) {
+
+	logs, sub, err := _Controller.contract.FilterLogs(opts, "TokenListAdded")
+	if err != nil {
+		return nil, err
+	}
+	return &ControllerTokenListAddedIterator{contract: _Controller.contract, event: "TokenListAdded", logs: logs, sub: sub}, nil
+}
+
+// WatchTokenListAdded is a free log subscription operation binding the contract event 0xd5e8e673f6e24dc7176b58a5620dcee488e08e985c6fd9db96b1b6d214004117.
+//
+// Solidity: event TokenListAdded(uint256 listID, bytes32 metadataHash, address scoringStrategy, uint128 minimumScore, uint128 maximumScore)
+func (_Controller *ControllerFilterer) WatchTokenListAdded(opts *bind.WatchOpts, sink chan<- *ControllerTokenListAdded) (event.Subscription, error) {
+
+	logs, sub, err := _Controller.contract.WatchLogs(opts, "TokenListAdded")
+	if err != nil {
+		return nil, err
+	}
+	return event.NewSubscription(func(quit <-chan struct{}) error {
+		defer sub.Unsubscribe()
+		for {
+			select {
+			case log := <-logs:
+				// New log arrived, parse the event and forward to the user
+				event := new(ControllerTokenListAdded)
+				if err := _Controller.contract.UnpackLog(event, "TokenListAdded", log); err != nil {
+					return err
+				}
+				event.Raw = log
+
+				select {
+				case sink <- event:
+				case err := <-sub.Err():
+					return err
+				case <-quit:
+					return nil
+				}
+			case err := <-sub.Err():
+				return err
+			case <-quit:
+				return nil
+			}
+		}
+	}), nil
+}
+
+// ParseTokenListAdded is a log parse operation binding the contract event 0xd5e8e673f6e24dc7176b58a5620dcee488e08e985c6fd9db96b1b6d214004117.
+//
+// Solidity: event TokenListAdded(uint256 listID, bytes32 metadataHash, address scoringStrategy, uint128 minimumScore, uint128 maximumScore)
+func (_Controller *ControllerFilterer) ParseTokenListAdded(log types.Log) (*ControllerTokenListAdded, error) {
+	event := new(ControllerTokenListAdded)
+	if err := _Controller.contract.UnpackLog(event, "TokenListAdded", log); err != nil {
+		return nil, err
+	}
+	event.Raw = log
+	return event, nil
+}
+
+// ControllerTokenListSortedIterator is returned from FilterTokenListSorted and is used to iterate over the raw logs and unpacked data for TokenListSorted events raised by the Controller contract.
+type ControllerTokenListSortedIterator struct {
+	Event *ControllerTokenListSorted // Event containing the contract specifics and raw log
+
+	contract *bind.BoundContract // Generic contract to use for unpacking event data
+	event    string              // Event name to use for unpacking event data
+
+	logs chan types.Log        // Log channel receiving the found contract events
+	sub  ethereum.Subscription // Subscription for errors, completion and termination
+	done bool                  // Whether the subscription completed delivering logs
+	fail error                 // Occurred error to stop iteration
+}
+
+// Next advances the iterator to the subsequent event, returning whether there
+// are any more events found. In case of a retrieval or parsing error, false is
+// returned and Error() can be queried for the exact failure.
+func (it *ControllerTokenListSortedIterator) Next() bool {
+	// If the iterator failed, stop iterating
+	if it.fail != nil {
+		return false
+	}
+	// If the iterator completed, deliver directly whatever's available
+	if it.done {
+		select {
+		case log := <-it.logs:
+			it.Event = new(ControllerTokenListSorted)
+			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
+				it.fail = err
+				return false
+			}
+			it.Event.Raw = log
+			return true
+
+		default:
+			return false
+		}
+	}
+	// Iterator still in progress, wait for either a data or an error event
+	select {
+	case log := <-it.logs:
+		it.Event = new(ControllerTokenListSorted)
+		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
+			it.fail = err
+			return false
+		}
+		it.Event.Raw = log
+		return true
+
+	case err := <-it.sub.Err():
+		it.done = true
+		it.fail = err
+		return it.Next()
+	}
+}
+
+// Error returns any retrieval or parsing error occurred during filtering.
+func (it *ControllerTokenListSortedIterator) Error() error {
+	return it.fail
+}
+
+// Close terminates the iteration process, releasing any pending underlying
+// resources.
+func (it *ControllerTokenListSortedIterator) Close() error {
+	it.sub.Unsubscribe()
+	return nil
+}
+
+// ControllerTokenListSorted represents a TokenListSorted event raised by the Controller contract.
+type ControllerTokenListSorted struct {
+	ListID *big.Int
+	Raw    types.Log // Blockchain specific contextual infos
+}
+
+// FilterTokenListSorted is a free log retrieval operation binding the contract event 0xf53ac44f7bda4111b4677882e4e57cfab74f80d4de1e8b3245754369b48db601.
+//
+// Solidity: event TokenListSorted(uint256 listID)
+func (_Controller *ControllerFilterer) FilterTokenListSorted(opts *bind.FilterOpts) (*ControllerTokenListSortedIterator, error) {
+
+	logs, sub, err := _Controller.contract.FilterLogs(opts, "TokenListSorted")
+	if err != nil {
+		return nil, err
+	}
+	return &ControllerTokenListSortedIterator{contract: _Controller.contract, event: "TokenListSorted", logs: logs, sub: sub}, nil
+}
+
+// WatchTokenListSorted is a free log subscription operation binding the contract event 0xf53ac44f7bda4111b4677882e4e57cfab74f80d4de1e8b3245754369b48db601.
+//
+// Solidity: event TokenListSorted(uint256 listID)
+func (_Controller *ControllerFilterer) WatchTokenListSorted(opts *bind.WatchOpts, sink chan<- *ControllerTokenListSorted) (event.Subscription, error) {
+
+	logs, sub, err := _Controller.contract.WatchLogs(opts, "TokenListSorted")
+	if err != nil {
+		return nil, err
+	}
+	return event.NewSubscription(func(quit <-chan struct{}) error {
+		defer sub.Unsubscribe()
+		for {
+			select {
+			case log := <-logs:
+				// New log arrived, parse the event and forward to the user
+				event := new(ControllerTokenListSorted)
+				if err := _Controller.contract.UnpackLog(event, "TokenListSorted", log); err != nil {
+					return err
+				}
+				event.Raw = log
+
+				select {
+				case sink <- event:
+				case err := <-sub.Err():
+					return err
+				case <-quit:
+					return nil
+				}
+			case err := <-sub.Err():
+				return err
+			case <-quit:
+				return nil
+			}
+		}
+	}), nil
+}
+
+// ParseTokenListSorted is a log parse operation binding the contract event 0xf53ac44f7bda4111b4677882e4e57cfab74f80d4de1e8b3245754369b48db601.
+//
+// Solidity: event TokenListSorted(uint256 listID)
+func (_Controller *ControllerFilterer) ParseTokenListSorted(log types.Log) (*ControllerTokenListSorted, error) {
+	event := new(ControllerTokenListSorted)
+	if err := _Controller.contract.UnpackLog(event, "TokenListSorted", log); err != nil {
 		return nil, err
 	}
 	event.Raw = log
@@ -2888,14 +2587,14 @@ func (it *ControllerTokenRemovedIterator) Close() error {
 
 // ControllerTokenRemoved represents a TokenRemoved event raised by the Controller contract.
 type ControllerTokenRemoved struct {
-	Token      common.Address
-	CategoryID *big.Int
-	Raw        types.Log // Blockchain specific contextual infos
+	Token  common.Address
+	ListID *big.Int
+	Raw    types.Log // Blockchain specific contextual infos
 }
 
 // FilterTokenRemoved is a free log retrieval operation binding the contract event 0xbe9bb4bdca0a094babd75e3a98b1d2e2390633430d0a2f6e2b9970e2ee03fb2e.
 //
-// Solidity: event TokenRemoved(address token, uint256 categoryID)
+// Solidity: event TokenRemoved(address token, uint256 listID)
 func (_Controller *ControllerFilterer) FilterTokenRemoved(opts *bind.FilterOpts) (*ControllerTokenRemovedIterator, error) {
 
 	logs, sub, err := _Controller.contract.FilterLogs(opts, "TokenRemoved")
@@ -2907,7 +2606,7 @@ func (_Controller *ControllerFilterer) FilterTokenRemoved(opts *bind.FilterOpts)
 
 // WatchTokenRemoved is a free log subscription operation binding the contract event 0xbe9bb4bdca0a094babd75e3a98b1d2e2390633430d0a2f6e2b9970e2ee03fb2e.
 //
-// Solidity: event TokenRemoved(address token, uint256 categoryID)
+// Solidity: event TokenRemoved(address token, uint256 listID)
 func (_Controller *ControllerFilterer) WatchTokenRemoved(opts *bind.WatchOpts, sink chan<- *ControllerTokenRemoved) (event.Subscription, error) {
 
 	logs, sub, err := _Controller.contract.WatchLogs(opts, "TokenRemoved")
@@ -2944,7 +2643,7 @@ func (_Controller *ControllerFilterer) WatchTokenRemoved(opts *bind.WatchOpts, s
 
 // ParseTokenRemoved is a log parse operation binding the contract event 0xbe9bb4bdca0a094babd75e3a98b1d2e2390633430d0a2f6e2b9970e2ee03fb2e.
 //
-// Solidity: event TokenRemoved(address token, uint256 categoryID)
+// Solidity: event TokenRemoved(address token, uint256 listID)
 func (_Controller *ControllerFilterer) ParseTokenRemoved(log types.Log) (*ControllerTokenRemoved, error) {
 	event := new(ControllerTokenRemoved)
 	if err := _Controller.contract.UnpackLog(event, "TokenRemoved", log); err != nil {

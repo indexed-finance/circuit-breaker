@@ -33,8 +33,12 @@ type WatchedContract struct {
 	isSimulation   bool // indicates if this is a simulation for more refined control over parameters
 	backend        bind.ContractBackend
 	controller     *controller.Controller
-	minimumGwei    *big.Int
-	gasMultiplier  *big.Int
+	// the breaker has no public contract right now
+	// but it has the same public swap function so we
+	// can reuse the contract binding for it
+	breaker       *controller.Controller
+	minimumGwei   *big.Int
+	gasMultiplier *big.Int
 
 	breakLock sync.Mutex
 	breaking  bool
@@ -87,6 +91,14 @@ func (ew *EventWatcher) NewWatchedContracts(
 		if err != nil {
 			return nil, err
 		}
+		circuitBreakerAddr, err := control.CircuitBreaker(nil)
+		if err != nil {
+			return nil, err
+		}
+		breaker, err := controller.NewController(circuitBreakerAddr, backend)
+		if err != nil {
+			return nil, err
+		}
 		// lowercase the name
 		name = strings.ToLower(name)
 		out = append(out, &WatchedContract{
@@ -101,6 +113,7 @@ func (ew *EventWatcher) NewWatchedContracts(
 			tokenNames:     names,
 			backend:        backend,
 			controller:     control,
+			breaker:        breaker,
 			minimumGwei:    minimumGwei,
 			gasMultiplier:  gasMultiplier,
 			toggleCh:       toggleCh,
@@ -264,7 +277,7 @@ func (wc *WatchedContract) setPublicSwap(
 	wc.breaking = true
 	wc.breakLock.Unlock()
 	auth.GasPrice = gasPrice
-	if tx, err := wc.controller.SetPublicSwap(auth.TransactOpts, poolAddress, false); err != nil {
+	if tx, err := wc.breaker.SetPublicSwap(auth.TransactOpts, poolAddress, false); err != nil {
 		wc.logger.Error(
 			"failed to broadcast public swap disable transaction",
 			zap.Error(err),
