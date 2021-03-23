@@ -9,10 +9,10 @@ contracts-all: build-contracts abigen
 
 .PHONY: build-contracts
 build-contracts:
-	solc --bin --abi -o bin --overwrite contracts/BMath.sol
-	solc --bin --abi -o bin --overwrite contracts/LogSwapTest.sol
-	solc --bin --abi -o bin --overwrite contracts/FreeTokens.sol
-	solc --optimize --bin --abi -o bin --overwrite contracts/SimpleMultiCall.sol
+	compilers/solc-0.7.4 --bin --abi -o bin --overwrite contracts/BMath.sol
+	compilers/solc-0.7.4 --bin --abi -o bin --overwrite contracts/LogSwapTest.sol
+	compilers/solc-0.7.4 --bin --abi -o bin --overwrite contracts/FreeTokens.sol
+	compilers/solc-0.7.4 --optimize --bin --abi -o bin --overwrite contracts/SimpleMultiCall.sol
 
 .PHONY: abigen
 abigen:
@@ -21,7 +21,7 @@ abigen:
 	abigen --abi bin/SimpleMultiCall.abi --bin bin/SimpleMultiCall.bin --pkg multicall --out bindings/multicall/bindings.go
 	abigen --abi bin/SigmaIndexPoolV1.json --pkg sigmacore --out bindings/sigmacore/bindings.go
 	abigen --abi bin/FreeTokens.abi --pkg freetokens --out bindings/freetokens/bindings.go
-	abigen --abi bin/MarketCapSqrtController.json --pkg controller --out bindings/controller/bindings.go
+	abigen --abi bin/SigmaControllerV1.json --pkg controller --out bindings/controller/bindings.go
 
 # TESTFLAGS="-v -cover" make test
 .PHONY: test

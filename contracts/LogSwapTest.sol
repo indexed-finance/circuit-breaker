@@ -16,7 +16,10 @@ contract LogSwapTest {
     uint8 public decimal = 18;
     uint256 public _swapFee = 25000000000000000; // 2.5%
     bool internal _publicSwap;
-
+    address public circuitBreaker;
+    constructor() {
+        circuitBreaker = address(this);
+    }
     function emitLogSwap(uint256 outAmount, uint256 inAmount) public {
         emit LOG_SWAP(msg.sender, msg.sender, msg.sender, inAmount, outAmount);
     }
