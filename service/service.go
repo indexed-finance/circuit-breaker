@@ -195,6 +195,11 @@ func (s *Service) StartWatchers() error {
 		addresses[pool.Name] = pool.ContractAddress
 		spotPriceBreakPercentages[pool.Name] = pool.SpotPriceBreakPercentage
 	}
+	s.logger.Info(
+		"break percentages configured",
+		zap.Any("addresses", addresses),
+		zap.Any("spot.prices", spotPriceBreakPercentages),
+	)
 
 	// get the bindings
 	// name -> contract
