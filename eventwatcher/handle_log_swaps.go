@@ -108,6 +108,8 @@ func (wc *WatchedContract) handleLogSwaps(
 
 					wc.logger.Warn(
 						"price fluctuation outside of acceptable bounds, breaking!",
+						zap.Float64("change.abs", math.Abs(change)),
+						zap.Float64("break.percentage", breakPercentage),
 					)
 
 					// lock the authorizer since bind.TransactOpts is not threadsafe
