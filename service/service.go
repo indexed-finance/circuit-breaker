@@ -192,14 +192,9 @@ func (s *Service) StartWatchers() error {
 	)
 
 	for _, pool := range s.pools {
-		addresses[pool.Name] = pool.ContractAddress
-		spotPriceBreakPercentages[pool.Name] = pool.SpotPriceBreakPercentage
+		addresses[strings.ToLower(pool.Name)] = pool.ContractAddress
+		spotPriceBreakPercentages[strings.ToLower(pool.Name)] = pool.SpotPriceBreakPercentage
 	}
-	s.logger.Info(
-		"break percentages configured",
-		zap.Any("addresses", addresses),
-		zap.Any("spot.prices", spotPriceBreakPercentages),
-	)
 
 	// get the bindings
 	// name -> contract
@@ -232,7 +227,7 @@ func (s *Service) StartWatchers() error {
 			if err := wtchr.Listen(ctx, s.db, s.at, s.auther, bkPercent, s.ew.BC().EthClient()); err != nil {
 				errCh <- err
 			}
-		}(watcher, spotPriceBreakPercentages[watcher.Name()])
+		}(watcher, spotPriceBreakPercentages[strings.ToLower(watcher.Name())])
 	}
 
 	select {
