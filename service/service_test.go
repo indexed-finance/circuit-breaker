@@ -202,7 +202,7 @@ func TestService(t *testing.T) {
 			common.HexToHash("0x5b6d669d3a27795f6f162737115a5e605157fb26465de23292c55e9739a198e8"),
 		)
 		require.NoError(t, err)
-		fakeSwap := newFakePublicSwap(tx)
+		fakeSwap := newFakePublicSwap(tx, acct.Address)
 		type args struct {
 			token         string
 			supply        interface{}
@@ -373,15 +373,20 @@ func getFakeBalancesWeightsAndSupplies(
 }
 
 type fakePublicSwap struct {
-	tx *types.Transaction
+	tx   *types.Transaction
+	addr common.Address
 }
 
 // returns a fake public swap struct for use with the circuitBreakCheck
 // function, you must provide a transaction hash that has already been mined
-func newFakePublicSwap(tx *types.Transaction) *fakePublicSwap {
+func newFakePublicSwap(tx *types.Transaction, addr common.Address) *fakePublicSwap {
 	return &fakePublicSwap{tx: tx}
 }
 
 func (fpb *fakePublicSwap) SetPublicSwap(opts *bind.TransactOpts, pool common.Address, enabled bool) (*types.Transaction, error) {
 	return fpb.tx, nil
+}
+
+func (fpb *fakePublicSwap) CircuitBreaker(opts *bind.CallOpts) (common.Address, error) {
+	return fpb.addr, nil
 }

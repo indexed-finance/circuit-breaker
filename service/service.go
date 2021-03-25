@@ -325,19 +325,8 @@ func (s *Service) StartBlockListener() error {
 							if err != nil {
 								s.logger.Error("failed to get controller contract", zap.Error(err), zap.String("pool", pool.Name), zap.String("token", tok))
 							} else {
-								// get the circuit breaker address
-								circuitBreakerAddr, err := conContract.CircuitBreaker(nil)
-								if err != nil {
-									s.logger.Error("failed to get circuit breaker contract address", zap.Error(err), zap.String("pool", pool.Name), zap.String("token", tok))
-								} else {
-									breaker, err := controller.NewController(circuitBreakerAddr, s.ew.BC().EthClient())
-									if err != nil {
-										s.logger.Error("failed to get circuit breaker contract", zap.Error(err), zap.String("pool", pool.Name), zap.String("token", tok))
-									} else {
-										if err := s.circuitBreakCheck(tok, supply, totalSupplies, pool, breaker); err != nil {
-											s.logger.Error("circuitBreakCheck failed", zap.Error(err), zap.String("pool", pool.Name), zap.String("token", tok))
-										}
-									}
+								if err := s.circuitBreakCheck(tok, supply, totalSupplies, pool, conContract); err != nil {
+									s.logger.Error("circuitBreakCheck failed", zap.Error(err), zap.String("pool", pool.Name), zap.String("token", tok))
 								}
 							}
 						}
@@ -427,7 +416,16 @@ func (s *Service) circuitBreakCheck(
 	// we take the absolute to see if the change is greater than the break percentage
 	// as we want to handle circuit breaks whether the total supply increased or decreases
 	if math.Abs(change) > pool.SupplyBreakPercentage {
-
+		circuitBreakAddr, err := contract.CircuitBreaker(nil)
+		if err != nil {
+			s.logger.Error("failed to get circuit breaker contract address", zap.Error(err))
+			return err
+		}
+		breaker, err := controller.NewController(circuitBreakAddr, s.ew.BC().EthClient())
+		if err != nil {
+			s.logger.Error("failed to get circuit breaker contract binding", zap.Error(err))
+			return err
+		}
 		s.logger.Warn(
 			"token supply fluctuation is greater than minimum break percentage, breaking circuits!",
 			zap.String("pool", pool.Name), zap.String("token", tok),
@@ -443,7 +441,7 @@ func (s *Service) circuitBreakCheck(
 			s.logger.Error("failed to suggest gasprice", zap.Error(err))
 		} else {
 			s.logger.Info("gas price calculated (includes boost)", zap.String("gas.price", gasPrice.String()))
-			s.setPublicSwap(contract, gasPrice, pool.Name, tok, pool.ContractAddress)
+			s.setPublicSwap(breaker, gasPrice, pool.Name, tok, pool.ContractAddress)
 		}
 		// we need to unset the gas price that we overrode the transactor with
 		// so that future uses of this transactor have the gas price set to nil

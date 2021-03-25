@@ -13,6 +13,7 @@ import (
 // designed to allow for easier testing
 type Breaker interface {
 	SetPublicSwap(opts *bind.TransactOpts, pool common.Address, enabled bool) (*types.Transaction, error)
+	CircuitBreaker(opts *bind.CallOpts) (common.Address, error)
 }
 
 // GetGasPrice returns a gas price as reported by the oracle, overriding it if it is lower
