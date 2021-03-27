@@ -1,4 +1,5 @@
 pragma solidity >=0.7.0 <0.8.0;
+pragma experimental ABIEncoderV2;
 
 /**
     * @notice this interface is taken from indexed-core commit hash dae7f231d0f58bfc0993f6c01199cd6b74b01895
@@ -20,6 +21,53 @@ interface ERC20I {
     * @notice and leverage Golang's abigen to do the heavy lifting
  */
 contract SimpleMultiCall {
+
+    struct Bundle {
+        address pool;
+        address[] tokens;
+        uint256[] denormalizedWeights;
+        uint256[] balances;
+        uint256[] totalSupplies;
+    }
+    
+    function getBundle(
+        address poolAddress,
+        address[] memory tokens
+    )
+        public
+        view
+        returns (Bundle memory)
+    {
+        // order of the elements will be based on the ordering of the tokens
+        // so we can ignore the return values of the address array
+        (, uint256[] memory weights) = getDenormalizedWeights(poolAddress, tokens);
+        (, uint256[] memory balances) = getBalances(poolAddress, tokens);
+        (, uint256[] memory totalSupplies) = getTotalSupplies(tokens);
+        Bundle memory bundle = Bundle({
+            pool: poolAddress,
+            tokens: tokens,
+            denormalizedWeights: weights,
+            balances: balances,
+            totalSupplies: totalSupplies
+        });
+        return bundle;
+    }
+
+    function getBundles(
+        address[] memory pools,
+        address[][] memory tokens
+    )
+        public
+        view
+        returns (Bundle[] memory)
+    {
+        require(pools.length == tokens.length, "mismatching pools and tokens length");
+        Bundle[] memory bundles = new Bundle[](pools.length);
+        for (uint256 i = 0; i < tokens.length; i++) {
+            bundles[i] = getBundle(pools[i], tokens[i]);
+        }
+        return bundles;
+    }
 
     // index pool methods
 
