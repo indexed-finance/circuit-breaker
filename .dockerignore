@@ -12,6 +12,7 @@ circuit-breaker
 sigma-core
 bin
 contracts
+compilers
 
 # regexs
 **/*.yaml
