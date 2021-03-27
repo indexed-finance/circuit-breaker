@@ -312,26 +312,22 @@ func (s *Service) StartBlockListener() error {
 					if err != nil {
 						s.logger.Error("UpdateBalancesWeightsAndSupplies failed", zap.Error(err), zap.String("pool", pool.Name))
 					}
-
+					controllerAddress, err := contract.GetController(nil)
+					if err != nil {
+						s.logger.Error("failed to get controller address", zap.Error(err), zap.String("pool", pool.Name))
+						return
+					}
 					// now start checking total supply shifts
 					for tok, supply := range infos.TokenTotalSupplies {
-						// check the total supply for the given token
-						// however if it fails dont abort processing, continue processing
-						// as other tokens may need to be checked
-						if controllerAddress, err := contract.GetController(nil); err != nil {
-							s.logger.Error("failed to get controller address", zap.Error(err), zap.String("pool", pool.Name), zap.String("token", tok))
+						conContract, err := controller.NewController(controllerAddress, s.ew.BC().EthClient())
+						if err != nil {
+							s.logger.Error("failed to get controller contract", zap.Error(err), zap.String("pool", pool.Name), zap.String("token", tok))
 						} else {
-							conContract, err := controller.NewController(controllerAddress, s.ew.BC().EthClient())
-							if err != nil {
-								s.logger.Error("failed to get controller contract", zap.Error(err), zap.String("pool", pool.Name), zap.String("token", tok))
-							} else {
-								if err := s.circuitBreakCheck(tok, supply, totalSupplies, pool, conContract); err != nil {
-									s.logger.Error("circuitBreakCheck failed", zap.Error(err), zap.String("pool", pool.Name), zap.String("token", tok))
-								}
+							if err := s.circuitBreakCheck(tok, supply, totalSupplies, pool, conContract); err != nil {
+								s.logger.Error("circuitBreakCheck failed", zap.Error(err), zap.String("pool", pool.Name), zap.String("token", tok))
 							}
 						}
 					}
-
 					// purge old records if need be
 					s.purgeInfoCheck(pool.Name)
 
