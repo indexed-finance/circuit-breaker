@@ -14,29 +14,12 @@ import (
 	"github.com/indexed-finance/circuit-breaker/alerts"
 	"github.com/indexed-finance/circuit-breaker/bindings/logswap"
 	"github.com/indexed-finance/circuit-breaker/bindings/sigmacore"
-	"github.com/indexed-finance/circuit-breaker/config"
 	"github.com/indexed-finance/circuit-breaker/database"
 	"github.com/indexed-finance/circuit-breaker/utils"
+	testutils "github.com/indexed-finance/circuit-breaker/utils/tests"
 	"github.com/stretchr/testify/require"
 	"go.uber.org/zap"
 )
-
-var (
-	twilioSID           = os.Getenv("TWILIO_SID")
-	twilioAuthToken     = os.Getenv("TWILIO_AUTH_TOKEN")
-	twilioTestRecipient = os.Getenv("TWILIO_TEST_RECIPIENT")
-	twilioNumber        = os.Getenv("TWILIO_NUMBER")
-)
-
-func getConfig(t *testing.T) *config.Config {
-	exCfg := *config.ExampleConfig
-	exCfg.InfuraAPIKey = os.Getenv("INFURA_API_KEY")
-	exCfg.Alerts.Twilio.Recipients = []string{twilioTestRecipient}
-	exCfg.Alerts.Twilio.From = twilioNumber
-	exCfg.Alerts.Twilio.SID = twilioSID
-	exCfg.Alerts.Twilio.AuthToken = twilioAuthToken
-	return &exCfg
-}
 
 func TestWatchedContract(t *testing.T) {
 	t.Cleanup(func() {
@@ -49,7 +32,7 @@ func TestWatchedContract(t *testing.T) {
 	tenv, err := testenv.NewBlockchain(ctx)
 	require.NoError(t, err)
 	authorizer := utils.NewAuthorizerFromPK(tenv.PK())
-	cfg := getConfig(t)
+	cfg := testutils.GetConfig(t)
 	db, err := database.New(database.OptsFromConfig(cfg.Database))
 	require.NoError(t, err)
 	require.NoError(t, db.AutoMigrate())

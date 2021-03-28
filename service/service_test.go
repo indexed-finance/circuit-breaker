@@ -8,6 +8,8 @@ import (
 	"testing"
 	"time"
 
+	testutils "github.com/indexed-finance/circuit-breaker/utils/tests"
+
 	"github.com/bonedaddy/go-indexed/bclient"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
@@ -20,23 +22,6 @@ import (
 	"github.com/indexed-finance/circuit-breaker/utils"
 	"github.com/stretchr/testify/require"
 )
-
-var (
-	twilioSID           = os.Getenv("TWILIO_SID")
-	twilioAuthToken     = os.Getenv("TWILIO_AUTH_TOKEN")
-	twilioTestRecipient = os.Getenv("TWILIO_TEST_RECIPIENT")
-	twilioNumber        = os.Getenv("TWILIO_NUMBER")
-)
-
-func getConfig(t *testing.T) *config.Config {
-	exCfg := *config.ExampleConfig
-	exCfg.InfuraAPIKey = os.Getenv("INFURA_API_KEY")
-	exCfg.Alerts.Twilio.Recipients = []string{twilioTestRecipient}
-	exCfg.Alerts.Twilio.From = twilioNumber
-	exCfg.Alerts.Twilio.SID = twilioSID
-	exCfg.Alerts.Twilio.AuthToken = twilioAuthToken
-	return &exCfg
-}
 
 func TestService(t *testing.T) {
 	t.Cleanup(func() {
@@ -52,7 +37,7 @@ func TestService(t *testing.T) {
 	// create test account
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
-	cfg := getConfig(t)
+	cfg := testutils.GetConfig(t)
 	db, err := database.New(database.OptsFromConfig(cfg.Database))
 	require.NoError(t, err)
 	require.NoError(t, db.AutoMigrate())
