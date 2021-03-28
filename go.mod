@@ -5,7 +5,6 @@ go 1.15
 require (
 	github.com/BurntSushi/locker v0.0.0-20171006230638-a6e239ea1c69
 	github.com/arl/statsviz v0.2.2
-	github.com/bonedaddy/bdsm v0.0.2
 	github.com/bonedaddy/go-defi v0.0.4-rc3
 	github.com/bonedaddy/go-indexed v0.0.23
 	github.com/ethereum/go-ethereum v1.10.1
