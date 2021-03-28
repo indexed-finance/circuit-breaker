@@ -23,7 +23,13 @@ interface ERC20I {
 contract SimpleMultiCall {
 
     struct Bundle {
+        // address of the pool this bundle applies to
         address pool;
+        // address of tokens included in this bundle
+        // the order of tokens is the order of their weights, balances, and supplies
+        // this means that denormalizedWeights[1], balances[1], totalSupplies[1] will
+        // apply to tokens[1], while denormalizedWeights[0], balances[0], totalSupplies[0]
+        // will apply to tokens[0], etc...
         address[] tokens;
         uint256[] denormalizedWeights;
         uint256[] balances;
