@@ -211,11 +211,14 @@ func TestMulticallSimulated(t *testing.T) {
 	require.NoError(t, err)
 	_, err = tenv.DoWaitDeployed(tx, "multicall deployment")
 	require.NoError(t, err)
-	lAddr, tx, _, err := logswap.DeployLogswap(tenv.Auth, tenv)
+	lAddr1, tx, _, err := logswap.DeployLogswap(tenv.Auth, tenv)
 	require.NoError(t, err)
 	_, err = tenv.DoWaitDeployed(tx, "logswap deployment")
 	require.NoError(t, err)
-	_ = lAddr
+	lAddr2, tx, _, err := logswap.DeployLogswap(tenv.Auth, tenv)
+	require.NoError(t, err)
+	_, err = tenv.DoWaitDeployed(tx, "logswap deployment")
+	require.NoError(t, err)
 
 	require.NoError(t, err)
 	caller, err := New(ctx, addr.String(), tenv)
@@ -232,12 +235,12 @@ func TestMulticallSimulated(t *testing.T) {
 			wantCount int
 		}{
 			{"1-Addrs", args{
-				lAddr.String(),
-				[]string{lAddr.String()},
+				lAddr1.String(),
+				[]string{lAddr1.String()},
 			}, 1},
 			{"2-Addrs", args{
-				lAddr.String(),
-				[]string{lAddr.String(), lAddr.String()},
+				lAddr2.String(),
+				[]string{lAddr1.String(), lAddr2.String()},
 			}, 2},
 		}
 		for _, tt := range tests {
@@ -281,6 +284,13 @@ func TestMulticallSimulated(t *testing.T) {
 				require.Len(t, bundle.Tokens, tt.wantCount)
 				require.Equal(t, bundle.Pool.String(), tt.args.pool)
 
+				for i := range bundle.Tokens {
+					require.Equal(
+						t,
+						bundle.Tokens[i].String(),
+						tt.args.addrs[i],
+					)
+				}
 				for i := range bundle.Balances {
 					require.Equal(
 						t,
@@ -309,24 +319,90 @@ func TestMulticallSimulated(t *testing.T) {
 		}
 	})
 	t.Run("GetBundles", func(t *testing.T) {
-		bundles1, err := caller.GetBundles(
+		bundles, err := caller.GetBundles(
 			tenv.Blockchain().CurrentBlock().NumberU64(),
 			map[string][]string{
-				lAddr.String(): {lAddr.String()},
+				lAddr1.String(): {lAddr1.String()},
+				lAddr2.String(): {lAddr1.String(), lAddr2.String()},
 			},
 		)
 		require.NoError(t, err)
-		tenv.Commit()
-		bundles2, err := caller.GetBundles(
+
+		lAddr1Bundle, err := caller.GetBundle(
 			tenv.Blockchain().CurrentBlock().NumberU64(),
-			map[string][]string{
-				lAddr.String(): {lAddr.String(), lAddr.String()},
-			},
+			lAddr1.String(),
+			[]string{lAddr1.String()},
 		)
 		require.NoError(t, err)
-		_ = bundles1
-		_ = bundles2
-		// TODO(bonedaddy): validate the return values here and compare with non bundle retrieval
+
+		lAddr2Bundle, err := caller.GetBundle(
+			tenv.Blockchain().CurrentBlock().NumberU64(),
+			lAddr2.String(),
+			[]string{lAddr1.String(), lAddr2.String()},
+		)
+		require.NoError(t, err)
+		for _, bundle := range bundles {
+			switch bundle.Pool.String() {
+			case lAddr1Bundle.Pool.String():
+				for i := range bundle.Tokens {
+					require.Equal(
+						t,
+						bundle.Tokens[i].String(),
+						lAddr1Bundle.Tokens[i].String(),
+					)
+				}
+				for i := range bundle.Balances {
+					require.Equal(
+						t,
+						bundle.Balances[i].Int64(),
+						lAddr1Bundle.Balances[i].Int64(),
+					)
+				}
+				for i := range bundle.DenormalizedWeights {
+					require.Equal(
+						t,
+						bundle.DenormalizedWeights[i].Int64(),
+						lAddr1Bundle.DenormalizedWeights[i].Int64(),
+					)
+				}
+				for i := range bundle.TotalSupplies {
+					require.Equal(
+						t,
+						bundle.TotalSupplies[i].Int64(),
+						lAddr1Bundle.TotalSupplies[i].Int64(),
+					)
+				}
+			case lAddr2Bundle.Pool.String():
+				for i := range bundle.Tokens {
+					require.Equal(
+						t,
+						bundle.Tokens[i].String(),
+						lAddr2Bundle.Tokens[i].String(),
+					)
+				}
+				for i := range bundle.Balances {
+					require.Equal(
+						t,
+						bundle.Balances[i].Int64(),
+						lAddr2Bundle.Balances[i].Int64(),
+					)
+				}
+				for i := range bundle.DenormalizedWeights {
+					require.Equal(
+						t,
+						bundle.DenormalizedWeights[i].Int64(),
+						lAddr2Bundle.DenormalizedWeights[i].Int64(),
+					)
+				}
+				for i := range bundle.TotalSupplies {
+					require.Equal(
+						t,
+						bundle.TotalSupplies[i].Int64(),
+						lAddr2Bundle.TotalSupplies[i].Int64(),
+					)
+				}
+			}
+		}
 	})
 	t.Run("GetDenormalizedWeights", func(t *testing.T) {
 		type args struct {
@@ -339,12 +415,12 @@ func TestMulticallSimulated(t *testing.T) {
 			wantCount int
 		}{
 			{"1-Addrs", args{
-				lAddr.String(),
-				[]string{lAddr.String()},
+				lAddr1.String(),
+				[]string{lAddr1.String()},
 			}, 1},
 			{"2-Addrs", args{
-				lAddr.String(),
-				[]string{lAddr.String(), lAddr.String()},
+				lAddr2.String(),
+				[]string{lAddr1.String(), lAddr2.String()},
 			}, 2},
 		}
 		for _, tt := range tests {
@@ -373,12 +449,12 @@ func TestMulticallSimulated(t *testing.T) {
 			wantCount int
 		}{
 			{"1-Addrs", args{
-				lAddr.String(),
-				[]string{lAddr.String()},
+				lAddr1.String(),
+				[]string{lAddr1.String()},
 			}, 1},
 			{"2-Addrs", args{
-				lAddr.String(),
-				[]string{lAddr.String(), lAddr.String()},
+				lAddr2.String(),
+				[]string{lAddr1.String(), lAddr2.String()},
 			}, 2},
 		}
 		for _, tt := range tests {
@@ -407,12 +483,12 @@ func TestMulticallSimulated(t *testing.T) {
 			wantCount int
 		}{
 			{"1-Addrs", args{
-				lAddr.String(),
-				[]string{lAddr.String()},
+				lAddr1.String(),
+				[]string{lAddr1.String()},
 			}, 1},
 			{"2-Addrs", args{
-				lAddr.String(),
-				[]string{lAddr.String(), lAddr.String()},
+				lAddr1.String(),
+				[]string{lAddr1.String(), lAddr2.String()},
 			}, 2},
 		}
 		for _, tt := range tests {
@@ -442,14 +518,14 @@ func TestMulticallSimulated(t *testing.T) {
 			wantCount int
 		}{
 			{"1-Addrs", args{
-				lAddr.String(),
-				[]string{lAddr.String()},
-				[]string{lAddr.String()},
+				lAddr1.String(),
+				[]string{lAddr1.String()},
+				[]string{lAddr1.String()},
 			}, 1},
 			{"2-Addrs", args{
-				lAddr.String(),
-				[]string{lAddr.String(), lAddr.String()},
-				[]string{lAddr.String(), lAddr.String()},
+				lAddr2.String(),
+				[]string{lAddr1.String(), lAddr2.String()},
+				[]string{lAddr2.String(), lAddr1.String()},
 			}, 2},
 		}
 		for _, tt := range tests {
