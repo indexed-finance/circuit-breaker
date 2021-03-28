@@ -66,7 +66,6 @@ contract SimpleMultiCall {
         view
         returns (Bundle[] memory)
     {
-        require(pools.length == tokens.length);
         Bundle[] memory bundles = new Bundle[](pools.length);
         for (uint256 i = 0; i < tokens.length; i++) {
             bundles[i] = getBundle(pools[i], tokens[i]);
@@ -130,7 +129,6 @@ contract SimpleMultiCall {
         view 
         returns (address[] memory, address[] memory, uint256[] memory)
     {
-        require(inTokens.length == outTokens.length);
         uint256[] memory prices = new uint256[](inTokens.length);
         for (uint256 i = 0; i < inTokens.length; i++) {
             prices[i] = IndexPoolI(poolAddress).getSpotPrice(inTokens[i], outTokens[i]);
