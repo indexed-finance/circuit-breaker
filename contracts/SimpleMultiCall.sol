@@ -66,7 +66,7 @@ contract SimpleMultiCall {
         view
         returns (Bundle[] memory)
     {
-        require(pools.length == tokens.length, "mismatching pools and tokens length");
+        require(pools.length == tokens.length);
         Bundle[] memory bundles = new Bundle[](pools.length);
         for (uint256 i = 0; i < tokens.length; i++) {
             bundles[i] = getBundle(pools[i], tokens[i]);
