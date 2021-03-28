@@ -221,6 +221,41 @@ func TestMulticallSimulated(t *testing.T) {
 	caller, err := New(ctx, addr.String(), tenv)
 	require.NoError(t, err)
 	_ = caller
+	t.Run("GetBundle", func(t *testing.T) {
+		type args struct {
+			pool  string
+			addrs []string
+		}
+		tests := []struct {
+			name      string
+			args      args
+			wantCount int
+		}{
+			{"1-Addrs", args{
+				lAddr.String(),
+				[]string{lAddr.String()},
+			}, 1},
+			{"2-Addrs", args{
+				lAddr.String(),
+				[]string{lAddr.String(), lAddr.String()},
+			}, 2},
+		}
+		for _, tt := range tests {
+			t.Run(tt.name, func(t *testing.T) {
+				bundle, err := caller.GetBundle(
+					tenv.Blockchain().CurrentBlock().NumberU64(),
+					tt.args.pool,
+					tt.args.addrs,
+				)
+				require.NoError(t, err)
+				require.Len(t, bundle.Balances, tt.wantCount)
+				require.Len(t, bundle.DenormalizedWeights, tt.wantCount)
+				require.Len(t, bundle.TotalSupplies, tt.wantCount)
+				require.Len(t, bundle.Tokens, tt.wantCount)
+				require.Equal(t, bundle.Pool.String(), tt.args.pool)
+			})
+		}
+	})
 
 	t.Run("GetDenormalizedWeights", func(t *testing.T) {
 		type args struct {
