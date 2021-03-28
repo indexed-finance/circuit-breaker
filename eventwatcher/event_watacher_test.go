@@ -1,10 +1,10 @@
 package eventwatcher
 
 import (
-	"os"
+	"context"
 	"testing"
 
-	"github.com/bonedaddy/go-indexed/bclient"
+	"github.com/bonedaddy/go-defi/testenv"
 	"github.com/stretchr/testify/require"
 )
 
@@ -15,21 +15,10 @@ var (
 	}
 )
 
-func doSetup(t *testing.T) *EventWatcher {
-	infuraAPIKey := os.Getenv("INFURA_API_KEY")
-	if infuraAPIKey == "" {
-		t.Fatal("INFURA_API_KEY env var is empty")
-	}
-	client, err := bclient.NewInfuraClient(infuraAPIKey, true)
-	require.NoError(t, err)
-	return New(client)
-}
-
 func TestEventWatcher(t *testing.T) {
-	client := doSetup(t)
-	t.Cleanup(func() {
-		client.Close()
-	})
-	_, err := client.NewBindings(pools)
+	tenv, err := testenv.NewBlockchain(context.Background())
+	require.NoError(t, err)
+	client := New(tenv)
+	_, err = client.NewBindings(pools)
 	require.NoError(t, err)
 }

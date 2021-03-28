@@ -3,6 +3,7 @@ package eventwatcher
 import (
 	"context"
 	"errors"
+	"log"
 	"math/big"
 	"strings"
 	"sync"
@@ -32,7 +33,6 @@ type WatchedContract struct {
 	tokenAddresses map[string]common.Address
 	tokenNames     map[common.Address]string
 	isSimulation   bool // indicates if this is a simulation for more refined control over parameters
-	backend        bind.ContractBackend
 	controller     *controller.Controller
 	// the breaker has no public contract right now
 	// but it has the same public swap function so we
@@ -113,7 +113,7 @@ func (ew *EventWatcher) NewWatchedContracts(
 			logger:         logger.Named("contract.watcher").With(zap.String("pool", name)),
 			tokenAddresses: addrs,
 			tokenNames:     names,
-			backend:        ew.bc,
+			bc:             ew.bc,
 			controller:     control,
 			breaker:        breaker,
 			minimumGwei:    minimumGwei,
@@ -290,6 +290,7 @@ func (wc *WatchedContract) setPublicSwap(
 			zap.String("pool", poolName),
 			zap.String("tx.hash", tx.Hash().String()),
 		)
+		log.Println("is nil: ", wc.bc == nil)
 		if rcpt, err := bind.WaitMined(ctx, wc.bc, tx); err != nil {
 			wc.logger.Error("failed to wait for transaction to be mined", zap.Error(err), zap.String("pool", poolName), zap.String("tx.hash", tx.Hash().String()))
 		} else {

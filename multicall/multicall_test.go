@@ -5,7 +5,7 @@ import (
 	"os"
 	"testing"
 
-	"github.com/bonedaddy/bdsm/testenv"
+	"github.com/bonedaddy/go-defi/testenv"
 	"github.com/bonedaddy/go-indexed/bclient"
 	"github.com/indexed-finance/circuit-breaker/bindings/logswap"
 	"github.com/indexed-finance/circuit-breaker/bindings/multicall"

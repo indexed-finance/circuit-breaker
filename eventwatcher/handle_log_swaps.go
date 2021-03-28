@@ -113,7 +113,7 @@ func (wc *WatchedContract) handleLogSwaps(
 					// lock the authorizer since bind.TransactOpts is not threadsafe
 					authorizer.Lock()
 
-					gasPrice, err := utils.GetGasPrice(ctx, wc.backend, wc.minimumGwei, wc.gasMultiplier)
+					gasPrice, err := utils.GetGasPrice(ctx, wc.bc, wc.minimumGwei, wc.gasMultiplier)
 					if err != nil {
 						wc.logger.Error("failed to suggest gasprice", zap.Error(err))
 					} else {

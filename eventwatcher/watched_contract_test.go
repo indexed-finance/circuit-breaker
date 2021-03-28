@@ -8,7 +8,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/bonedaddy/bdsm/testenv"
+	"github.com/bonedaddy/go-defi/testenv"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/indexed-finance/circuit-breaker/alerts"
@@ -57,7 +57,7 @@ func TestWatchedContract(t *testing.T) {
 	require.NoError(t, err)
 	_, err = tenv.DoWaitDeployed(tx)
 	require.NoError(t, err)
-	ew := &EventWatcher{}
+	ew := New(tenv)
 	pool, err := sigmacore.NewSigmacore(addr, tenv)
 	require.NoError(t, err)
 	/*logger, err := zap.NewDevelopment()

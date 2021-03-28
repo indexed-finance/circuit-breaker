@@ -72,7 +72,7 @@ func New(
 	}
 	return &Service{
 		db:            db,
-		ew:            eventwatcher.New(bc),
+		ew:            eventwatcher.New(bc.EthClient()),
 		logger:        logger.Named("service"),
 		mc:            mc,
 		at:            alert,

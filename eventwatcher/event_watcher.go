@@ -2,7 +2,6 @@ package eventwatcher
 
 import (
 	"github.com/bonedaddy/go-defi/utils"
-	"github.com/bonedaddy/go-indexed/bclient"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/ethclient"
 	"github.com/indexed-finance/circuit-breaker/bindings/sigmacore"
@@ -16,8 +15,8 @@ type EventWatcher struct {
 }
 
 // New returns a new EventWatcher implementation
-func New(bc *bclient.Client) *EventWatcher {
-	return &EventWatcher{bc: bc.EthClient()}
+func New(bc utils.Blockchain) *EventWatcher {
+	return &EventWatcher{bc: bc}
 }
 
 // NewBindings constructs poolbindings for various indices, the input addresses argument is a map of pool name -> pool address
