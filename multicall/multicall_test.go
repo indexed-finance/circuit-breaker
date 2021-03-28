@@ -242,6 +242,33 @@ func TestMulticallSimulated(t *testing.T) {
 		}
 		for _, tt := range tests {
 			t.Run(tt.name, func(t *testing.T) {
+
+				addrsBals, bals, err := caller.GetBalances(
+					tenv.Blockchain().CurrentBlock().NumberU64(),
+					tt.args.pool,
+					tt.args.addrs,
+				)
+				require.NoError(t, err)
+				require.Len(t, addrsBals, tt.wantCount)
+				require.Len(t, bals, tt.wantCount)
+
+				addrsWeights, weights, err := caller.GetDenormalizedWeights(
+					tenv.Blockchain().CurrentBlock().NumberU64(),
+					tt.args.pool,
+					tt.args.addrs,
+				)
+				require.NoError(t, err)
+				require.Len(t, addrsWeights, tt.wantCount)
+				require.Len(t, weights, tt.wantCount)
+
+				addrsSupplies, supplies, err := caller.GetTotalSupplies(
+					tenv.Blockchain().CurrentBlock().NumberU64(),
+					tt.args.addrs,
+				)
+				require.NoError(t, err)
+				require.Len(t, addrsSupplies, tt.wantCount)
+				require.Len(t, supplies, tt.wantCount)
+
 				bundle, err := caller.GetBundle(
 					tenv.Blockchain().CurrentBlock().NumberU64(),
 					tt.args.pool,
@@ -253,10 +280,53 @@ func TestMulticallSimulated(t *testing.T) {
 				require.Len(t, bundle.TotalSupplies, tt.wantCount)
 				require.Len(t, bundle.Tokens, tt.wantCount)
 				require.Equal(t, bundle.Pool.String(), tt.args.pool)
+
+				for i := range bundle.Balances {
+					require.Equal(
+						t,
+						bundle.Balances[i].Int64(),
+						bals[i].Int64(),
+					)
+				}
+				for i := range bundle.DenormalizedWeights {
+					require.Equal(
+						t,
+						bundle.DenormalizedWeights[i].Int64(),
+						weights[i].Int64(),
+					)
+				}
+				for i := range bundle.TotalSupplies {
+					require.Equal(
+						t,
+						bundle.TotalSupplies[i].Int64(),
+						supplies[i].Int64(),
+					)
+				}
+
+				// mine a block to generate new numbers
+				tenv.Commit()
 			})
 		}
 	})
-
+	t.Run("GetBundles", func(t *testing.T) {
+		bundles1, err := caller.GetBundles(
+			tenv.Blockchain().CurrentBlock().NumberU64(),
+			map[string][]string{
+				lAddr.String(): {lAddr.String()},
+			},
+		)
+		require.NoError(t, err)
+		tenv.Commit()
+		bundles2, err := caller.GetBundles(
+			tenv.Blockchain().CurrentBlock().NumberU64(),
+			map[string][]string{
+				lAddr.String(): {lAddr.String(), lAddr.String()},
+			},
+		)
+		require.NoError(t, err)
+		_ = bundles1
+		_ = bundles2
+	})
 	t.Run("GetDenormalizedWeights", func(t *testing.T) {
 		type args struct {
 			pool  string
