@@ -68,7 +68,6 @@ func TestWatchedContract(t *testing.T) {
 	require.True(t, ok)
 	watched, err := ew.NewWatchedContracts(
 		zap.NewNop(),
-		tenv,
 		map[string]*sigmacore.Sigmacore{"cc10": pool},
 		minimumGwei,
 		multiplier,
@@ -105,7 +104,7 @@ func TestWatchedContract(t *testing.T) {
 	wg.Add(1)
 	go func() {
 		defer wg.Done()
-		watchedContract.Listen(ctx, db, alerts.New(zap.NewNop(), cfg.Alerts), authorizer, 0.1, nil)
+		watchedContract.Listen(ctx, db, alerts.New(zap.NewNop(), cfg.Alerts), authorizer, 0.1)
 	}()
 
 	// we need to spoof some information for easier testing

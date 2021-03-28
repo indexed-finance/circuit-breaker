@@ -77,7 +77,7 @@ func TestService(t *testing.T) {
 	)
 	t.Run("PreCreateDatabaseEntry", func(t *testing.T) {
 		// get current block
-		block, err := srv.ew.BC().CurrentBlock()
+		block, err := srv.ew.BC().BlockNumber(ctx)
 		require.NoError(t, err)
 		pool := cfg.Pools[0]
 		switch strings.ToLower(pool.Name) {
@@ -86,9 +86,9 @@ func TestService(t *testing.T) {
 		case "defi5":
 			nonStalePool = "cc10"
 		}
-		contract, err := sigmacore.NewSigmacore(common.HexToAddress(pool.ContractAddress), srv.ew.BC().EthClient())
+		contract, err := sigmacore.NewSigmacore(common.HexToAddress(pool.ContractAddress), srv.ew.BC())
 		require.NoError(t, err)
-		tokens, err := utils.PoolTokensFor(contract, srv.ew.BC().EthClient())
+		tokens, err := utils.PoolTokensFor(contract, srv.ew.BC())
 		require.NoError(t, err)
 		// balances, denormWeights, err := srv.GetBalancesAndWeights(contract)
 		// require.NoError(t, err)
@@ -142,11 +142,11 @@ func TestService(t *testing.T) {
 	t.Run("FreshPoolValidate", func(t *testing.T) {
 		pool, err := srv.db.GetPool(nonStalePool)
 		require.NoError(t, err)
-		contract, err := sigmacore.NewSigmacore(common.HexToAddress(pool.ContractAddress), srv.ew.BC().EthClient())
+		contract, err := sigmacore.NewSigmacore(common.HexToAddress(pool.ContractAddress), srv.ew.BC())
 		require.NoError(t, err)
-		poolTokens, err := utils.PoolTokensFor(contract, srv.ew.BC().EthClient())
+		poolTokens, err := utils.PoolTokensFor(contract, srv.ew.BC())
 		require.NoError(t, err)
-		currBlock, err := srv.ew.BC().CurrentBlock()
+		currBlock, err := srv.ew.BC().BlockNumber(ctx)
 		require.NoError(t, err)
 		balances, weights, supplies, err := srv.GetBalancesWeightsAndSupplies(contract, currBlock, pool.ContractAddress, poolTokens)
 		require.NoError(t, err)
@@ -197,7 +197,7 @@ func TestService(t *testing.T) {
 
 	})
 	t.Run("CircuitBreakCheck", func(t *testing.T) {
-		tx, _, err := srv.ew.BC().EthClient().TransactionByHash(
+		tx, _, err := srv.ew.BC().TransactionByHash(
 			ctx,
 			common.HexToHash("0x5b6d669d3a27795f6f162737115a5e605157fb26465de23292c55e9739a198e8"),
 		)

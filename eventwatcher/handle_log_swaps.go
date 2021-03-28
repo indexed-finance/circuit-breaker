@@ -6,7 +6,6 @@ import (
 	"math"
 
 	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/ethclient"
 	"github.com/indexed-finance/circuit-breaker/alerts"
 	"github.com/indexed-finance/circuit-breaker/database"
 	"github.com/indexed-finance/circuit-breaker/utils"
@@ -19,7 +18,6 @@ func (wc *WatchedContract) handleLogSwaps(
 	alerter *alerts.Alerter,
 	authorizer *utils.Authorizer,
 	breakPercentage float64,
-	ec *ethclient.Client,
 	poolAddress common.Address,
 ) error {
 	defer func() {
@@ -120,7 +118,7 @@ func (wc *WatchedContract) handleLogSwaps(
 						wc.logger.Error("failed to suggest gasprice", zap.Error(err))
 					} else {
 						wc.logger.Info("gas price calculated (includes boost)", zap.String("gas.price", gasPrice.String()))
-						wc.setPublicSwap(ctx, authorizer, poolAddress, gasPrice, wc.name, ec)
+						wc.setPublicSwap(ctx, authorizer, poolAddress, gasPrice, wc.name)
 					}
 
 					// we need to unset the gas price that we overrode the transactor with
