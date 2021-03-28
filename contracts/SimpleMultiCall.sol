@@ -43,14 +43,13 @@ contract SimpleMultiCall {
         (, uint256[] memory weights) = getDenormalizedWeights(poolAddress, tokens);
         (, uint256[] memory balances) = getBalances(poolAddress, tokens);
         (, uint256[] memory totalSupplies) = getTotalSupplies(tokens);
-        Bundle memory bundle = Bundle({
+        return Bundle({
             pool: poolAddress,
             tokens: tokens,
             denormalizedWeights: weights,
             balances: balances,
             totalSupplies: totalSupplies
         });
-        return bundle;
     }
 
     function getBundles(
