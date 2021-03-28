@@ -7,6 +7,7 @@ import (
 
 	"github.com/bonedaddy/go-defi/testenv"
 	"github.com/bonedaddy/go-indexed/bclient"
+	"github.com/ethereum/go-ethereum/common"
 	"github.com/indexed-finance/circuit-breaker/bindings/logswap"
 	"github.com/indexed-finance/circuit-breaker/bindings/multicall"
 	"github.com/stretchr/testify/require"
@@ -15,7 +16,7 @@ import (
 var (
 	infuraAPIKey             = os.Getenv("INFURA_API_KEY")
 	defi5ContractAddress     = "0xfa6de2697d59e88ed7fc4dfe5a33dac43565ea41"
-	multicallContractAddress = "0x3067b1b7bf344027c7439509fbdf344eb25f5991"
+	multicallContractAddress = "0x1e91D7b9C052a4e07D4704a0D749A4Eeb68A1a79"
 	defi5Tokens              = []string{
 		"0xc00e94Cb662C3520282E6f5717214004A7f26888",
 		"0xC011a73ee8576Fb46F5E1c5751cA3B9Fe0af2a6F",
@@ -39,6 +40,78 @@ func TestMulticallReal(t *testing.T) {
 	// make sure reversal worked
 	require.NotEqual(t, defi5Tokens, defi5TokensReversed)
 
+	t.Run("GetBundle", func(t *testing.T) {
+		type args struct {
+			pool  string
+			addrs []string
+		}
+		tests := []struct {
+			name      string
+			args      args
+			wantCount int
+		}{
+			{"DEFI5", args{
+				defi5ContractAddress,
+				defi5Tokens,
+			}, 5},
+		}
+		for _, tt := range tests {
+			t.Run(tt.name, func(t *testing.T) {
+				// get the current block number
+				block, err := bc.CurrentBlock()
+				require.NoError(t, err)
+				bundle, err := caller.GetBundle(
+					block,
+					tt.args.pool,
+					tt.args.addrs,
+				)
+				require.NoError(t, err)
+				require.Len(t, bundle.Tokens, tt.wantCount)
+				require.Len(t, bundle.Balances, tt.wantCount)
+				require.Len(t, bundle.DenormalizedWeights, tt.wantCount)
+				require.Len(t, bundle.TotalSupplies, tt.wantCount)
+				require.Equal(t, bundle.Pool.String(), common.HexToAddress(tt.args.pool).String())
+			})
+		}
+	})
+	t.Run("GetBundles", func(t *testing.T) {
+		type args struct {
+			pool  string
+			addrs []string
+		}
+		tests := []struct {
+			name      string
+			args      args
+			wantCount int
+		}{
+			{"DEFI5", args{
+				defi5ContractAddress,
+				defi5Tokens,
+			}, 5},
+		}
+		for _, tt := range tests {
+			t.Run(tt.name, func(t *testing.T) {
+				// get the current block number
+				block, err := bc.CurrentBlock()
+				require.NoError(t, err)
+				pools := make(map[string][]string)
+				for _, tok := range tt.args.addrs {
+					pools[tt.args.pool] = append(pools[tt.args.pool], tok)
+				}
+				bundles, err := caller.GetBundles(
+					block,
+					pools,
+				)
+				require.NoError(t, err)
+				require.Len(t, bundles, 1)
+				require.Len(t, bundles[0].Tokens, tt.wantCount)
+				require.Len(t, bundles[0].Balances, tt.wantCount)
+				require.Len(t, bundles[0].DenormalizedWeights, tt.wantCount)
+				require.Len(t, bundles[0].TotalSupplies, tt.wantCount)
+				require.Equal(t, bundles[0].Pool.String(), common.HexToAddress(tt.args.pool).String())
+			})
+		}
+	})
 	t.Run("GetDenormalizedWeights", func(t *testing.T) {
 		type args struct {
 			pool  string
