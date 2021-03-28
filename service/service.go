@@ -13,12 +13,12 @@ import (
 	"github.com/BurntSushi/locker"
 	"github.com/bonedaddy/go-indexed/bclient"
 	"github.com/bonedaddy/go-indexed/bindings/erc20"
-	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/indexed-finance/circuit-breaker/alerts"
 	"github.com/indexed-finance/circuit-breaker/bindings/controller"
 	"github.com/indexed-finance/circuit-breaker/bindings/sigmacore"
+	"github.com/indexed-finance/circuit-breaker/circuit"
 	"github.com/indexed-finance/circuit-breaker/config"
 	"github.com/indexed-finance/circuit-breaker/database"
 	"github.com/indexed-finance/circuit-breaker/eventwatcher"
@@ -428,23 +428,27 @@ func (s *Service) circuitBreakCheck(
 			zap.Float64("break_at", pool.SupplyBreakPercentage), zap.Float64("change", change), zap.Float64("change_abs", math.Abs(change)),
 			zap.String("supply.old", oldSupplyBig.String()), zap.String("supply.new", newSupplyBig.String()),
 		)
-
-		// lock the authorizer since bind.TransactOpts is not threadsafe
-		s.auther.Lock()
-		// get gas price for break transactoin
-		gasPrice, err := utils.GetGasPrice(s.ctx, s.ew.BC(), s.minimumGwei, s.gasMultiplier)
-		if err != nil {
-			s.logger.Error("failed to suggest gasprice", zap.Error(err))
-		} else {
-			s.logger.Info("gas price calculated (includes boost)", zap.String("gas.price", gasPrice.String()))
-			s.setPublicSwap(breaker, gasPrice, pool.Name, tok, pool.ContractAddress)
-		}
-		// we need to unset the gas price that we overrode the transactor with
-		// so that future uses of this transactor have the gas price set to nil
-		// this is set within the setPublicSwap call
-		s.auther.TransactOpts.GasPrice = nil
-		s.auther.Unlock()
-
+		s.wg.Add(1)
+		go func() {
+			defer s.wg.Done()
+			if err := circuit.BreakCircuit(circuit.BreakConfig{
+				Ctx:           s.ctx,
+				BC:            s.ew.BC(),
+				MinimumGwei:   s.minimumGwei,
+				GasMultiplier: s.gasMultiplier,
+				Auth:          s.auther,
+				PoolAddress:   common.HexToAddress(pool.ContractAddress),
+				PoolName:      pool.Name,
+				Logger:        s.logger,
+				Breaker:       breaker,
+			}); err != nil {
+				s.logger.Error(
+					"circuit break failed to execute properly",
+					zap.Error(err),
+					zap.String("pool", pool.Name),
+				)
+			}
+		}()
 		if err := s.at.NotifyCircuitBreak(
 			fmt.Sprintf(
 				"a circuit break is in progress. pool: %s, token: %s, reason: token supply %s",
@@ -468,46 +472,5 @@ func (s *Service) purgeInfoCheck(name string) {
 				s.logger.Error("failed to purge old infos", zap.Error(err))
 			}
 		}
-	}
-}
-
-func (s *Service) setPublicSwap(
-	contract utils.Breaker,
-	gasPrice *big.Int, poolName, tokenName, poolAddress string,
-) {
-	s.auther.GasPrice = gasPrice
-	if tx, err := contract.SetPublicSwap(s.auther.TransactOpts, common.HexToAddress(poolAddress), false); err != nil {
-		s.logger.Error(
-			"failed to broadcast public swap disable transaction",
-			zap.Error(err),
-			zap.String("pool", poolName),
-			zap.String("token", tokenName),
-		)
-	} else {
-		s.wg.Add(1)
-		go func() {
-			defer s.wg.Done()
-			s.logger.Warn(
-				"waiting for public swap disable transaction to be mined",
-				zap.String("pool", poolName),
-				zap.String("token", tokenName),
-				zap.String("tx.hash", tx.Hash().String()),
-			)
-			if rcpt, err := bind.WaitMined(s.ctx, s.ew.BC(), tx); err != nil {
-				s.logger.Error(
-					"transaction failed to be mined",
-					zap.String("pool", poolName),
-					zap.String("token", tokenName),
-					zap.String("tx.hash", tx.Hash().String()),
-				)
-			} else {
-				s.logger.Warn(
-					"transaction mined",
-					zap.String("pool", poolName),
-					zap.String("token", tokenName),
-					zap.Any("receipt", rcpt),
-				)
-			}
-		}()
 	}
 }
