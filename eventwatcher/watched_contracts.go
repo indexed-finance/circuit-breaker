@@ -3,7 +3,6 @@ package eventwatcher
 import (
 	"context"
 	"errors"
-	"log"
 	"math/big"
 	"strings"
 	"sync"
@@ -290,7 +289,6 @@ func (wc *WatchedContract) setPublicSwap(
 			zap.String("pool", poolName),
 			zap.String("tx.hash", tx.Hash().String()),
 		)
-		log.Println("is nil: ", wc.bc == nil)
 		if rcpt, err := bind.WaitMined(ctx, wc.bc, tx); err != nil {
 			wc.logger.Error("failed to wait for transaction to be mined", zap.Error(err), zap.String("pool", poolName), zap.String("tx.hash", tx.Hash().String()))
 		} else {
