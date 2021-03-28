@@ -6,8 +6,8 @@ import (
 	"math"
 
 	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/ethclient"
 	"github.com/indexed-finance/circuit-breaker/alerts"
+	"github.com/indexed-finance/circuit-breaker/circuit"
 	"github.com/indexed-finance/circuit-breaker/database"
 	"github.com/indexed-finance/circuit-breaker/utils"
 	"go.uber.org/zap"
@@ -19,7 +19,6 @@ func (wc *WatchedContract) handleLogSwaps(
 	alerter *alerts.Alerter,
 	authorizer *utils.Authorizer,
 	breakPercentage float64,
-	ec *ethclient.Client,
 	poolAddress common.Address,
 ) error {
 	defer func() {
@@ -112,21 +111,36 @@ func (wc *WatchedContract) handleLogSwaps(
 						zap.Float64("break.percentage", breakPercentage),
 					)
 
-					// lock the authorizer since bind.TransactOpts is not threadsafe
-					authorizer.Lock()
-
-					gasPrice, err := utils.GetGasPrice(ctx, wc.backend, wc.minimumGwei, wc.gasMultiplier)
-					if err != nil {
-						wc.logger.Error("failed to suggest gasprice", zap.Error(err))
-					} else {
-						wc.logger.Info("gas price calculated (includes boost)", zap.String("gas.price", gasPrice.String()))
-						wc.setPublicSwap(ctx, authorizer, poolAddress, gasPrice, wc.name, ec)
+					// check to see if an anctive circuit break is ongoing
+					wc.breakLock.Lock()
+					if wc.breaking {
+						wc.logger.Warn("attempting to trigger circuit break while one is ongoing")
+						wc.breakLock.Unlock()
+						continue
 					}
-
-					// we need to unset the gas price that we overrode the transactor with
-					// so that future uses of this transactor have the gas price set to nil
-					authorizer.TransactOpts.GasPrice = nil
-					authorizer.Unlock()
+					wc.breaking = true
+					wc.breakLock.Unlock()
+					if err := circuit.BreakCircuit(circuit.BreakConfig{
+						Ctx:           ctx,
+						BC:            wc.bc,
+						MinimumGwei:   wc.minimumGwei,
+						GasMultiplier: wc.gasMultiplier,
+						Auth:          authorizer,
+						PoolAddress:   poolAddress,
+						PoolName:      wc.name,
+						Logger:        wc.logger,
+						Breaker:       wc.breaker,
+					}); err != nil {
+						wc.logger.Error(
+							"circuit break failed to execute properly",
+							zap.Error(err),
+							zap.String("pool", wc.name),
+						)
+					}
+					// unset the breaking boolean
+					wc.breakLock.Lock()
+					wc.breaking = false
+					wc.breakLock.Unlock()
 
 					if err := alerter.NotifyCircuitBreak(
 						fmt.Sprintf(

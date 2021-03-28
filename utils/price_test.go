@@ -5,7 +5,7 @@ import (
 	"math/big"
 	"testing"
 
-	"github.com/bonedaddy/bdsm/testenv"
+	"github.com/bonedaddy/go-defi/testenv"
 	bmat "github.com/indexed-finance/circuit-breaker/bindings/bmath"
 	"github.com/stretchr/testify/require"
 )

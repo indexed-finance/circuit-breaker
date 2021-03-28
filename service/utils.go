@@ -109,7 +109,7 @@ func (s *Service) UpdateBalancesWeightsAndSupplies(
 	totalSupplies map[string]interface{},
 	err error,
 ) {
-	tokens, err := utils.PoolTokensFor(contract, s.ew.BC().EthClient())
+	tokens, err := utils.PoolTokensFor(contract, s.ew.BC())
 	if err != nil {
 		s.logger.Error("failed to get pool tokens", zap.Error(err))
 		return

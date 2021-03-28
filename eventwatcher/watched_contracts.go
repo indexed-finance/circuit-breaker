@@ -7,9 +7,10 @@ import (
 	"strings"
 	"sync"
 
+	dutils "github.com/bonedaddy/go-defi/utils"
+
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/ethclient"
 	"github.com/ethereum/go-ethereum/event"
 	"github.com/indexed-finance/circuit-breaker/alerts"
 	"github.com/indexed-finance/circuit-breaker/bindings/controller"
@@ -31,7 +32,6 @@ type WatchedContract struct {
 	tokenAddresses map[string]common.Address
 	tokenNames     map[common.Address]string
 	isSimulation   bool // indicates if this is a simulation for more refined control over parameters
-	backend        bind.ContractBackend
 	controller     *controller.Controller
 	// the breaker has no public contract right now
 	// but it has the same public swap function so we
@@ -51,12 +51,13 @@ type WatchedContract struct {
 
 	swapCh  chan *sigmacore.SigmacoreLOGSWAP
 	swapSub event.Subscription
+
+	bc dutils.Blockchain
 }
 
 // NewWatchedContracts initializes watched contracts and prepares them for event listening
 func (ew *EventWatcher) NewWatchedContracts(
 	logger *zap.Logger,
-	backend bind.ContractBackend,
 	bindings map[string]*sigmacore.Sigmacore,
 	minimumGwei, gasMultiplier *big.Int,
 ) ([]*WatchedContract, error) {
@@ -75,7 +76,7 @@ func (ew *EventWatcher) NewWatchedContracts(
 		// get the current pool tokens
 		// this logic is copied from go-indexed/blcient
 		// we could use the ew.BC() function but that makes it harder to do simulated testing
-		addrs, err := utils.PoolTokensFor(contract, backend)
+		addrs, err := utils.PoolTokensFor(contract, ew.bc)
 		if err != nil {
 			return nil, err
 		}
@@ -87,7 +88,7 @@ func (ew *EventWatcher) NewWatchedContracts(
 		if err != nil {
 			return nil, err
 		}
-		control, err := controller.NewController(controllerAddress, backend)
+		control, err := controller.NewController(controllerAddress, ew.bc)
 		if err != nil {
 			return nil, err
 		}
@@ -95,7 +96,7 @@ func (ew *EventWatcher) NewWatchedContracts(
 		if err != nil {
 			return nil, err
 		}
-		breaker, err := controller.NewController(circuitBreakerAddr, backend)
+		breaker, err := controller.NewController(circuitBreakerAddr, ew.bc)
 		if err != nil {
 			return nil, err
 		}
@@ -111,7 +112,7 @@ func (ew *EventWatcher) NewWatchedContracts(
 			logger:         logger.Named("contract.watcher").With(zap.String("pool", name)),
 			tokenAddresses: addrs,
 			tokenNames:     names,
-			backend:        backend,
+			bc:             ew.bc,
 			controller:     control,
 			breaker:        breaker,
 			minimumGwei:    minimumGwei,
@@ -124,7 +125,7 @@ func (ew *EventWatcher) NewWatchedContracts(
 }
 
 // Listen stars the watche contract listening process waiting for incoming events
-func (wc *WatchedContract) Listen(ctx context.Context, db *database.Database, alerter *alerts.Alerter, authorizer *utils.Authorizer, breakPercentage float64, ec *ethclient.Client) error {
+func (wc *WatchedContract) Listen(ctx context.Context, db *database.Database, alerter *alerts.Alerter, authorizer *utils.Authorizer, breakPercentage float64) error {
 	// register channel closures to prevent possible issues
 
 	wc.logger.Info("contract watcher started listening for events")
@@ -139,7 +140,7 @@ func (wc *WatchedContract) Listen(ctx context.Context, db *database.Database, al
 	go wc.handleSwapToggles(ctx)
 
 	// this is a blocking function call
-	return wc.handleLogSwaps(ctx, db, alerter, authorizer, breakPercentage, ec, poolAddress)
+	return wc.handleLogSwaps(ctx, db, alerter, authorizer, breakPercentage, poolAddress)
 }
 
 // NotifChanSwap returns events when listened on, this is used to notify any
@@ -259,50 +260,4 @@ func (wc *WatchedContract) getPreviousSwapFee(blockNum uint64) (*big.Int, error)
 	}
 	return prevSwapFee, nil
 
-}
-
-func (wc *WatchedContract) setPublicSwap(
-	ctx context.Context,
-	auth *utils.Authorizer,
-	poolAddress common.Address,
-	gasPrice *big.Int, poolName string,
-	ec *ethclient.Client,
-) {
-	wc.breakLock.Lock()
-	if wc.breaking {
-		wc.logger.Warn("attempting to trigger circuit break while one is ongoing")
-		wc.breakLock.Unlock()
-		return
-	}
-	wc.breaking = true
-	wc.breakLock.Unlock()
-	auth.GasPrice = gasPrice
-	if tx, err := wc.breaker.SetPublicSwap(auth.TransactOpts, poolAddress, false); err != nil {
-		wc.logger.Error(
-			"failed to broadcast public swap disable transaction",
-			zap.Error(err),
-			zap.String("pool", poolName),
-		)
-	} else {
-		if ec == nil {
-			wc.logger.Warn("ethclient argument is nil, if you are running on mainnet and see this please contact the developer")
-		} else {
-			wc.logger.Warn(
-				"public swap disable transaction sent, waiting for transaction to be mined",
-				zap.String("pool", poolName),
-				zap.String("tx.hash", tx.Hash().String()),
-			)
-			if rcpt, err := bind.WaitMined(ctx, ec, tx); err != nil {
-				wc.logger.Error("failed to wait for transaction to be mined", zap.Error(err), zap.String("pool", poolName), zap.String("tx.hash", tx.Hash().String()))
-			} else {
-				if rcpt.Status != 1 {
-					wc.logger.Warn("public swap transaction failed execution as return status is not 1")
-				}
-			}
-			// unset the breaking boolean
-			wc.breakLock.Lock()
-			wc.breaking = false
-			wc.breakLock.Unlock()
-		}
-	}
 }

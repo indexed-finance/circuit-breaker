@@ -1,19 +1,21 @@
 package eventwatcher
 
 import (
-	"github.com/bonedaddy/go-indexed/bclient"
+	"github.com/bonedaddy/go-defi/utils"
 	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/ethclient"
 	"github.com/indexed-finance/circuit-breaker/bindings/sigmacore"
 )
 
 // EventWatcher wraps one or more interfaces to the ethereum blockchain to watch events
 type EventWatcher struct {
-	bc *bclient.Client
+	bc utils.Blockchain
+	// bc *bclient.Client
 	// TODO(bonedaddy): add highly available lookups
 }
 
 // New returns a new EventWatcher implementation
-func New(bc *bclient.Client) *EventWatcher {
+func New(bc utils.Blockchain) *EventWatcher {
 	return &EventWatcher{bc: bc}
 }
 
@@ -21,7 +23,7 @@ func New(bc *bclient.Client) *EventWatcher {
 func (ew *EventWatcher) NewBindings(addresses map[string]string) (map[string]*sigmacore.Sigmacore, error) {
 	out := make(map[string]*sigmacore.Sigmacore)
 	for name, addr := range addresses {
-		binding, err := sigmacore.NewSigmacore(common.HexToAddress(addr), ew.bc.EthClient())
+		binding, err := sigmacore.NewSigmacore(common.HexToAddress(addr), ew.bc)
 		if err != nil {
 			return nil, err
 		}
@@ -31,12 +33,14 @@ func (ew *EventWatcher) NewBindings(addresses map[string]string) (map[string]*si
 }
 
 // BC returns the underlying blockchain client
-func (ew *EventWatcher) BC() *bclient.Client {
+func (ew *EventWatcher) BC() utils.Blockchain {
 	return ew.bc
 }
 
 // Close is used to terminate the event watcher
 func (ew *EventWatcher) Close() error {
-	ew.bc.Close()
+	if ibc, ok := ew.bc.(*ethclient.Client); ok {
+		ibc.Close()
+	}
 	return nil
 }

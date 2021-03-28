@@ -8,6 +8,8 @@ import (
 	"testing"
 	"time"
 
+	testutils "github.com/indexed-finance/circuit-breaker/utils/tests"
+
 	"github.com/bonedaddy/go-indexed/bclient"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
@@ -20,23 +22,6 @@ import (
 	"github.com/indexed-finance/circuit-breaker/utils"
 	"github.com/stretchr/testify/require"
 )
-
-var (
-	twilioSID           = os.Getenv("TWILIO_SID")
-	twilioAuthToken     = os.Getenv("TWILIO_AUTH_TOKEN")
-	twilioTestRecipient = os.Getenv("TWILIO_TEST_RECIPIENT")
-	twilioNumber        = os.Getenv("TWILIO_NUMBER")
-)
-
-func getConfig(t *testing.T) *config.Config {
-	exCfg := *config.ExampleConfig
-	exCfg.InfuraAPIKey = os.Getenv("INFURA_API_KEY")
-	exCfg.Alerts.Twilio.Recipients = []string{twilioTestRecipient}
-	exCfg.Alerts.Twilio.From = twilioNumber
-	exCfg.Alerts.Twilio.SID = twilioSID
-	exCfg.Alerts.Twilio.AuthToken = twilioAuthToken
-	return &exCfg
-}
 
 func TestService(t *testing.T) {
 	t.Cleanup(func() {
@@ -52,7 +37,7 @@ func TestService(t *testing.T) {
 	// create test account
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
-	cfg := getConfig(t)
+	cfg := testutils.GetConfig(t)
 	db, err := database.New(database.OptsFromConfig(cfg.Database))
 	require.NoError(t, err)
 	require.NoError(t, db.AutoMigrate())
@@ -77,7 +62,7 @@ func TestService(t *testing.T) {
 	)
 	t.Run("PreCreateDatabaseEntry", func(t *testing.T) {
 		// get current block
-		block, err := srv.ew.BC().CurrentBlock()
+		block, err := srv.ew.BC().BlockNumber(ctx)
 		require.NoError(t, err)
 		pool := cfg.Pools[0]
 		switch strings.ToLower(pool.Name) {
@@ -86,9 +71,9 @@ func TestService(t *testing.T) {
 		case "defi5":
 			nonStalePool = "cc10"
 		}
-		contract, err := sigmacore.NewSigmacore(common.HexToAddress(pool.ContractAddress), srv.ew.BC().EthClient())
+		contract, err := sigmacore.NewSigmacore(common.HexToAddress(pool.ContractAddress), srv.ew.BC())
 		require.NoError(t, err)
-		tokens, err := utils.PoolTokensFor(contract, srv.ew.BC().EthClient())
+		tokens, err := utils.PoolTokensFor(contract, srv.ew.BC())
 		require.NoError(t, err)
 		// balances, denormWeights, err := srv.GetBalancesAndWeights(contract)
 		// require.NoError(t, err)
@@ -142,11 +127,11 @@ func TestService(t *testing.T) {
 	t.Run("FreshPoolValidate", func(t *testing.T) {
 		pool, err := srv.db.GetPool(nonStalePool)
 		require.NoError(t, err)
-		contract, err := sigmacore.NewSigmacore(common.HexToAddress(pool.ContractAddress), srv.ew.BC().EthClient())
+		contract, err := sigmacore.NewSigmacore(common.HexToAddress(pool.ContractAddress), srv.ew.BC())
 		require.NoError(t, err)
-		poolTokens, err := utils.PoolTokensFor(contract, srv.ew.BC().EthClient())
+		poolTokens, err := utils.PoolTokensFor(contract, srv.ew.BC())
 		require.NoError(t, err)
-		currBlock, err := srv.ew.BC().CurrentBlock()
+		currBlock, err := srv.ew.BC().BlockNumber(ctx)
 		require.NoError(t, err)
 		balances, weights, supplies, err := srv.GetBalancesWeightsAndSupplies(contract, currBlock, pool.ContractAddress, poolTokens)
 		require.NoError(t, err)
@@ -197,7 +182,7 @@ func TestService(t *testing.T) {
 
 	})
 	t.Run("CircuitBreakCheck", func(t *testing.T) {
-		tx, _, err := srv.ew.BC().EthClient().TransactionByHash(
+		tx, _, err := srv.ew.BC().TransactionByHash(
 			ctx,
 			common.HexToHash("0x5b6d669d3a27795f6f162737115a5e605157fb26465de23292c55e9739a198e8"),
 		)

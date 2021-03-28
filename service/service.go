@@ -13,12 +13,12 @@ import (
 	"github.com/BurntSushi/locker"
 	"github.com/bonedaddy/go-indexed/bclient"
 	"github.com/bonedaddy/go-indexed/bindings/erc20"
-	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/indexed-finance/circuit-breaker/alerts"
 	"github.com/indexed-finance/circuit-breaker/bindings/controller"
 	"github.com/indexed-finance/circuit-breaker/bindings/sigmacore"
+	"github.com/indexed-finance/circuit-breaker/circuit"
 	"github.com/indexed-finance/circuit-breaker/config"
 	"github.com/indexed-finance/circuit-breaker/database"
 	"github.com/indexed-finance/circuit-breaker/eventwatcher"
@@ -72,7 +72,7 @@ func New(
 	}
 	return &Service{
 		db:            db,
-		ew:            eventwatcher.New(bc),
+		ew:            eventwatcher.New(bc.EthClient()),
 		logger:        logger.Named("service"),
 		mc:            mc,
 		at:            alert,
@@ -96,7 +96,7 @@ func (s *Service) Prepare() error {
 	s.start.Do(func() {
 		s.mx.RLock()
 		defer s.mx.RUnlock()
-		block, err := s.ew.BC().CurrentBlock()
+		block, err := s.ew.BC().BlockNumber(s.ctx)
 		if err != nil {
 			s.logger.Error("failed to get current block", zap.Error(err))
 			startErr = err
@@ -104,7 +104,7 @@ func (s *Service) Prepare() error {
 		}
 		for _, pool := range s.pools {
 			// construct the pool contract bindings
-			contract, err := sigmacore.NewSigmacore(common.HexToAddress(pool.ContractAddress), s.ew.BC().EthClient())
+			contract, err := sigmacore.NewSigmacore(common.HexToAddress(pool.ContractAddress), s.ew.BC())
 			if err != nil {
 				s.logger.Error("failed to get pool contract bindings")
 				startErr = err
@@ -114,7 +114,7 @@ func (s *Service) Prepare() error {
 			dPool, err := s.db.GetPool(pool.Name)
 			if err != nil {
 				s.logger.Info("creating fresh pool database entry", zap.String("pool", pool.Name))
-				tokens, err := utils.PoolTokensFor(contract, s.ew.BC().EthClient())
+				tokens, err := utils.PoolTokensFor(contract, s.ew.BC())
 				if err != nil {
 					s.logger.Error("failed to get pool tokens", zap.Error(err))
 					return
@@ -128,7 +128,7 @@ func (s *Service) Prepare() error {
 				// gather decimal information
 				decimals := make(map[string]interface{})
 				for tok, addr := range tokens {
-					erc20Contract, err := erc20.NewErc20(addr, s.ew.BC().EthClient())
+					erc20Contract, err := erc20.NewErc20(addr, s.ew.BC())
 					if err != nil {
 						s.logger.Error("failed to get erc20 contract binding", zap.Error(err), zap.String("pool", pool.Name), zap.String("token", tok))
 						startErr = err
@@ -203,7 +203,7 @@ func (s *Service) StartWatchers() error {
 		return err
 	}
 
-	watchers, err := s.ew.NewWatchedContracts(s.logger, s.ew.BC().EthClient(), bindings, s.minimumGwei, s.gasMultiplier)
+	watchers, err := s.ew.NewWatchedContracts(s.logger, bindings, s.minimumGwei, s.gasMultiplier)
 	if err != nil {
 		return err
 	}
@@ -224,7 +224,7 @@ func (s *Service) StartWatchers() error {
 	for _, watcher := range watchers {
 		go func(wtchr *eventwatcher.WatchedContract, bkPercent float64) {
 			defer s.wg.Done()
-			if err := wtchr.Listen(ctx, s.db, s.at, s.auther, bkPercent, s.ew.BC().EthClient()); err != nil {
+			if err := wtchr.Listen(ctx, s.db, s.at, s.auther, bkPercent); err != nil {
 				errCh <- err
 			}
 		}(watcher, spotPriceBreakPercentages[strings.ToLower(watcher.Name())])
@@ -245,7 +245,7 @@ func (s *Service) StartWatchers() error {
 // StartBlockListener waits for new blocks to be mined to trigger blockchain db updates
 func (s *Service) StartBlockListener() error {
 	ch := make(chan *types.Header, 100)
-	sub, err := s.ew.BC().EthClient().SubscribeNewHead(s.ctx, ch)
+	sub, err := s.ew.BC().SubscribeNewHead(s.ctx, ch)
 	if err != nil {
 		s.logger.Error("failed to create new head subscription", zap.Error(err))
 		close(ch)
@@ -301,7 +301,7 @@ func (s *Service) StartBlockListener() error {
 					// create bindings for the given contract
 					contract, err := sigmacore.NewSigmacore(
 						common.HexToAddress(pool.ContractAddress),
-						s.ew.BC().EthClient(),
+						s.ew.BC(),
 					)
 					if err != nil {
 						s.logger.Error("failed to get contract binding", zap.Error(err), zap.String("pool", pool.Name))
@@ -319,7 +319,7 @@ func (s *Service) StartBlockListener() error {
 					}
 					// now start checking total supply shifts
 					for tok, supply := range infos.TokenTotalSupplies {
-						conContract, err := controller.NewController(controllerAddress, s.ew.BC().EthClient())
+						conContract, err := controller.NewController(controllerAddress, s.ew.BC())
 						if err != nil {
 							s.logger.Error("failed to get controller contract", zap.Error(err), zap.String("pool", pool.Name), zap.String("token", tok))
 						} else {
@@ -417,7 +417,7 @@ func (s *Service) circuitBreakCheck(
 			s.logger.Error("failed to get circuit breaker contract address", zap.Error(err))
 			return err
 		}
-		breaker, err := controller.NewController(circuitBreakAddr, s.ew.BC().EthClient())
+		breaker, err := controller.NewController(circuitBreakAddr, s.ew.BC())
 		if err != nil {
 			s.logger.Error("failed to get circuit breaker contract binding", zap.Error(err))
 			return err
@@ -428,23 +428,27 @@ func (s *Service) circuitBreakCheck(
 			zap.Float64("break_at", pool.SupplyBreakPercentage), zap.Float64("change", change), zap.Float64("change_abs", math.Abs(change)),
 			zap.String("supply.old", oldSupplyBig.String()), zap.String("supply.new", newSupplyBig.String()),
 		)
-
-		// lock the authorizer since bind.TransactOpts is not threadsafe
-		s.auther.Lock()
-		// get gas price for break transactoin
-		gasPrice, err := utils.GetGasPrice(s.ctx, s.ew.BC().EthClient(), s.minimumGwei, s.gasMultiplier)
-		if err != nil {
-			s.logger.Error("failed to suggest gasprice", zap.Error(err))
-		} else {
-			s.logger.Info("gas price calculated (includes boost)", zap.String("gas.price", gasPrice.String()))
-			s.setPublicSwap(breaker, gasPrice, pool.Name, tok, pool.ContractAddress)
-		}
-		// we need to unset the gas price that we overrode the transactor with
-		// so that future uses of this transactor have the gas price set to nil
-		// this is set within the setPublicSwap call
-		s.auther.TransactOpts.GasPrice = nil
-		s.auther.Unlock()
-
+		s.wg.Add(1)
+		go func() {
+			defer s.wg.Done()
+			if err := circuit.BreakCircuit(circuit.BreakConfig{
+				Ctx:           s.ctx,
+				BC:            s.ew.BC(),
+				MinimumGwei:   s.minimumGwei,
+				GasMultiplier: s.gasMultiplier,
+				Auth:          s.auther,
+				PoolAddress:   common.HexToAddress(pool.ContractAddress),
+				PoolName:      pool.Name,
+				Logger:        s.logger,
+				Breaker:       breaker,
+			}); err != nil {
+				s.logger.Error(
+					"circuit break failed to execute properly",
+					zap.Error(err),
+					zap.String("pool", pool.Name),
+				)
+			}
+		}()
 		if err := s.at.NotifyCircuitBreak(
 			fmt.Sprintf(
 				"a circuit break is in progress. pool: %s, token: %s, reason: token supply %s",
@@ -468,46 +472,5 @@ func (s *Service) purgeInfoCheck(name string) {
 				s.logger.Error("failed to purge old infos", zap.Error(err))
 			}
 		}
-	}
-}
-
-func (s *Service) setPublicSwap(
-	contract utils.Breaker,
-	gasPrice *big.Int, poolName, tokenName, poolAddress string,
-) {
-	s.auther.GasPrice = gasPrice
-	if tx, err := contract.SetPublicSwap(s.auther.TransactOpts, common.HexToAddress(poolAddress), false); err != nil {
-		s.logger.Error(
-			"failed to broadcast public swap disable transaction",
-			zap.Error(err),
-			zap.String("pool", poolName),
-			zap.String("token", tokenName),
-		)
-	} else {
-		s.wg.Add(1)
-		go func() {
-			defer s.wg.Done()
-			s.logger.Warn(
-				"waiting for public swap disable transaction to be mined",
-				zap.String("pool", poolName),
-				zap.String("token", tokenName),
-				zap.String("tx.hash", tx.Hash().String()),
-			)
-			if rcpt, err := bind.WaitMined(s.ctx, s.ew.BC().EthClient(), tx); err != nil {
-				s.logger.Error(
-					"transaction failed to be mined",
-					zap.String("pool", poolName),
-					zap.String("token", tokenName),
-					zap.String("tx.hash", tx.Hash().String()),
-				)
-			} else {
-				s.logger.Warn(
-					"transaction mined",
-					zap.String("pool", poolName),
-					zap.String("token", tokenName),
-					zap.Any("receipt", rcpt),
-				)
-			}
-		}()
 	}
 }
