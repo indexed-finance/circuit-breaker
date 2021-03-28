@@ -326,6 +326,7 @@ func TestMulticallSimulated(t *testing.T) {
 		require.NoError(t, err)
 		_ = bundles1
 		_ = bundles2
+		// TODO(bonedaddy): validate the return values here and compare with non bundle retrieval
 	})
 	t.Run("GetDenormalizedWeights", func(t *testing.T) {
 		type args struct {
