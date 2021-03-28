@@ -202,7 +202,6 @@ func TestMulticallReal(t *testing.T) {
 }
 
 func TestMulticallSimulated(t *testing.T) {
-	// t.Skip("this is encountering unexpected errors disabling")
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 	tenv, err := testenv.NewBlockchain(ctx)
