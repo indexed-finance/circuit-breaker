@@ -29,6 +29,7 @@ func (wc *WatchedContract) handleLogSwaps(
 	for {
 		select {
 		case <-ctx.Done():
+			wc.logger.Info("context cancelled, exiting")
 			return nil
 		case err := <-wc.swapSub.Err():
 			wc.logger.Error("event subscription error received", zap.Error(err))
