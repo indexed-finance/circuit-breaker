@@ -143,6 +143,53 @@ func (m *Multicall) GetTotalSupplies(
 	)
 }
 
+func (m *Multicall) GetBundle(
+	block uint64,
+	pool string,
+	tokens []string,
+) (bindings.SimpleMultiCallBundle, error) {
+	var tokenAddrs = make([]common.Address, len(tokens))
+	for i, tok := range tokens {
+		tokenAddrs[i] = common.HexToAddress(tok)
+	}
+	return m.binding.GetBundle(
+		&bind.CallOpts{
+			Context:     m.ctx,
+			BlockNumber: new(big.Int).SetUint64(block),
+		},
+		common.HexToAddress(pool),
+		tokenAddrs,
+	)
+}
+
+func (m *Multicall) GetBundles(
+	block uint64,
+	// poolAddress -> tokens
+	pools map[string][]string,
+) ([]bindings.SimpleMultiCallBundle, error) {
+	var (
+		poolAddrs  []common.Address
+		tokenAddrs [][]common.Address
+	)
+	for pool, toks := range pools {
+		poolAddrs = append(poolAddrs, common.HexToAddress(pool))
+		var _tokenAddrs []common.Address
+		for _, tok := range toks {
+			_tokenAddrs = append(_tokenAddrs, common.HexToAddress(tok))
+		}
+		tokenAddrs = append(tokenAddrs, _tokenAddrs)
+
+	}
+	return m.binding.GetBundles(
+		&bind.CallOpts{
+			Context:     m.ctx,
+			BlockNumber: new(big.Int).SetUint64(block),
+		},
+		poolAddrs,
+		tokenAddrs,
+	)
+}
+
 // Close terminates the context
 func (m *Multicall) Close() {
 	m.cancel()

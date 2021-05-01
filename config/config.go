@@ -106,9 +106,12 @@ type GasPrice struct {
 var (
 	// ExampleConfig is primarily used to provide a template for generating the config file
 	ExampleConfig = &Config{
-		InfuraAPIKey:     "INFURA-KEY",
-		Network:          "mainnet",
-		MultiCallAddress: "0x3067b1b7bf344027c7439509fbdf344eb25f5991",
+		InfuraAPIKey: "INFURA-KEY",
+		Network:      "mainnet",
+		// non bundle version
+		// MultiCallAddress: "0x3067b1b7bf344027c7439509fbdf344eb25f5991",
+		// bundle version
+		MultiCallAddress: "0x1e91D7b9C052a4e07D4704a0D749A4Eeb68A1a79",
 		Logger: Logger{
 			Path:  "circuit-breaker.log",
 			Debug: true,

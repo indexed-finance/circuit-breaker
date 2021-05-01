@@ -1,7 +1,6 @@
 package service
 
 import (
-	"errors"
 	"math/big"
 	"strings"
 	"time"
@@ -27,72 +26,47 @@ func (s *Service) GetBalancesWeightsAndSupplies(
 	totalSupplies map[string]interface{},
 	err error,
 ) {
-	balances, err = s.GetBalances(contract, block, poolAddress, tokens)
+	var (
+		toks []string
+		// addr -> symbol
+		tokSymbols = make(map[common.Address]string)
+	)
+	balances = make(map[string]interface{})
+	denormWeights = make(map[string]interface{})
+	totalSupplies = make(map[string]interface{})
+
+	for symbol, tokAddr := range tokens {
+		toks = append(toks, tokAddr.String())
+		tokSymbols[tokAddr] = strings.ToLower(symbol)
+	}
+	bundle, err := s.mc.GetBundle(block, poolAddress, toks)
 	if err != nil {
 		// try one last time after a sleep, this is sometimes a temporary error
 		if strings.Contains(err.Error(), "header not found") {
 			s.logger.Warn("header not found error encountered, retrying after sleep")
 			time.Sleep(time.Millisecond * 750)
-			balances, err = s.GetBalances(contract, block, poolAddress, tokens)
+			bundle, err = s.mc.GetBundle(block, poolAddress, toks)
 		}
 		if err != nil {
-			s.logger.Error("failed to get balances after after a retry", zap.Error(err))
+			s.logger.Error("failed to get bundle after a retry", zap.Error(err))
 			return
 		}
 	}
-	denormWeights, err = s.GetWeights(contract, block, poolAddress, tokens)
-	if err != nil {
-		// try one last time after a sleep, this is sometimes a temporary error
-		if strings.Contains(err.Error(), "header not found") {
-			s.logger.Warn("header not found error encountered, retrying after sleep")
-			time.Sleep(time.Millisecond * 750)
-			denormWeights, err = s.GetWeights(contract, block, poolAddress, tokens)
-		}
-		if err != nil {
-			s.logger.Error("failed to get weights after a retry", zap.Error(err))
-			return
-		}
-	}
-	totalSupplies, err = s.GetTotalSupplies(contract, block, tokens)
-	if err != nil {
-		// try one last time after a sleep, this is sometimes a temporary error
-		if strings.Contains(err.Error(), "header not found") {
-			s.logger.Warn("header not found error encountered, retrying after sleep")
-			time.Sleep(time.Millisecond * 750)
-			totalSupplies, err = s.GetTotalSupplies(contract, block, tokens)
-		}
-		if err != nil {
-			s.logger.Error("failed to get total supplies after a retry", zap.Error(err))
-			return
-		}
-	}
-	for symbol, value := range balances {
-		valBig, ok := new(big.Int).SetString(value.(string), 10)
-		if !ok {
-			s.logger.Error("failed to parse balance", zap.String("symbol", symbol))
-			err = errors.New("invalid balance")
-			return
-		}
-		if valBig.Cmp(big.NewInt(0)) == 0 {
+	for i, addr := range bundle.Tokens {
+		symbol := tokSymbols[addr]
+		// if 0 skip as this means it is an uninitialized token
+		if bundle.Balances[i].Cmp(big.NewInt(0)) == 0 {
 			s.logger.Warn("encountered token with balance of 0 removing", zap.String("symbol", symbol))
-			delete(balances, symbol)
-			delete(denormWeights, symbol)
-			delete(totalSupplies, symbol)
+			continue
 		}
-	}
-	for symbol, value := range denormWeights {
-		valBig, ok := new(big.Int).SetString(value.(string), 10)
-		if !ok {
-			s.logger.Error("failed to parse denormalized weight", zap.String("symbol", symbol))
-			err = errors.New("invalid weight")
-			return
-		}
-		if valBig.Cmp(big.NewInt(0)) == 0 {
+		// if 0 skip as this means it is an uninitialized token
+		if bundle.DenormalizedWeights[i].Cmp(big.NewInt(0)) == 0 {
 			s.logger.Warn("encountered token with weight less than or equal to 0", zap.String("symbol", symbol))
-			delete(balances, symbol)
-			delete(denormWeights, symbol)
-			delete(totalSupplies, symbol)
+			continue
 		}
+		balances[symbol] = bundle.Balances[i].String()
+		denormWeights[symbol] = bundle.DenormalizedWeights[i].String()
+		totalSupplies[symbol] = bundle.TotalSupplies[i].String()
 	}
 	return
 }
@@ -121,77 +95,4 @@ func (s *Service) UpdateBalancesWeightsAndSupplies(
 	}
 	err = s.db.RecordInfo(pool.Name, block, balances, denormWeights, totalSupplies)
 	return
-}
-
-// GetWeights is used to return a given pool's token weights
-func (s *Service) GetWeights(
-	contract *sigmacore.Sigmacore,
-	block uint64,
-	poolAddress string,
-	tokens map[string]common.Address,
-) (map[string]interface{}, error) {
-	var tokenAddress []string
-	var names = make(map[common.Address]string)
-	for name, addr := range tokens {
-		tokenAddress = append(tokenAddress, addr.String())
-		names[addr] = strings.ToLower(name)
-	}
-	addrs, values, err := s.mc.GetDenormalizedWeights(block, poolAddress, tokenAddress)
-	if err != nil {
-		return nil, err
-	}
-
-	weights := make(map[string]interface{})
-	for i, addr := range addrs {
-		weights[names[addr]] = values[i].String()
-	}
-	return weights, nil
-}
-
-// GetBalances returns the balances of various pool tokens
-// This is not to be confused with IndexPool token balances
-func (s *Service) GetBalances(
-	contract *sigmacore.Sigmacore,
-	block uint64,
-	poolAddress string,
-	tokens map[string]common.Address,
-) (map[string]interface{}, error) {
-	var tokenAddress []string
-	var names = make(map[common.Address]string)
-	for name, addr := range tokens {
-		tokenAddress = append(tokenAddress, addr.String())
-		names[addr] = strings.ToLower(name)
-	}
-	addrs, values, err := s.mc.GetBalances(block, poolAddress, tokenAddress)
-	if err != nil {
-		return nil, err
-	}
-	balances := make(map[string]interface{})
-	for i, addr := range addrs {
-		balances[names[addr]] = values[i].String()
-	}
-	return balances, nil
-}
-
-// GetTotalSupplies returns the total supplies of all the tokens that are part of the pool
-func (s *Service) GetTotalSupplies(
-	contract *sigmacore.Sigmacore,
-	block uint64,
-	tokens map[string]common.Address,
-) (map[string]interface{}, error) {
-	var tokenAddress []string
-	var names = make(map[common.Address]string)
-	for name, addr := range tokens {
-		tokenAddress = append(tokenAddress, addr.String())
-		names[addr] = strings.ToLower(name)
-	}
-	addrs, values, err := s.mc.GetTotalSupplies(block, tokenAddress)
-	if err != nil {
-		return nil, err
-	}
-	supplies := make(map[string]interface{})
-	for i, addr := range addrs {
-		supplies[names[addr]] = values[i].String()
-	}
-	return supplies, nil
 }
